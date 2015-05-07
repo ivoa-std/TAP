@@ -360,7 +360,7 @@ under the UWS result list, e.g.:
 \begin{verbatim}
 http://example.com/tap/async/42/results/
 \end{verbatim}
-Failed TAP queries produce an error document (see section~\ref{sec:vot-error}) which must be accessible 
+Failed TAP queries produce an error document (see section~\ref{sec:query-error}) which must be accessible 
 as the error resource, e.g.:
 \begin{verbatim}
 http://example.com/tap/async/42/error
@@ -404,13 +404,13 @@ ivo://ivoa.net/std/TAP
 \end{verbatim}
 
 For TAP-1.1 we define new standard identifiers for each of the 
-features. Asynchronous query resources (section~\ref{sec:async}) are described by standardID: 
+features. Asynchronous query resources (section~\ref{sec:tap-async}) are described by standardID: 
 
 \begin{verbatim}
 ivo://ivoa.net/std/TAP#async-1.1 
 \end{verbatim}
 
-Synchronous query resources (section~\ref{sec:sync}) are described by standardID:
+Synchronous query resources (section~\ref{sec:tap-sync}) are described by standardID:
 
 \begin{verbatim}
 standardID="ivo://ivoa.net/std/TAP#sync-1.1 
@@ -512,7 +512,7 @@ The table metadata should be accessible from a web resource with relative URL
 /tables that is a direct child of the root web resource. The /tables resource 
 must be accessible via the http GET method. The content is described by 
 [std:VODataService] and is equivalent to the metadata from the 
-TAP\underline{' '}SCHEMA described in section~\ref{sec:tap-schema}.
+TAP\_SCHEMA described in section~\ref{sec:tap-schema}.
 
 Services which do not implement the /tables resource must respond with an HTTP 
 response code of 404 when this resource is accessed.
@@ -634,7 +634,7 @@ language version used for the query parameter(s), as defined by the service
 capabilities.  The client may specify the version of the query language,  e.g. 
 LANG=ADQL-2.0 (the syntax should be as shown) or it may omit the version, e.g. 
 LANG=ADQL.  The service should return an “unknown query language” error as 
-described in section~\ref{sec:vot-error} if an unsupported language or an incompatible 
+described in section~\ref{sec:query-error} if an unsupported language or an incompatible 
 language version is specified.
 
 \subsubsection{QUERY}
@@ -690,7 +690,7 @@ is valid and the overflow indicator does not necessarily mean that there is at
 least one row satisfying the query. The service may perform validation and may 
 try to execute the query, in which case a MAXREC=0 request can fail. A query 
 with MAXREC=0 can be used with a simple query (e.g. SELECT * FROM  
-some\underline{' '}table) to extract and examine the VOTable metadata (assuming 
+some\_table) to extract and examine the VOTable metadata (assuming 
 FORMAT=votable). Note: in this version of TAP, this is the only mechanism to 
 learn some of the detailed metadata, such as coordinate systems used.
 
@@ -715,11 +715,11 @@ If table upload supported, the service must accept tables in VOTable format.
 The client specifies the name of the uploaded table; this name must be a legal 
 ADQL table name with no catalog or schema (i.e., a string following the 
 regular identifier production of [std:ADQL]). Uploaded tables must be referred 
-to in queries as TAP\underline{' '}UPLOAD.<tablename>, where <tablename> is the 
-specified by the user. Tables in the TAP\underline{' '}UPLOAD schema are 
+to in queries as TAP\_UPLOAD.<tablename>, where <tablename> is the 
+specified by the user. Tables in the TAP\_UPLOAD schema are 
 transient and persist only for the lifetime of the query (although caching might 
 be used behind the scenes) and are never visible in the 
-TAP\underline{' '}SCHEMA metadata.
+TAP\_SCHEMA metadata.
 
 The [std:DALI] UPLOAD parameter supports both external resources and in-line 
 content. For external resources, one provides a URI (usually an HTTP URL) the 
@@ -729,7 +729,7 @@ HTTP POST http://example.com/tap/async/42
 UPLOAD=mytable,http://otherplace.com/path/votable.xml
 \end{verbatim}
 The service would retrieve the table from the provided URL and 
-make it visible to the query as TAP\underline{' '}UPLOAD.mytable.
+make it visible to the query as TAP\_UPLOAD.mytable.
 
 If the TAP service supports VOSpace (TBD: how to declare this?), one may 
 specify an upload table using a URI to a table stored in a VOSpace, for example:
@@ -738,10 +738,10 @@ HTTP POST http://example.com/tap/async/42
 UPLOAD=mytable,vos://space/path/votable.xml
 \end{verbatim}
 The service would resolve the URI, contact the VOSpace, retrieve the table, and 
-make it visible to the query as TAP\underline{' '}UPLOAD.mytable.
+make it visible to the query as TAP\_UPLOAD.mytable.
 
 UPLOADs are accumulating, i.e., each UPLOAD parameter given will create one or 
-more tables in TAP\underline{' '}UPLOAD. When the table names from two or more 
+more tables in TAP\_UPLOAD. When the table names from two or more 
 upload items agree after case folding, the service behaviour is unspecified. 
 Clients thus cannot reliably overwrite uploaded tables; to correct errors, they 
 have to tear down the existing job and create a new one. In principle, any 
@@ -749,7 +749,7 @@ number of tables can be uploaded using the UPLOAD parameter and any combination
 of URI schemes supported by the service as long as they are assigned unique 
 table names within the query. Services may limit the size and number of 
 uploaded tables; if the service refuses to accept the entire table it must 
-respond with an error as described in section~\ref{sec:vot-error}.
+respond with an error as described in section~\ref{sec:query-error}.
 
 
 \section{Use of VOTable}
@@ -763,7 +763,7 @@ input (table upload) in a TAP service.
 \label{sec:vot-info}
 
 The RESOURCE element must contain an INFO element with attribute 
-name="QUERY\underline{' '}STATUS" indicating the success of the operation. For 
+name="QUERY\_STATUS" indicating the success of the operation. For 
 RESOURCE elements that contain a TABLE element, this INFO element must appear 
 lexically before the TABLE. The following values are defined for this INFO 
 element's value attribute:
@@ -811,7 +811,7 @@ self-document the query response), but clients should not depend on these.
 
 If an overflow occurs (result exceeds MAXREC), the service must close the table 
 and append another INFO element to the RESOURCE (after the TABLE) with 
-name=”QUERY\underline{' '}STATUS” and the value=”OVERFLOW”.
+name=”QUERY\_STATUS” and the value=”OVERFLOW”.
 \begin{verbatim}
 <RESOURCE type=”results”>
 <INFO name="QUERY_STATUS" value="OK"/>
@@ -825,7 +825,7 @@ In the above example, the TABLE should have exactly MAXREC rows.
 
 If an error occurs while writing the rows of the VOTable, the service must 
 close the table and append another INFO element to the RESOURCE, after the 
-TABLE, with name=”QUERY\underline{' '}STATUS” and the value=”ERROR”.
+TABLE, with name=”QUERY\_STATUS” and the value=”ERROR”.
 \begin{verbatim}
 <RESOURCE type=”results”>
 <INFO name="QUERY_STATUS" value="OK"/>
@@ -837,7 +837,7 @@ TABLE, with name=”QUERY\underline{' '}STATUS” and the value=”ERROR”.
 The content of these trailing INFO elements is optional and intended for users; 
 client software should not depend on it.
 
-Thus, one INFO element with name=”QUERY\underline{' '}STATUS” and value=”OK” or 
+Thus, one INFO element with name=”QUERY\_STATUS” and value=”OK” or 
 value=”ERROR” must be included before the TABLE. If the TABLE does not contain 
 the entire query result, one INFO element with value=”OVERFLOW” or 
 value=”ERROR” must be included after the table. 
@@ -857,7 +857,7 @@ FIELD elements must be the same as the column names (or aliases if specified in
 the query) from the query and the datatype, arraysize, and xtype attributes of 
 FIELD elements must be set using the mapping specified in section 2.5 . The 
 xtype attribute in the output must match the datatype for the column in the 
-TAP\underline{' '}SCHEMA.
+TAP\_SCHEMA.
 
 VOTable structure follows the rules in section 2.9 and must be returned with an 
 allowed VOTable MIME type (application/x-votable+xml or text/xml). If the 
@@ -993,28 +993,28 @@ attribute must be specified in an uploaded VOTable in order for the char values
 to be parsed and treated as REGIONs (e.g. to be used with some of the ADQL 
 region functions).
 
-\section{Metadata: TAP SCHEMA}
+\section{Metadata: TAP\_SCHEMA}
 \label{sec:tap-schema}
 
 There are several approaches to getting metadata for a given TAP service. All 
 TAP services must support a set of tables in a schema named 
-TAP\underline{' '}SCHEMA that describe the tables and columns included in the 
-service. In addition to the TAP\underline{' '}SCHEMA, there are two other ways 
+TAP\_SCHEMA that describe the tables and columns included in the 
+service. In addition to the TAP\_SCHEMA, there are two other ways 
 to get metadata from a TAP service. First, the VOSI tables resource provides 
 metadata on all tables and columns; this resource is described in 2.2.5 . The 
-VOSI tables resource provides the same metadata as the TAP\underline{' '}SCHEMA 
+VOSI tables resource provides the same metadata as the TAP\_SCHEMA 
 but in a rigorously controlled format; the information in the 
-TAP\underline{' '}SCHEMA is equivalent to that defined by the  VODataService 
+TAP\_SCHEMA is equivalent to that defined by the  VODataService 
 [7]. Second, the client may specify a query of one or more tables setting the 
 MAXREC parameter to 0 so that only the metadata regarding the requested fields 
 is returned. Use of MAXREC is described in section~\ref{sec:MAXREC}.
 
-The TAP\underline{' '}SCHEMA provides access to table, column, and join key 
+The TAP\_SCHEMA provides access to table, column, and join key 
 metadata through the TAP query mechanisms themselves. Users can discover tables 
 or columns that meet their specific criteria by querying the tables described 
-below.  The service may enhance the TAP\underline{' '}SCHEMA with additional 
+below.  The service may enhance the TAP\_SCHEMA with additional 
 metadata where that seems appropriate; since it is self-describing, the 
-TAP\underline{' '}SCHEMA may be queried to determine if any extended schema 
+TAP\_SCHEMA may be queried to determine if any extended schema 
 metadata is defined by the service. Services must provide these tables and make 
 them accessible by all supported query mechanisms.
 
@@ -1022,11 +1022,11 @@ The qualified names in the tables of the TAP schema must follow the rules
 defined in section 2.4. The names must be stated in a form that is acceptable as 
 an operand of a query.
 
-All columns in the TAP\underline{' '}SCHEMA tables are of type VARCHAR except 
+All columns in the TAP\_SCHEMA tables are of type VARCHAR except 
 for size,  principal, indexed, and std (in Columns) which are INTEGER values.
 
 Implementors are permitted to include additional tables in the 
-TAP\underline{' '}SCHEMA to describe additional aspects of their service not 
+TAP\_SCHEMA to describe additional aspects of their service not 
 covered by this specification. Implementors may also include additional columns 
 in the standard tables described below. For example, one could include a column 
 with a timestamp saying when metadata values were was last modified.
@@ -1034,17 +1034,17 @@ with a timestamp saying when metadata values were was last modified.
 \subsection{Schemas}
 \label{sec:tap-schema-schemas}
 
-The table TAP\underline{' '}SCHEMA.schemas must contain the following columns:
+The table TAP\_SCHEMA.schemas must contain the following columns:
 
 \begin{tabular}{l l l}
 \label{tab:resources}
 column name & datatype & not-null \\
-schema\underline{' '}name & VARCHAR & true \\
+schema\_name & VARCHAR & true \\
 utype & VARCHAR & false \\
 description & VARCHAR & false \\
 \end{tabular}
 
-The schema\underline{' '}name values must be unique and may be qualified by the 
+The schema\_name values must be unique and may be qualified by the 
 catalog name or not depending on the implementation requirements. The fully 
 qualified schema name is defined by the ADQL language and  follows the pattern 
 [catalog.]schema. The schema metadata are included for reference and are not 
@@ -1052,33 +1052,33 @@ used directly to construct queries.
 
 \subsection{Tables}
 \label{sec:tap-schema-tables}
-The table TAP\underline{' '}SCHEMA.tables must contain the following columns:
+The table TAP\_SCHEMA.tables must contain the following columns:
 
 \begin{tabular}{l l l}
 \label{tab:tap-schema-tables}
 column name & datatype & not-null \\
-schema\underline{' '}name & VARCHAR & true \\
-table\underline{' '}name & VARCHAR & true \\
-table\underline{' '}type & VARCHAR & true \\
+schema\_name & VARCHAR & true \\
+table\_name & VARCHAR & true \\
+table\_type & VARCHAR & true \\
 utype & VARCHAR & false \\
 description & VARCHAR & false \\
 \end{tabular}
 
-The table\underline{' '}name values must be unique. The value of the 
-table\underline{' '}name should be the string that is recommended for use in 
+The table\_name values must be unique. The value of the 
+table\_name should be the string that is recommended for use in 
 querying the table; it may or may not be qualified by schema and catalog name(s) 
 depending on the implementation requirements. The fully qualified table name is 
 defined by the ADQL language and follows the pattern [[catalog.]schema.]table. 
 
 \subsection{Columns}
 \label{sec:tap-schema-columns}
-The table TAP\underline{' '}SCHEMA.columns must contain the following columns:
+The table TAP\_SCHEMA.columns must contain the following columns:
 
 \begin{tabular}{l l l}
 \label{tab:tap-schema-columns}
 column name & datatype & not-null \\
-table\underline{' '}name & VARCHAR & true \\
-column\underline{' '}name & VARCHAR & true \\
+table\_name & VARCHAR & true \\
+column\_name & VARCHAR & true \\
 datatype & VARCHAR & true \\
 "size" arraysize? datasize? & INTEGER & false \\
 description & VARCHAR & false \\
@@ -1090,7 +1090,7 @@ principal & BOOLEAN? & true \\
 std & BOOLEAN? & true \\
 \end{tabular}
 
-The table\underline{' '}name,column\underline{' '}name (pair) values must be 
+The table\_name,column\_name (pair) values must be 
 unique.
 
 Data types and how they map to VOTable datatypes are described in Section 
@@ -1100,7 +1100,7 @@ when the latter specifies the size and shape of a multi-dimensional array. To us
 size column in a query, it must be put in double quotes since it collides with an ADQL reserved 
 word. Since delimited identifiers are case-sensitive, for the size column both 
 clients and servers MUST always (in particular, in the DDL for 
-TAP\underline{' '}SCHEMA) use lower case exclusively. In the next major version 
+TAP\_SCHEMA) use lower case exclusively. In the next major version 
 of TAP, this column will be called arraysize.
 
 The “principal” flag indicates that the column is considered a core part the 
@@ -1119,47 +1119,47 @@ custom column defined by a particular service.
 
 \subsection{Foreign Keys}
 \label{sec:tap-schema-keys}
-The table TAP\underline{' '}SCHEMA.keys must contain the following columns to 
+The table TAP\_SCHEMA.keys must contain the following columns to 
 describe foreign key relations between tables:
 
 \begin{tabular}{l l l}
 \label{tab:tap-schema-keys}
 column name & datatype & not-null \\
-key\underline{' '}id & VARCHAR & true \\
-from\underline{' '}table & VARCHAR & true \\
-target\underline{' '}table & VARCHAR & true \\
+key\_id & VARCHAR & true \\
+from\_table & VARCHAR & true \\
+target\_table & VARCHAR & true \\
 description & VARCHAR & false \\
 utype & VARCHAR & false \\
 \end{tabular}
 
-The key\underline{' '}id values are unique and used only to join with the 
-TAP\underline{' '}SCHEMA.key\underline{' '}columns table below. There may be 
-one or more rows with different key\underline{' '}id values and a pair 
+The key\_id values are unique and used only to join with the 
+TAP\_SCHEMA.key\_columns table below. There may be 
+one or more rows with different key\_id values and a pair 
 of tables to denote one or more ways to join the tables.
 
-The table TAP\underline{' '}SCHEMA.key\underline{' '}columns must contain the 
+The table TAP\_SCHEMA.key\_columns must contain the 
 following columns to describe the columns that make up a foreign key:
 
 \begin{tabular}{l l l}
 \label{tab:tap-schema-key-columns}
 column name & datatype & not-null \\
-key\underline{' '}id & VARCHAR & true \\
-from\underline{' '}column & VARCHAR & true \\
-target\underline{' '}column & VARCHAR & true \\
+key\_id & VARCHAR & true \\
+from\_column & VARCHAR & true \\
+target\_column & VARCHAR & true \\
 \end{tabular}
 
-There may be one or more rows with a specific key\underline{' '}id to 
+There may be one or more rows with a specific key\_id to 
 denote single or multi-column keys.
 
 A TAP service must provide the tables listed above and may provide other tables 
-in the TAP\underline{' '}SCHEMA namespace.
+in the TAP\_SCHEMA namespace.
 
 
 \section{Examples}
 \label{sec:examples}
 
 The UWS pattern is specified in [std:UWS] and its application to TAP in section 
-section~\ref{sec:async}. This section gives examples of the exchange of messages between a 
+section~\ref{sec:tap-async}. This section gives examples of the exchange of messages between a 
 TAP client and service when using UWS to run an asynchronous query.
 
 \subsection{Example: Asynchronous Query}
@@ -1362,7 +1362,7 @@ the scope and tell readers what TAP is supposed to accomplish.
 
 Made clarifications: restricted allowed table names for UPLOAD, clarified that 
 multiple UPLOAD pamaters accumulate, deprecated the size column in 
-TAP\underline{' '}SCHEMA.columns and added advice to quote it as a delimited 
+TAP\_SCHEMA.columns and added advice to quote it as a delimited 
 identifier, made presence of a TABLE element on VOTable output only required for 
 successful queries, added optional DALI-examples endpoint (text TBD).
 
