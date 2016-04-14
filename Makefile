@@ -7,7 +7,7 @@ DOCNAME = TAP
 DOCVERSION = 1.1
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 20155555-05-12
+DOCDATE = 2016-04-15
 
 # What is it you're writing: NOTE, WD, PR, or REC
 DOCTYPE = WD

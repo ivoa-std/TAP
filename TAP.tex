@@ -1,6 +1,9 @@
 \documentclass[11pt,letter]{ivoa}
 \input tthdefs
 
+\usepackage{listings}
+\lstloadlanguages{XML}
+\lstset{flexiblecolumns=true,basicstyle=\small,tagstyle=\ttfamily}
 \usepackage[utf8]{inputenc}
 
 \title{Table Access Protocol}
@@ -22,7 +25,8 @@ table data, including astronomical catalogs as well as general database tables.
 Access is provided for both database and table metadata as well as for actual 
 table data. This version of the protocol includes support for multiple query 
 languages, including queries specified using the Astronomical Data Query 
-Language ([std:ADQL]) within an integrated interface. It also includes support 
+Language \citep{std:ADQL} within an integrated interface. It also includes 
+support 
 for both synchronous and asynchronous queries. Special support is provided for
 spatially indexed queries using the spatial extensions in ADQL. A multi-position 
 query capability permits queries against an arbitrarily large list of 
@@ -61,7 +65,8 @@ services accept queries posed against the tableset available via the service and
 return the query response as another table, in accord with the relational model. 
  Queries may be submitted using various query languages and may execute 
 synchronously or asynchronously. Support for the Astronomical Data Query 
-Language ([std:ADQL]) is mandatory; support for other query languages is supported 
+Language \citep{std:ADQL} is mandatory; support for other query languages is 
+supported 
 but optional.
 
 The result of a TAP query is another table, normally returned as a VOTable. 
@@ -100,7 +105,6 @@ NOTE: not in TAP-1.0
 Fig.~section~\ref{fig:archdiag} shows the role this document plays within the
 IVOA architecture \citep{note:VOARCH}.
 
-
 \subsection{Motivating Use Cases}
 Below are some of the more common use cases that have motivated the development 
 of the TAP specification. While this is not complete, it helps to understand the 
@@ -134,7 +138,7 @@ be able to declare their support for data models as well as the way that model
 elements are mapped to tables and columns.
 
 \subsubsection{ADQL Queries}
-The Astronomical Data Query Language ([std:ADQL]) is the standard 
+The Astronomical Data Query Language \citep{std:ADQL} is the standard 
 query language for the IVOA. Support for ADQL queries is mandatory. ADQL can be 
 used to specify queries  that access one or more tables provided by the TAP 
 service, including the standard metadata tables. In general, the client must 
@@ -169,95 +173,6 @@ and start returning results quickly. Even with large query results, synchronous
 queries are a good approach as long as the service can stream the output 
 and consume modest internal resources. 
 
-
-\subsection{Interface Overview -- move to examples section?}
-Table Access Protocol (TAP) is implemented over the HTTP protocol using standard 
-HTTP GET and POST requests and conventions. A TAP request specifies one or more 
-parameter key/value pairs; both keys and values are strings. The keys used are 
-discussed in this specification and in the specifications for query languages 
-supported by a service. The values may need to be encoded, using standard 
-URL-encoding. For the following examples, http://example.com/tap/ is the base 
-URL for a TAP service.
-
-This is an example of a synchronous ADQL query on r magnitude:
-
-\begin{verbatim}
-HTTP POST htp://example.com/tap/sync
-REQUEST=doQuery
-LANG=ADQL
-QUERY=SELECT * FROM magnitudes as m where m.r>=10 and m.r<=16
-\end{verbatim}
-
-Synchronous queries return the table of results in the HTTP response to the 
-initial request. In the examples above, the output format defaults to VOTable; 
-the FORMAT parameter could be added to select a different format.
-
-Asynchronous queries are created in the same way as the synchronous kind, using 
-the /async endpoint:
-
-\begin{verbatim}
-HTTP POST http://example.com/tap/async
-REQUEST=doQuery
-LANG=ADQL
-QUERY=SELECT * FROM magnitudes AS m WHERE m.r>=10 AND m.r<=16
-\end{verbatim}
-
-The service's response to these requests is a URL representing the query's 
-state and progress and where the state may be monitored and controlled. The 
-query 
-result or an error document can then be retrieved from a URL associated with the 
-job. This is an application of the UWS pattern. The query is then executed 
-with a separate request to run the job URL:
-
-\begin{verbatim}
-HTTP POST http://example.com/tap/async/<jobid>/phase
-PHASE=RUN
-\end{verbatim}
-
-The state of the job can be retrieved from the phase resource:
-
-\begin{verbatim}
-HTTP GET http://example.com/tap/async/<jobid>/phase
-\end{verbatim}
-
-The client may have to check the phase multiple times until the job 
-finishes. Once the returned value is COMPLETED, the results can be obtained 
-from the results resource:
-
-\begin{verbatim}
-HTTP GET http://example.com/tap/async/<jobid>/results/result
-\end{verbatim}
-
-In addition to the sync and async resources for query execution, a TAP service 
-also has metadata resources defined by the VOSI standard. The availability of a 
-service can be monitored by accessing:
-
-\begin{verbatim}
-HTTP GET http://example.com/tap/availability
-\end{verbatim}
-
-The complete table metadata can be obtained:
-
-\begin{verbatim}
-HTTP GET http://example.com/tap/tables
-\end{verbatim}
-
-The capabilities can be obtained by:
-
-\begin{verbatim}
-HTTP GET http://example.com/tap/capabilities
-\end{verbatim}
-
-The capabilities are also accessible via a service request to the synchronous 
-query resource:
-
-\begin{verbatim}
-HTTP GET http://example.com/tap/sync?REQUEST=getCapabilities
-\end{verbatim}
-
-This output lists support for optional TAP functionality and additional 
-implemented interfaces.
-
 \section{Resources}
 \label{sec:resources}
 
@@ -267,25 +182,32 @@ under the base URL.
 \begin{tabular}{l l l l l}
 \label{tab:resources}
 resource type & resource name & required \\
-{sync} & /sync & must (anonymous) & \\
-{async} & /async & must (anonymous) & \\
-{sync} & service-specific & may (alternate authentication method) & \\
-{async} & service-specific & may (alternate authentication method) & \\
-VOSI-availability & /availability & should & \\
+{sync} & /sync & must & \\
+{async} & /async & must & \\
+{sync} & service specific & may (alternate authentication method) & \\
+{async} & service specific & may (alternate authentication method) & \\
+VOSI-availability & service specific & must & \\
+VOSI-availability & service specific & may (alternate authentication method) & \\
 VOSI-capabilities & /capabilities & must & \\
+VOSI-capabilities & service specific & may (alternate authentication method) & \\
 VOSI-tables & /tables & should & \\
+VOSI-tables & service specific & may (alternate authentication method) & \\
 DALI-examples & /examples & should & \\
+DALI-examples & service specific & may (alternate authentication method) & \\
 \end{tabular}
 
 At least one set of {sync} and {async} resources must be named /sync and 
 /async respectively for backwards compatibility with TAP-1.0 (which required 
-these names. These resources must be used for anonymous query execution. Other 
-{sync} and {async} resources may have service specific names, but all resources 
-listed above must be siblings so that a client with one such URL can find the 
-VOSI-capabilities URL and thus discover other available resources. 
+these names. Other  {sync} and {async} resources may have service specific names. 
+As required by \citep{std:DALI}, all resources except the VOSI-availability must 
+be siblings of the VOSI-capabilities resource. 
 
-A TAP service must be represented as a set of sibling web resources each 
-addressable via a URL in the http scheme, or the https scheme, or both.
+If a TAP service allows anonymous access, the fixed name resources and VOSI-availability
+must be used for anonymous access; other resource names may be used for authenticated access. 
+If the entire service requires authentication then the fixed names may be used for 
+authenticated access. [Note: There is probably no use for authenticated VOSI-availability, 
+VOSI-capabilities, or DALI-examples resources when anonymous is allowed so those options
+are not precent in the table above... should they be for completeness?]
 
 The web resource at the root of the tree must represent the service as a whole. 
 This specification defines no standard representation for this root resource. 
@@ -297,9 +219,9 @@ clients must not depend on a specific representation of the root web-resource.
 \subsection{\{sync\}}
 \label{sec:tap-sync}
 
-A TAP service must provide a web resource with relative URL /sync that is a 
-direct child of the root web resource. This web resource represents the results 
-of synchronous requests. The exact form of the query, and hence the 
+A TAP service must provide one or more web resources that represents the results 
+of synchronous query execution. The {sync} resources must conform to the general rules for
+DALI-sync \citep{std:DALI} resources. The exact form of the query, and hence the 
 representation of the resource, is defined by the  query parameters as listed in 
 section~\ref{sec:parameters}. Representations of results of queries if defined in 
 section~\ref{sec:RESPONSEFORMAT} and section~\ref{sec:votable}.
@@ -318,10 +240,10 @@ HTTP POST.
 \subsection{\{async\}}
 \label{sec:tap-async}
 
-A TAP service must provide a web resource with relative URL /async that is a 
-direct child of the root web resource. This web resource represents controls for 
-asynchronous queries. Specifically, the web resource must represent the job-list 
-as specified in the UWS standard [std:UWS].
+A TAP service must provide one or more web resource representing controls for 
+asynchronous queries. Specifically, the web resource must conform to the general rules
+for DALI-async \citep{std:DALI} resources and thus represent a job-list 
+as specified in \citep{std:UWS}.
 
 The child web resources of the /async resource are as specified by UWS. These 
 are descendants of the /async web-resource, and they include a web resource that 
@@ -341,7 +263,8 @@ and the job resource is
 \begin{verbatim}
 http://example.com/tap/async/42
 \end{verbatim}
-where 42 is the job identifier. A client making an asynchronous request must use 
+where 42 is an example job identifier. A client making an asynchronous request 
+must use 
 the UWS facilities to monitor or control the job. In addition to the job list 
 and job resource above, UWS specifies the name and semantics of the a small set 
 of child resources used to view and control the job, e.g.:
@@ -367,8 +290,8 @@ http://example.com/tap/async/42/error
 \end{verbatim}
 For query languages that produce a single result executed using the /async 
 endpoint, the result of a successful query can be found within the result list 
-specified by UWS [std:UWS]; the result must be named result and thus clients are able 
-to access it directly, e.g.:
+specified by UWS; the result must be named result and thus 
+clients are able to access it directly, e.g.:
 \begin{verbatim}
 http://example.com/tap/async/42/results/result
 \end{verbatim}
@@ -378,22 +301,16 @@ redirect (303: See Other) to a resource from which the result may be retrieved.
 For query languages that may produce multiple result resources, the names of the 
 results are not specified (they may be specified in the specification for the 
 language). The client can always access the result list resource as specified by 
-UWS [3].
+UWS.
 
 If the query returned no rows, the result resource must exist and contain no 
 data rows. Details on interacting with these resources are specified in the UWS 
 standard; for examples specific to TAP see section~\ref{sec:examples} below.
 
-\subsection{/availability}
+\subsection{availability}
 \label{sec:vosi-availability}
 
-The VOSI availability metadata should be accessible from a web resource with 
-relative URL /availability that is a direct child of the root web resource. If 
-implemented, the /availability resource must be accessible via the http GET 
-method. The content is described by [std:VOSI].
-
-Services which do not implement the /availability resource must respond with an 
-HTTP response code of 404 when this resource is accessed.
+The use of the VOSI-availability resource is described in \citep{std:DALI}.
 
 \subsection{/capabilities}
 \label{sec:vosi-capabilities}
@@ -413,45 +330,22 @@ ivo://ivoa.net/std/TAP#async-1.1
 Synchronous query resources (section~\ref{sec:tap-sync}) are described by standardID:
 
 \begin{verbatim}
-standardID="ivo://ivoa.net/std/TAP#sync-1.1 
+ivo://ivoa.net/std/TAP#sync-1.1 
 \end{verbatim}
 
 In TAP-1.0 the base URL was described with a single standard identifier; in 
-TAP-1.1 and beyond, individual resources are described with their on 
+TAP-1.1 and beyond, individual resources are described with their own 
 standardID. This allows service providers to describe multiple resources that 
 deliver the specified feature (e.g. with different authentication methods) in 
 the VOSI-capabilities resource.
 
-The VOSI standard specifies that the capability metadata is encoded as an XML 
-document which lists each of the service's capabilities as a <capability> 
-element. The type of this element (which defines the contents) is 
-{http://www.ivoa.net/xml/VOResource/v1.0}Capability from the VOResource XML 
-standard [8].
+The use of the VOSI-capabilities resource is described in \citep{std:DALI}.
 
-In addition, the capabilities output must also comply with the following    
-requirements:
-
-* the returned document must include <capability> elements 
-that describes the service's support for the TAP protocol using the TAP and 
-VOSI standardID values
-
-* this capability element must include at least one <interface> element 
-with its "role" attribute set to "std",  
-
-Note: VO registries recognize a service's support for a standard protocol 
-through this capability description. In particular, a different standard 
-Capability sub-type is used for each standard protocol to provide capability 
-metadata that is specific to that protocol. At the time of this writing, a 
-Capability sub-type for TAP has not yet been defined. Thus for compliance with 
-this standard, any legal Capability description that meets the above 
-restrictions is sufficient. However, once a VOResource extension for TAP is 
-standardized, it is strongly recommended that TAP services emit its 
-capabilities using that the Capability sub-type specialized for TAP.
 
 For example, the returned capabilities document for a service supporting  TAP 
 might look as follows:
 
-\begin{verbatim}
+\begin{lstlisting}[language=XML]
 <?xml version="1.0" encoding="UTF-8"?>
 
 <vosi:capabilities xmlns=""
@@ -463,42 +357,76 @@ might look as follows:
              http://www.ivoa.net/xml/VODataService/v1.0
              http://www.ivoa.net/xml/VODataService/v1.0">
 
+  <vosi:capability standardID="ivo://ivoa.net/std/TAP">
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
+      <accessURL use="base"> http://example.net/myTAP </accessURL>
+    </interface>
+    <interface xsi:type="vod:ParamHTTP" role="std" version="1.0">
+      <accessURL use="base">https://example.net/myTAP</accessURL>
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
+    </interface>
+
+  </vosi:capability>
+  
   <vosi:capability standardID="ivo://ivoa.net/std/TAP#async-1.1">
-    <interface xsi:type="vs:ParamHTTP" role="std">
-      <accessURL use="base"> http://myarchive.net/myTAP/async </accessURL>
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base"> http://example.net/myTAP/async </accessURL>
+    </interface>
+    <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base">http://example.net/myTAP/auth-async</accessURL>
+      <securityMethod standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA" />
+    </interface>
+    <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base">https://example.net/myTAP/async</accessURL>
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
     </interface>
   </vosi:capability>
 
   <vosi:capability standardID="ivo://ivoa.net/std/TAP#sync-1.1">
-    <interface xsi:type="vs:ParamHTTP" role="std">
-      <accessURL use="base"> http://myarchive.net/myTAP/sync </accessURL>
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base"> http://example.net/myTAP/sync </accessURL>
+    </interface>
+    <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base">http://example.net/myTAP/auth-sync</accessURL>
+      <securityMethod standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA" />
+    </interface>
+    <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base">https://example.net/myTAP/sync</accessURL>
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
     </interface>
   </vosi:capability>
 
   <vosi:capability standardID="ivo://ivoa.net/std/VOSI#capabilities">
     <interface xsi:type="vs:ParamHTTP">
       <accessURL use="full">
-        http://myarchive.net/myTAP/capabilities </accessURL>
+        http://example.net/myTAP/capabilities </accessURL>
     </interface>
   </vosi:capability>
 
   <vosi:capability standardID="ivo://ivoa.net/std/VOSI#availability">
     <interface xsi:type="vs:ParamHTTP">
       <accessURL use="full">
-        http://myarchive.net/myTAP/availability
+        http://example.net/myTAP/availability
       </accessURL>
     </interface>
   </vosi:capability>
 
   <vosi:capability standardID="ivo://ivoa.net/std/VOSI#tables">
     <interface xsi:type="vs:ParamHTTP">
-      <accessURL use="full">
-        http://myarchive.net/myTAP/tables </accessURL>
+      <accessURL use="full"> http://myarchive.net/myTAP/tables </accessURL>
+    </interface>
+    <interface xsi:type="vs:ParamHTTP">
+      <accessURL use="full"> https://myarchive.net/myTAP/tables </accessURL>
+        <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
+    </interface>
+    <interface xsi:type="vs:ParamHTTP">
+      <accessURL use="full"> http://myarchive.net/myTAP/auth-tables </accessURL>
+      <securityMethod standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA" />
     </interface>
   </vosi:capability>
 
 </vosi:capabilities>
-\end{verbatim}
+\end{lstlisting}
 
 The service capabilities must be accessible from a web resource with relative 
 URL /capabilities that is a direct child of the root web resource. The 
@@ -511,7 +439,7 @@ is described by [8].
 The table metadata should be accessible from a web resource with relative URL 
 /tables that is a direct child of the root web resource. The /tables resource 
 must be accessible via the http GET method. The content is described by 
-[std:VODataService] and is equivalent to the metadata from the 
+\citep{std:VODS11} and is equivalent to the metadata from the 
 TAP\_SCHEMA described in section~\ref{sec:tap-schema}.
 
 Services which do not implement the /tables resource must respond with an HTTP 
@@ -526,15 +454,15 @@ MUST return a 404 HTTP status on accessing this resource.
 
 If present, the endpoint must be represented in a capability in the TAP 
 service's registry record. The capability's standardID is defined by 
-[std:DALI]. A capability element could hence look like this:
+\citep{std:DALI}. A capability element could hence look like this:
 
-\begin{verbatim}
-   <capability standardID="ivo://ivoa.net/std/DALI#examples">
-     <interface xsi:type="vr:WebBrowser">
-       <accessURL use="full">http://myarchive.net/myTAP/examples</accessURL>
-     </interface>
-   </capability>
-\end{verbatim}
+\begin{lstlisting}[language=XML]
+<capability standardID="ivo://ivoa.net/std/DALI#examples">
+   <interface xsi:type="vr:WebBrowser">
+      <accessURL use="full">http://myarchive.net/myTAP/examples</accessURL>
+   </interface>
+</capability>
+\end{lstlisting}
 
 TAP defines two additional properties for the examples vocabulary:
 
@@ -553,8 +481,6 @@ When using elements with src or href attributes to carry the property
 attributes, note that the element content must be repeated in a content 
 attribute, as otherwise RDFa clients would interpret the embedded link rather 
 than the element content as the object in the triple.
-
-TODO: add example(s) here
 
 \subsection{Parameters}
 \label{sec:parameters}
@@ -579,35 +505,6 @@ service receives a spurious parameter in an otherwise correct request, then the
 service must ignore the spurious parameter, must respond to the request normally 
 and must not report errors concerning the spurious parameter.
 
-\subsubsection{REQUEST - remove? }
-This parameter distinguishes current service operations, makes it possible to 
-extend the service specification (with additional or custom operations), and 
-specifies how other parameters should be interpreted. If a TAP service attempts 
-to execute a TAP request without this parameter or with an incorrect value for 
-this parameter, then the service must reject the request and return an error 
-document as the result.
-
-These are the standard values of the parameter:
-
-doQuery: execute a query 
-
-getCapabilities: return VOSI-capabilities metadata 
-
-All requests to execute a query using a query language must 
-include REQUEST=doQuery and must include the LANG parameter. For other values of 
-REQUEST, additional parameters may or may not be required. The 
-REQUEST=getCapabilities service operation must be supported for synchronous 
-(/sync) requests and is not defined for asynchronous (/async) requests.
-
-For synchronous queries, the HTTP request must also include additional 
-parameters (see below) with the details of the query. These are used for 
-metadata queries and data queries.
-
-For asynchronous queries, the additional parameters may be included with the 
-HTTP request that creates the query (the UWS job) or they may be POSTed directly 
-to the created job resource, in one or more separate HTTP requests. The 
-parameter names remain the same in both cases.
-
 \subsubsection{LANG}
 \label{sec:LANG}
 
@@ -619,13 +516,11 @@ capabilities.
 
 For example, an ADQL query would be performed with
 \begin{verbatim}
-REQUEST=doQuery
 LANG=ADQL
 QUERY=<ADQL query string>
 \end{verbatim}
 A PQL query would be performed with
 \begin{verbatim}
-REQUEST=doQuery
 LANG=PQL
 <PQL-specific parameters>
 \end{verbatim}
@@ -652,7 +547,9 @@ sensitive except for character  literals; schema, table, and column names,
 function names, and other ADQL keywords are not case sensitive.
 
 Within the ADQL query, the service must support the use of timestamp values as 
-described in [std:DALI].
+described in \citep{std:DALI}.
+
+TAP-1.0 text about ADQL region functions:
 
 If the tables that are queried through a service contain columns with spatial 
 coordinates and the service supports spatial querying via the ADQL “region” 
@@ -664,6 +561,13 @@ STC-S format (see section 6 ); the extent of STC-S support within the REGION
 function is left up to the implementation. Coordinate system specification for 
 POINT, BOX, CIRCLE, and POLYGON must use values from STC-S as described in ???.
 
+Proposed TAP-1.1 text:
+
+INTERSECTS and CONTAINS are required. POINT, CIRCLE, and POLYGON are required. 
+POINT (and point-valued columns) cannot be used as an argument to INTERSECTS.
+AREA, CENTROID, COORDSYS, COORD1, and COORD2 are optional. REGION is not 
+supported (and hopefully gone from ADQL-2.1). 
+
 Note: Although it is allowed by the ADQL syntax, clients should be careful when 
 mixing constants and column references for coordinate system and coordinate 
 values. For example, POINT('ICRS', t.ra, t.dec) does not cause t.ra and t.dec to 
@@ -673,7 +577,8 @@ being expressed in that coordinate system.
 \subsubsection{FORMAT and RESPONSEFORMAT}
 \label{sec:RESPONSEFORMAT}
 
-The RESPONSEFORMAT parameter is fully described in [std:DALI]. For backwards 
+The RESPONSEFORMAT parameter is fully described in \citep{std:DALI}. For 
+backwards 
 compatibility, TAP-1.1 must also accept the FORMAT parameter as equivalent to 
 RESPONSEFORMAT.
 
@@ -681,8 +586,8 @@ RESPONSEFORMAT.
 \label{sec:MAXREC}
 
 The MAXREC parameter and its effect on the query result is fully described in 
-[std:DALI]. If the result set is truncated in this fashion, it must include an 
-overflow indicator as specified in section XREF.
+\citep{std:DALI}. If the result set is truncated in this fashion, it must 
+include an overflow indicator as specified in section~\ref{sec:query-overflow}.
 
 For the special value of MAXREC=0, the service is not required to execute the 
 query; a successful  MAXREC=0 request does not necessarily mean that the query 
@@ -694,19 +599,34 @@ some\_table) to extract and examine the VOTable metadata (assuming
 FORMAT=votable). Note: in this version of TAP, this is the only mechanism to 
 learn some of the detailed metadata, such as coordinate systems used.
 
-\subsubsection{RUNID}
-The RUNID parameter is fully described in [std:DALI].
+The output truncation caused by the MAXREC parameter occurs after any 
+limitations imposed by the query and the overflow indicator is only added if 
+the query result is actually truncated. For example:
 
-\subsubsection{VERSION}
-The VERSION parameter is fully described in {std:DALI].
+\begin{verbatim}
+MAXREC=A
+QUERY=select TOP B * from foo
+\end{verbatim}
+
+for integer values A and B. Assuming the table contains many rows, if A > B 
+then the result table will contain B rows and no overflow indicator. If A < B 
+then the result table will contain A rows and an overflow indicator. If the 
+table contains A or fewer rows then the result will not contain an overflow 
+indicator.
+
+\subsubsection{RUNID}
+The RUNID parameter is fully described in \citep{std:DALI}.
 
 \subsubsection{UPLOAD}
 \label{sec:UPLOAD}
 
-The UPLOAD parameter is described in [std:DALI]. Services should support the 
-upload of temporary tables (in [std:VOTable] format) via the standard UPLOAD 
+The UPLOAD parameter is described in \citep{std:DALI}. Services should support 
+the 
+upload of temporary tables (in \citep{std:VOTable} format) via the standard 
+UPLOAD 
 parameter. The table-name(s) must be legal ADQL table names as defined in 
-[std:ADQL] but restricted as described below XREF. URIs maybe be simple URLs 
+\citep{std:ADQL} but restricted as described below XREF. URIs maybe be simple 
+URLs 
 (e.g. with a URI scheme of http) or URIs (e.g. with a URI scheme of vos or 
 param) that must be resolved to give the location of the table content. See 
 section XREF for details.
@@ -714,14 +634,16 @@ section XREF for details.
 If table upload supported, the service must accept tables in VOTable format. 
 The client specifies the name of the uploaded table; this name must be a legal 
 ADQL table name with no catalog or schema (i.e., a string following the 
-regular identifier production of [std:ADQL]). Uploaded tables must be referred 
+regular identifier production of \citep{std:ADQL}). Uploaded tables must be 
+referred 
 to in queries as TAP\_UPLOAD.<tablename>, where <tablename> is the 
 specified by the user. Tables in the TAP\_UPLOAD schema are 
 transient and persist only for the lifetime of the query (although caching might 
 be used behind the scenes) and are never visible in the 
 TAP\_SCHEMA metadata.
 
-The [std:DALI] UPLOAD parameter supports both external resources and in-line 
+The \citep{std:DALI} UPLOAD parameter supports both external resources and 
+in-line 
 content. For external resources, one provides a URI (usually an HTTP URL) the 
 TAP service can use to obtain the table content. For example,
 \begin{verbatim}
@@ -755,9 +677,10 @@ respond with an error as described in section~\ref{sec:query-error}.
 \section{Use of VOTable}
 \label{sec:votable}
 
-The [std:VOTable] format is the standard format for output (query results) and 
-input (table upload) in a TAP service. 
-
+The \citep{std:VOTable} format is the standard format for output (query 
+results) and input (table upload) in a TAP service so most of this section 
+deals with how VOTable is used. However, rules about serialising column values 
+also apply to other formats (e.g. CSV and TSV).
 
 \subsection{INFO elements}
 \label{sec:vot-info}
@@ -872,12 +795,13 @@ enclosed in double quotes.  Text lines may be arbitrarily long.  The first data
 row should give the column name as the data value.   CSV data must be returned 
 with a MIME type of text/csv; if the optional header line (with column names) 
 is included, the MIME type must be text/csv;header=present. Full details of CSV 
-format are defined in RFC 4180 [std:CSV].
+format are defined in \citep{std:CSV}.
 
 TSV formatted data should represent the output table with one row of text per 
 table row, with the table column values rendered as text and separated by the 
 TAB character. TSV data must be returned with a MIME type of 
-text/tab-separated-values [std:TSV]. Column values may not contain the TAB 
+text/tab-separated-values \citep{std:TSV}. Column values may not contain the 
+TAB 
 character.
 
 \subsection{Errors}
@@ -932,37 +856,95 @@ If the output format is VOTable, section 2.9.1 describes the method by which
 the overflow is reported. No method of reporting an overflow is defined for 
 formats other than VOTable.
 
-\subsection{VOTable vs RDBMS Tables and Columns}
-\label{sec:votable-rdbms}
+\subsection{Mapping Table Datatypes}
+\label{sec:vot-rdbms}
 
-TODO: describe the bi-directional mapping of VOTable <-> RDBMS table aka the 
-old section on uploading tables... should this come earlier in the doc?
+This section describes the bi-directional mapping between VOTable and RDBMS + 
+geometric datatypes and extends the basic rules for serialising such values in 
+VOTable described in \citep{std:DALI}. These rules apply to input tables 
+supplied via an UPLOAD parameter (see ??) and to result tables after successful 
+query execution.
 
-The column names in the transient database table are taken directly from the 
-name attribute of the VOTable FIELD and PARAM elements. TODO: add column name 
-restrictions here to avoid quoted identifiers. The datatypes of the 
-transient table are determined from the FIELD and PARAM attributes as follows:
+For input tables, the name attribute of the FIELD element is used as the column 
+name. This name must be a legal ADQL column name (i.e., a string following the 
+regular identifier production of \citep{std:ADQL}). For result tables, the 
+column name or an alias specified in the query is used to set the name attribute 
+of the FIELD elements in the output table (the alias oevrrides the normal 
+column name). 
 
-TODO: something like the table from TAP-1.0
+NOTE: output column names from aliases may not be valid input 
+column names because users can put what they like in quotes... can we 
+or ADQL restrict the definition of a valid alias? 
+
+NOTE2: if the select has a 
+fully-qualified column name (tab.col or alias.col) is that the output FIELD 
+name? Those are always going to be invalid input names and here users would 
+have to use aliases to make them valid for later input... is the goal that all 
+result tables would be valid input tables? Can we achieve that?
+
+The mapping between VOTable datatype, arraysize, and type attributes and 
+RDBMS datatypes are as follows:
+
+\begin{tabular}{l l l l l}
+\label{tab:vot-rdbms-mapping}
+datatype & arraysize & xtype & RDBMS datatype & required \\
+char & [1] & & CHAR or CHAR(1) & yes \\
+char & * & & VARCHAR & yes \\
+char & n & & CHAR(n) & yes \\
+char & n* & & VARCHAR(n) & yes \\
+char & n, *, n* & CLOB & CLOB & yes \\
+unsignedByte & [1] & & BINARY(1) & yes \\
+unsignedByte & * & & VARBINARY(*) & yes \\
+unsignedByte & n & & BINARY(n) & yes \\
+unsignedByte & n* & & VARBINARY(n) & yes \\
+unsignedByte & n, *, n* & BLOB & BLOB & yes \\
+short & [1] & & SMALLINT? & yes \\
+short & * & & implementation-specific & no \\
+short & n & & implementation-specific & no \\
+short & n* & & implementation-specific & no \\
+int & [1] & & INTEGER & yes \\
+int & * & & implementation-specific & no \\
+int & n & & implementation-specific & no \\
+int & n* & & implementation-specific & no \\
+long & [1] & & BIGINT & yes \\
+long & * & & implementation-specific & no \\
+long & n & & implementation-specific & no \\
+long & n* & & implementation-specific & no \\
+float & [1] & & REAL & yes \\
+float & * & & implementation-specific & no \\
+float & n & & implementation-specific & no \\
+float & n* & & implementation-specific & no \\
+double & [1] & & DOUBLE [PRECISION] & yes \\
+double & * & & implementation-specific & no \\
+double & n & & implementation-specific & no \\
+double & n* & & implementation-specific & no \\
+char & n or n* & timestamp & timestamp & yes \\
+double & 2 & point & implementation-specific & no \\
+double & 3 & circle & implementation-specific & no \\
+double & * & polygon & implementation-specific & no \\
+float & 2 & point & implementation-specific & no \\
+float & 3 & circle & implementation-specific & no \\
+float & * & polygon & implementation-specific & no \\
+short & 2 & interval & implementation-specific & no \\
+int & 2 & interval & implementation-specific & no \\
+long & 2 & interval & implementation-specific & no \\
+float & 2 & interval & implementation-specific & no \\
+double & 2 & interval & implementation-specific & no \\
+\end{tabular}
 
 The default mapping of data types are shown above (no arraysize or xtype). If 
 the xtype attribute is set, this is the preferred internal datatype. If xtype is 
 not set, then the datatype and arraysize indicate the most suitable internal 
-datatype. Note that the last column of Table (x) is not normative. 
+datatype. Note that the RDBMS type i
+s not normative. 
 Implementations SHOULD try to make sure that the actual types chosen are at 
 least signature-compatible with the recommended types (i.e., integers should 
 remain integers, floating-point values floating-point values, etc.), such that 
 clients can reliably write queries against uploaded tables.
 
-For columns with xtype adql:REGION, this is particularly critical, since 
-databases typically use different types to represent various STC-S objects. 
-Clients are advised to assume that such columns will be approximated with 
-polygons in the actual database table.
-
 In the arraysize column above, [1] means the arraysize is not set or is set to 
 1, n means arraysize is set to a specific value, * means arraysize=”*”, and n* 
-means arraysize=”n*” (variable size up to length n). A blank means the arraysize 
-is not set.
+means arraysize=”n*” (variable size up to length n).
 
 Binary values (unsignedByte in VOTable, BINARY, VARBINARY, or BLOB in ADQL) can 
 be expressed as specified by the VOTable standard. By default, VOTable allows 
@@ -974,24 +956,21 @@ these columns in the select clause but not in any other part of the query.
 Services may use these types to indicate that columns may only be selected. For 
 example, if service implementors want to make URL(s) available as column values 
 in the results, but do not actually store the URL(s) in the database, they would 
-specify a column with xtype=”adql:CLOB” and the column with URL(s) could be 
+specify a column with xtype=”CLOB” and the column with URL(s) could be 
 referenced in the SELECT clause of a query, but could not be used in the WHERE 
 clause. The service could then process the query result and insert the URL(s) 
 or, more likely, transform a column value (an identifier) into a URL while 
 writing the results.
 
-TIMESTAMP values are specified as described in [std:DALI]. The 
-xtype=”adql:TIMESTAMP” attribute must be specified in an uploaded VOTable in 
+TIMESTAMP values are specified as described in \citep{std:DALI}. The 
+xtype=timestamp attribute must be specified in an uploaded VOTable in 
 order for the values to be inserted in a column of type TIMESTAMP; without the 
 xtype, the values would be inserted into a CHAR(n) or VARCHAR column.
 
-POINT and REGION values are specified in STC-S format (see section 6 ). The 
-xtype=”adql:POINT” attribute must be specified in an uploaded VOTable in order 
-for the char values to be parsed and treated as POINTs (e.g. to be used with 
-some of the ADQL region functions). For regions, the xtype=”adql:REGION” 
-attribute must be specified in an uploaded VOTable in order for the char values 
-to be parsed and treated as REGIONs (e.g. to be used with some of the ADQL 
-region functions).
+POINT, CIRCLE, and POLYGON values are specified as arrays of double values as 
+described in \citep{std:DALI}. The xtype attribute must be specified in 
+an uploaded VOTable in order for the array values to be parsed and treated as 
+geometric values and thus to be used with some of the ADQL features.
 
 \section{Metadata: TAP\_SCHEMA}
 \label{sec:tap-schema}
@@ -1001,11 +980,13 @@ TAP services must support a set of tables in a schema named
 TAP\_SCHEMA that describe the tables and columns included in the 
 service. In addition to the TAP\_SCHEMA, there are two other ways 
 to get metadata from a TAP service. First, the VOSI tables resource provides 
-metadata on all tables and columns; this resource is described in 2.2.5 . The 
+metadata on all tables and columns; this resource is described in 
+(section~\ref{sec:vosi-tables}). The 
 VOSI tables resource provides the same metadata as the TAP\_SCHEMA 
 but in a rigorously controlled format; the information in the 
 TAP\_SCHEMA is equivalent to that defined by the  VODataService 
-[7]. Second, the client may specify a query of one or more tables setting the 
+\citep{std:VODS11}. Second, the client may specify a query of one or more 
+tables setting the 
 MAXREC parameter to 0 so that only the metadata regarding the requested fields 
 is returned. Use of MAXREC is described in section~\ref{sec:MAXREC}.
 
@@ -1062,6 +1043,7 @@ table\_name & VARCHAR & true \\
 table\_type & VARCHAR & true \\
 utype & VARCHAR & false \\
 description & VARCHAR & false \\
+table\_index & INTEGER & false \\
 \end{tabular}
 
 The table\_name values must be unique. The value of the 
@@ -1069,6 +1051,12 @@ table\_name should be the string that is recommended for use in
 querying the table; it may or may not be qualified by schema and catalog name(s) 
 depending on the implementation requirements. The fully qualified table name is 
 defined by the ADQL language and follows the pattern [[catalog.]schema.]table. 
+If the table name is such that the name must be quoted (quoted identifier in 
+\citep{std:ADQL}) then the value must include the quotes.
+
+The table\_index is used to recommended table ordering for clients. Clients 
+may order by table\_index (ascending) so lower index tables would appear 
+earlier in a listing.
 
 \subsection{Columns}
 \label{sec:tap-schema-columns}
@@ -1080,7 +1068,8 @@ column name & datatype & not-null \\
 table\_name & VARCHAR & true \\
 column\_name & VARCHAR & true \\
 datatype & VARCHAR & true \\
-"size" arraysize? datasize? & INTEGER & false \\
+arraysize & INTEGER & false \\
+"size" & INTEGER & false \\
 description & VARCHAR & false \\
 utype & VARCHAR & false \\
 unit & VARCHAR & false \\
@@ -1088,27 +1077,32 @@ ucd & VARCHAR & false \\
 indexed & BOOLEAN? & true \\
 principal & BOOLEAN? & true \\
 std & BOOLEAN? & true \\
+column\_index & false \\
 \end{tabular}
 
 The table\_name,column\_name (pair) values must be 
 unique.
 
 Data types and how they map to VOTable datatypes are described in Section 
-xref{sec:vot-rdbms} above. The “size” gives the length of variable length datatypes, 
-for example varchar(256); this size does not map to the VOTable arraysize attribute 
-when the latter specifies the size and shape of a multi-dimensional array. To use the 
+xref{sec:vot-rdbms} above. The arraysize column gives the length of variable 
+length datatypes, 
+for example varchar(256); this arraysize does not map exactly to the VOTable 
+arraysize attribute because 
+the latter can specify the size and shape of a multi-dimensional array as well 
+as the variable size. The "size" column is retained for backwards compatiblity 
+to TAP-1.0 and must contain the same value as arrayaize. To use the 
 size column in a query, it must be put in double quotes since it collides with an ADQL reserved 
 word. Since delimited identifiers are case-sensitive, for the size column both 
 clients and servers MUST always (in particular, in the DDL for 
 TAP\_SCHEMA) use lower case exclusively. In the next major version 
-of TAP, this column will be called arraysize.
+of TAP, the "size" column will be removed.
 
 The “principal” flag indicates that the column is considered a core part the 
 content; clients can use this hint to make the principal column(s) visible, for 
 example by selecting them by default in generating an ADQL query. In cases where 
-the services selects the columns to return (such as PQL without a SELECT 
-parameter), the principal column indicates those columns that are returned by 
-default. 
+the services selects the columns to return (such as a query language without an 
+explicit output selection), the principal column indicates those columns that 
+are returned by default. 
 
 The “indexed” flag indicates that the column is indexed, potentially 
 making queries run much faster if this column is used in a constraint. 
@@ -1116,6 +1110,11 @@ making queries run much faster if this column is used in a constraint.
 The “std” is included for compatibility with the registry, which uses this value 
 to indicate that a given column is defined by some standard, as opposed to a 
 custom column defined by a particular service.
+
+The column\_index is used to recommended column ordering for clients. Clients 
+may order by column\_index (ascending) so lower index columns would appear 
+earlier in a listing. This is useful for keeping related columns together in 
+output or display.
 
 \subsection{Foreign Keys}
 \label{sec:tap-schema-keys}
@@ -1158,7 +1157,8 @@ in the TAP\_SCHEMA namespace.
 \section{Examples}
 \label{sec:examples}
 
-The UWS pattern is specified in [std:UWS] and its application to TAP in section 
+The UWS pattern is specified in \citep{std:UWS} and its application to TAP in 
+section 
 section~\ref{sec:tap-async}. This section gives examples of the exchange of messages between a 
 TAP client and service when using UWS to run an asynchronous query.
 
@@ -1168,26 +1168,84 @@ asynchronous requests be directed to http://example.com/tap/async (e.g. for
 anonymous queries). This URL points to the list of 'jobs'; i.e. the list of 
 queries currently or recently executed.
 
-\subsubsection{Creating a Query}
+\subsubsection{Creating and Executing a Simple Query}
+
+Asynchronous queries are created in the same way as synchronous, using 
+one of the {async} endpoints, for example:
+
+\begin{verbatim}
+HTTP POST http://example.com/tap/async
+LANG=ADQL
+QUERY=SELECT * FROM magnitudes AS m WHERE m.r>=10 AND m.r<=16
+\end{verbatim}
+
+The service's response to this request is an HTTP redirect with a URL fo the 
+query job:
+
+\begin{verbatim}
+HTTP status 303 'See other'
+Location: http://example.com/tap/async/42
+\end{verbatim}
+
+The query result or an error document can then be retrieved from a URL 
+associated with the job. This is an application of the UWS pattern. The query is 
+then executed with a separate request to run the job URL:
+
+\begin{verbatim}
+HTTP POST http://example.com/tap/async/42/phase
+PHASE=RUN
+\end{verbatim}
+
+The state of the job can be retrieved from the phase resource:
+
+\begin{verbatim}
+HTTP GET http://example.com/tap/async/42/phase
+\end{verbatim}
+
+The client may have to check the phase multiple times until the job 
+finishes. Once the returned value is COMPLETED, the results can be obtained 
+from the results resource:
+
+\begin{verbatim}
+HTTP GET http://example.com/tap/async/42/results/result
+\end{verbatim}
+
+\subsubsection{Modify a Query Job Before Execution}
 To create a new query, the client POSTs a request to the job list:
 
 \begin{verbatim}
 HTTP POST http://example.com/tap/async
-REQUEST=doQuery
 LANG=ADQL
-QUERY=SELECT TOP 100 * FROM foo
 \end{verbatim}
 
-The service then creates a job and assigns that job a name and a URL based on 
-the name. Suppose that the name is 42, then the URL will be 
-http://example.com/tap/async/42 because the jobs are always children of the job 
-list. While the job is in the PENDING phase, additional parameters may be 
-specified by additional POSTs to the job resource, for example:
+The response with the job URL:
 
 \begin{verbatim}
-HTTP POST http://example.com/tap/async/42
-UPLOAD=mytable,http://a.b.c/mytable.xml
+HTTP status 303 'See other'
+Location: http://example.com/tap/async/42
 \end{verbatim}
+
+While the job is in the PENDING phase, the job parameters may be modified 
+by additional POST(s) to the parameters resource (see 
+\citep{std:DALI}), for example:
+
+\begin{verbatim}
+HTTP POST http://example.com/tap/async/42/parameters
+UPLOAD=mytable,http://a.b.c/mytable.xml
+QUERY=select * from TAP_UPLOAD.mytable t join magnitudes m on t.target = 
+m.target
+\end{verbatim}
+
+Here we have specified with the UPLOAD parameter that the service create a 
+temporary table named mytable with content from the VOTable at the specified 
+URL. The QUERY parameter can then reference the uploaded table with the 
+specified name (but in the TAP\_UPLOAD schema).
+
+Parameter-value pairs accumulate when POSTed to the parameters resource, so an 
+additional POST of the UPLOAD parameter in this example would add another 
+parameter-value pair (essentially a multi-valued parameter as described in 
+\citep{std:DALI}). There is no mechanism to replace or remove a parameter in a 
+PENDING job.
 
 After each such POST, the service issues an HTTP redirection to the job's URL, 
 where the modified state may be accessed:
@@ -1197,8 +1255,9 @@ HTTP status 303 'See other'
 Location: http://example.com/tap/async/42
 \end{verbatim}
 
-All TAP-specific parameters are stored using the paramList mechanism of UWS and 
-are included in the XML representation of the job:
+
+All TAP-specific parameters are stored using the parameter list mechanism of 
+UWS and are included in the XML representation of the job:
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42
 \end{verbatim}
@@ -1222,21 +1281,20 @@ The quote resource specifies the predicted completion time for the job (query),
 assuming it is started immediately. In practice, it is very hard to estimate the 
 time a query will take; for TAP services it is recommended that this be set to 
 the current time plus the maximum amount of time the query will be allowed to 
-run (see termination below). 
-
-The termination resource specifies the amount of time (in seconds) the job 
-(query) will be allowed to run before being aborted by the service. The 
-termination time is set by the service and can be read from the job or directly 
-from the termination resource:
+run. The executionduration resource specifies the amount of time (in seconds) 
+the job (query) will be allowed to run before being aborted by the service. The 
+execution duration is set by the service and can be read from the job or 
+directly from the executionduration resource:
 
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42/executionduration
 \end{verbatim}
-The service may allow the client to change the termination:
+The service may allow the client to change the duration:
 \begin{verbatim}
 HTTP POST http://example.com/tap/async/42/executionduration
-TERMINATION=600
+EXECUTIONDURATION=600
 \end{verbatim}
+
 The destruction resource specifies when the service will destroy the job. The 
 service is only required to keep a job for a finite period of time, after which 
 it may destroy the job, including the result. After this time, the client will 
@@ -1252,6 +1310,9 @@ HTTP POST http://example.com/tap/async/42/destruction
 DESTRUCTION=2008-11-11T11:11:11Z
 \end{verbatim}
 
+In general, clients should fully specify the query job parameters and then 
+check and possibly negotiate the UWS job control parameters.
+
 \subsubsection{Running a Query}
 The phase URL shows the progress of the job. When the job is created by the 
 service it will normally be set to PENDING, but might be set to ERROR if the 
@@ -1261,14 +1322,14 @@ then the client needs to commit the job for execution.
 
 The client runs the job by posting to the phase URL:
 \begin{verbatim}
-HTTP POST http://example.com/tap /async/42/phase
+HTTP POST http://example.com/tap/async/42/phase
 PHASE=RUN
 \end{verbatim}
 
 The service replies with a redirection to the job URL
 \begin{verbatim}
 HTTP status 303 'see other'
-Location: http://example.com/tap /async/42
+Location: http://example.com/tap/async/42
 \end{verbatim}
 The phase will now have changed to either QUEUED or EXECUTING, depending on the 
 service implementation. The client tracks the execution by polling the phase 
@@ -1283,8 +1344,9 @@ HTTP POST http://example.com/tap/async/42/phase
 PHASE=ABORT
 \end{verbatim}
 
-When the query is complete, the phase changes to COMPLETED. The client then 
-retrieves the result from the results list:
+When the query job is complete, the phase changes will normally be one of 
+COMPLETED, ABORTED, or ERROR (although there are other less used phases defined 
+in \citep{std:UWS}). The client then retrieves the result from the results list:
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42/results/result
 \end{verbatim}
@@ -1310,51 +1372,73 @@ If the job was aborted (by the client or the service), the final phase will be
 ABORTED and there is no table or results. As with errors, the client should look 
 at the error resource to find out what went wrong.
 
-The basic sequence can be executed from a web browser or from a shell script 
-using the curl utility:
-\begin{verbatim}
-curl -d 'REQUEST=doQuery&LANG=PQL&POS=12,34&SIZE=0.5&FROM=foo' \
-       http://example.com/tap/async
-
-  [read Location header from curl output]
-
-curl -d 'PHASE=RUN' http://example.com/tap/async/42
-
-curl http://example.com/tap/async/42/phase
-
-  [repeat until phase is COMPLETED]
-
-curl http://example.com/tap/42/results/result
-\end{verbatim}
-
 \subsubsection{Example: Synchronous Query}
 
-TODO
+Synchronous queries return the table of results in the HTTP response to the 
+initial request. This is an example of a synchronous ADQL query on r magnitude:
+
+\begin{verbatim}
+HTTP POST http://example.com/tap/sync
+REQUEST=doQuery
+LANG=ADQL
+QUERY=SELECT * FROM magnitudes as m where m.r>=10 and m.r<=16
+\end{verbatim}
+
+In this examples, the output format defaults to VOTable; 
+the FORMAT parameter could be added to select a different format.
+
+Many implementations will implement synchronous query execution using the 
+common POST-redirect-GET pattern. If this is the case, the response from the 
+initial POST will be a redirect (HTTP reponse code 303) and another URL for the 
+results, e.g.: 
+
+\begin{verbatim}
+Location: http://example.com/tap/sync/53/go
+\end{verbatim}
+
+As described in \citep{std:DALI}, clients must be prepared to follow such 
+redirects to obtain the result.
 
 \subsubsection{Example: DALI-examples Document}
 
 TODO
 
-\section{Use of STC-S in TAP - deprecated}
-
-NOTE: The old section 6 is not included from TAP-1.0 since it was informative 
-and does not belong in this document. If we need to define syntax for 
-points, circles, and polygons then that should be done in [std:DALI], which 
-already defines timestamp syntax. 
-
-\section{VOSpace Integration - deprecated}
-
-Note: some text moved to the UPLOAD section; may propose DEST parameter for 
-outout.
-
-\section{Use of HTTP - deprecated}
-Note: This section is in or belongs in DALI.
-
 \appendix
 
 \section{Changes from Previous Versions}
 
+\subsection{WD-TAP-1.1-20160415}
+
+Completed the mapping table from VOTable to RDBMS datatypes using DALI-1.1 xtype values.
+
+Added details and VOSI-capabilities example for providing multiple resources with different 
+authentication requirements. Clarified that VOSI-availability is no longer restricted to a
+specific name or location.
+
+\subsection{WD-TAP-1.1-20150930}
+
+Clarified that MAXREC always overrides limitations in the query (e.g. 
+TOP in an ADQL query).
+
+Clarified that services are not required to support queries that reference tables 
+in different schema. This is primarily to allow the TAP\_SCHEMA to be implemented 
+in a different server from the content.
+
+Completed the references section.
+
 \subsection{Changes from TAP-1.0}
+
+Added table\_index and column\_index to TAP\_SCHEMA.
+
+Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
+indicator.
+
+Added advice that the size column TAP\_SCHEMA.columns must always be used 
+as a quoted identifier becayse it is a reserved word in many RDBMS 
+servers. Added arraysize column to TAP\_SCHEMA.columns to replace size and 
+deprecated size (which will be removed in the next major version).
+ 
+Removed REQUEST and VERSION parameters from interface.
 
 Restructured the document and removed text that duplicates material from DALI. 
 Rewrite the overly long introduction with some basic use cases to help define 
