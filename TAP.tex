@@ -205,9 +205,7 @@ be siblings of the VOSI-capabilities resource.
 If a TAP service allows anonymous access, the fixed name resources and VOSI-availability
 must be used for anonymous access; other resource names may be used for authenticated access. 
 If the entire service requires authentication then the fixed names may be used for 
-authenticated access. [Note: There is probably no use for authenticated VOSI-availability, 
-VOSI-capabilities, or DALI-examples resources when anonymous is allowed so those options
-are not precent in the table above... should they be for completeness?]
+authenticated access.
 
 The web resource at the root of the tree must represent the service as a whole. 
 This specification defines no standard representation for this root resource. 
@@ -340,7 +338,6 @@ deliver the specified feature (e.g. with different authentication methods) in
 the VOSI-capabilities resource.
 
 The use of the VOSI-capabilities resource is described in \citep{std:DALI}.
-
 
 For example, the returned capabilities document for a service supporting  TAP 
 might look as follows:
@@ -778,8 +775,8 @@ The output table must include the same number and order of columns as specified
 in the SELECT clause of the query. For VOTable output, the name attribute of 
 FIELD elements must be the same as the column names (or aliases if specified in 
 the query) from the query and the datatype, arraysize, and xtype attributes of 
-FIELD elements must be set using the mapping specified in section 2.5 . The 
-xtype attribute in the output must match the datatype for the column in the 
+FIELD elements must be set using the mapping specified in section~\ref{sec:vot-rdbms}. 
+The xtype attribute in the output must match the datatype for the column in the 
 TAP\_SCHEMA.
 
 VOTable structure follows the rules in section 2.9 and must be returned with an 
@@ -862,42 +859,30 @@ formats other than VOTable.
 This section describes the bi-directional mapping between VOTable and RDBMS + 
 geometric datatypes and extends the basic rules for serialising such values in 
 VOTable described in \citep{std:DALI}. These rules apply to input tables 
-supplied via an UPLOAD parameter (see ??) and to result tables after successful 
+supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) and to result tables after successful 
 query execution.
 
 For input tables, the name attribute of the FIELD element is used as the column 
 name. This name must be a legal ADQL column name (i.e., a string following the 
-regular identifier production of \citep{std:ADQL}). For result tables, the 
+regular identifier production \citep{std:ADQL}. For result tables, the 
 column name or an alias specified in the query is used to set the name attribute 
-of the FIELD elements in the output table (the alias oevrrides the normal 
+of the FIELD elements in the output table (the alias overrides the normal 
 column name). 
 
-NOTE: output column names from aliases may not be valid input 
-column names because users can put what they like in quotes... can we 
-or ADQL restrict the definition of a valid alias? 
-
-NOTE2: if the select has a 
-fully-qualified column name (tab.col or alias.col) is that the output FIELD 
-name? Those are always going to be invalid input names and here users would 
-have to use aliases to make them valid for later input... is the goal that all 
-result tables would be valid input tables? Can we achieve that?
-
-The mapping between VOTable datatype, arraysize, and type attributes and 
+The mapping between VOTable datatype, arraysize, and xtype attributes and 
 RDBMS datatypes are as follows:
 
 \begin{tabular}{l l l l l}
 \label{tab:vot-rdbms-mapping}
 datatype & arraysize & xtype & RDBMS datatype & required \\
 char & [1] & & CHAR or CHAR(1) & yes \\
-char & * & & VARCHAR & yes \\
+char & * & & VARCHAR(*) or CLOB & no \\
 char & n & & CHAR(n) & yes \\
 char & n* & & VARCHAR(n) & yes \\
-char & n, *, n* & CLOB & CLOB & yes \\
 unsignedByte & [1] & & BINARY(1) & yes \\
-unsignedByte & * & & VARBINARY(*) & yes \\
+unsignedByte & * & & VARBINARY(*) or BLOB & no \\
 unsignedByte & n & & BINARY(n) & yes \\
 unsignedByte & n* & & VARBINARY(n) & yes \\
-unsignedByte & n, *, n* & BLOB & BLOB & yes \\
 short & [1] & & SMALLINT? & yes \\
 short & * & & implementation-specific & no \\
 short & n & & implementation-specific & no \\
@@ -918,7 +903,7 @@ double & [1] & & DOUBLE [PRECISION] & yes \\
 double & * & & implementation-specific & no \\
 double & n & & implementation-specific & no \\
 double & n* & & implementation-specific & no \\
-char & n or n* & timestamp & timestamp & yes \\
+char & n or n* & timestamp & implementation-specific & yes \\
 double & 2 & point & implementation-specific & no \\
 double & 3 & circle & implementation-specific & no \\
 double & * & polygon & implementation-specific & no \\
@@ -935,8 +920,7 @@ double & 2 & interval & implementation-specific & no \\
 The default mapping of data types are shown above (no arraysize or xtype). If 
 the xtype attribute is set, this is the preferred internal datatype. If xtype is 
 not set, then the datatype and arraysize indicate the most suitable internal 
-datatype. Note that the RDBMS type i
-s not normative. 
+datatype. Note that the RDBMS type is not normative. 
 Implementations SHOULD try to make sure that the actual types chosen are at 
 least signature-compatible with the recommended types (i.e., integers should 
 remain integers, floating-point values floating-point values, etc.), such that 
@@ -944,23 +928,15 @@ clients can reliably write queries against uploaded tables.
 
 In the arraysize column above, [1] means the arraysize is not set or is set to 
 1, n means arraysize is set to a specific value, * means arraysize=”*”, and n* 
-means arraysize=”n*” (variable size up to length n).
+means arraysize=”n*” (variable size up to length n). Support for arrays of 
+numeric values is not required but may be implemented and described. However, such
+values can only be selected unless the query language or a custom extension or function
+is provided.
 
 Binary values (unsignedByte in VOTable, BINARY, VARBINARY, or BLOB in ADQL) can 
 be expressed as specified by the VOTable standard. By default, VOTable allows 
 them to be written as an array of decimal numbers, e.g. 12 56 0 255 0 0 255 (one 
 number per byte value).
-
-For columns of type BLOB or CLOB, most database systems support reference to 
-these columns in the select clause but not in any other part of the query. 
-Services may use these types to indicate that columns may only be selected. For 
-example, if service implementors want to make URL(s) available as column values 
-in the results, but do not actually store the URL(s) in the database, they would 
-specify a column with xtype=”CLOB” and the column with URL(s) could be 
-referenced in the SELECT clause of a query, but could not be used in the WHERE 
-clause. The service could then process the query result and insert the URL(s) 
-or, more likely, transform a column value (an identifier) into a URL while 
-writing the results.
 
 TIMESTAMP values are specified as described in \citep{std:DALI}. The 
 xtype=timestamp attribute must be specified in an uploaded VOTable in 
@@ -1083,15 +1059,27 @@ column\_index & false \\
 The table\_name,column\_name (pair) values must be 
 unique.
 
-Data types and how they map to VOTable datatypes are described in Section 
-xref{sec:vot-rdbms} above. The arraysize column gives the length of variable 
-length datatypes, 
-for example varchar(256); this arraysize does not map exactly to the VOTable 
-arraysize attribute because 
-the latter can specify the size and shape of a multi-dimensional array as well 
+Database data types and how they map to VOTable datatypes are described in Section 
+xref{sec:vot-rdbms} above. However, the datatype column in the TAP\_SCHEMA.columns
+table contains the database type: either an xtype defined in \citep{std:DALI} or a
+TAPType defined in \citep{std:VODS11}. [TODO: make this consistent with VOSI-tables]
+For columns with a datatype of BLOB or CLOB, most database systems support reference to 
+these columns in the select clause but not in any other part of the query. 
+Services may use these types to indicate that columns may only be selected. For 
+example, if service implementors want to make URL(s) available as column values 
+in the results, but do not actually store the URL(s) in the database, they would 
+specify a column with datatype CLOB in the TAP\_SCHEMA and the column with URL(s) could be 
+referenced in the SELECT clause of a query, but could not be used in the WHERE 
+clause. The service could then process the query result and insert the URL(s) 
+or, more likely, transform a column value (an identifier) into a URL while 
+writing the results.
+
+The arraysize column gives the length of variable length datatypes, for example 
+varchar(256); this arraysize does not map exactly to the VOTable arraysize attribute 
+because the latter can specify the size and shape of a multi-dimensional array as well 
 as the variable size. The "size" column is retained for backwards compatiblity 
-to TAP-1.0 and must contain the same value as arrayaize. To use the 
-size column in a query, it must be put in double quotes since it collides with an ADQL reserved 
+to TAP-1.0 and must contain the same value as arraysize. To use the size column in a 
+query, it must be put in double quotes since it collides with an ADQL reserved 
 word. Since delimited identifiers are case-sensitive, for the size column both 
 clients and servers MUST always (in particular, in the DDL for 
 TAP\_SCHEMA) use lower case exclusively. In the next major version 
@@ -1111,7 +1099,7 @@ The “std” is included for compatibility with the registry, which uses this v
 to indicate that a given column is defined by some standard, as opposed to a 
 custom column defined by a particular service.
 
-The column\_index is used to recommended column ordering for clients. Clients 
+The column\_index is used to recommend column ordering for clients. Clients 
 may order by column\_index (ascending) so lower index columns would appear 
 earlier in a listing. This is useful for keeping related columns together in 
 output or display.
@@ -1407,7 +1395,7 @@ TODO
 
 \section{Changes from Previous Versions}
 
-\subsection{WD-TAP-1.1-20160415}
+\subsection{WD-TAP-1.1-20160428}
 
 Completed the mapping table from VOTable to RDBMS datatypes using DALI-1.1 xtype values.
 
