@@ -450,10 +450,11 @@ application/xhtml+xml or text/html. A service that does not provide examples
 MUST return a 404 HTTP status on accessing this resource.
 
 If present, the endpoint must be represented in a capability in the TAP 
-service's registry record. The capability's standardID is defined by 
+service's registry record. The capability's \xmlel{standardID} is defined by
+DALI
 \citep{std:DALI}. A capability element could hence look like this:
 
-\begin{lstlisting}[language=XML]
+\begin{lstlisting}[language=XML,basicstyle=\footnotesize]
 <capability standardID="ivo://ivoa.net/std/DALI#examples">
    <interface xsi:type="vr:WebBrowser">
       <accessURL use="full">http://myarchive.net/myTAP/examples</accessURL>
@@ -463,21 +464,21 @@ service's registry record. The capability's standardID is defined by
 
 TAP defines two additional properties for the examples vocabulary:
 
-* query -- each example MUST have a unique child element with simple text 
-content having a property attribute valued query. It contains the query itself, 
+\begin{itemize}
+\item query -- each example MUST have a unique child element with simple text 
+content having a \xmlel{property} attribute valued query. It contains the query itself, 
 preferably with extra whitespace for easy human consumption and editing. This 
-will usually be a HTML pre element.
+will usually be a HTML \xmlel{pre} element.
     
-* table -- examples MAY also have descendants with property attributes having 
+\item table -- examples MAY also have descendants with \xmlel{property} attributes having 
 the value table. These must have pure text content and contain fully qualified 
-table names to which the query is somehow "pertaining". Suitable HTML elements 
-holding these include span, or a (which would allow linking to further 
-information on the table).
+table names to which the query is somehow ``pertaining''.
+\end{itemize}
 
-When using elements with src or href attributes to carry the property 
-attributes, note that the element content must be repeated in a content 
-attribute, as otherwise RDFa clients would interpret the embedded link rather 
-than the element content as the object in the triple.
+Although it might be tempting, examples authors should not put table
+names into HTML \xmlel{a} elements (e.g., to link to the table
+descriptions).  As discussed in DALI 1.1, sect.~2.3, this would result
+in invalid RDF statements.
 
 \subsection{Parameters}
 \label{sec:parameters}
