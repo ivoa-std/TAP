@@ -186,9 +186,9 @@ resource type & resource name & required \\
 {async} & /async & must & \\
 {sync} & service specific & may (alternate authentication method) & \\
 {async} & service specific & may (alternate authentication method) & \\
-VOSI-availability & service specific & must & \\
+VOSI-availability & service specific & must (should be anonymous) & \\
 VOSI-availability & service specific & may (alternate authentication method) & \\
-VOSI-capabilities & /capabilities & must & \\
+VOSI-capabilities & /capabilities & must (should be anonymous) & \\
 VOSI-capabilities & service specific & may (alternate authentication method) & \\
 VOSI-tables & /tables & should & \\
 VOSI-tables & service specific & may (alternate authentication method) & \\
@@ -202,10 +202,13 @@ these names. Other  {sync} and {async} resources may have service specific names
 As required by \citep{std:DALI}, all resources except the VOSI-availability must 
 be siblings of the VOSI-capabilities resource. 
 
-If a TAP service allows anonymous access, the fixed name resources and VOSI-availability
-must be used for anonymous access; other resource names may be used for authenticated access. 
-If the entire service requires authentication then the fixed names may be used for 
-authenticated access.
+The fixed name resources above (async, sync, tables) should be used for the 
+primary access mode of the service; this is typically anonymous access and 
+other resource names may be used for authenticated access. However, if a 
+service only supports authenticated access to these resources, the fixed names 
+may be used for authenticated access. The VOSI resources should allow anonymous 
+access as they can be used by clients to determine if the service is available 
+and which resources to use with available security (authentication) methods. 
 
 The web resource at the root of the tree must represent the service as a whole. 
 This specification defines no standard representation for this root resource. 
@@ -775,10 +778,12 @@ query result must be a single table (in a single file).
 The output table must include the same number and order of columns as specified 
 in the SELECT clause of the query. For VOTable output, the name attribute of 
 FIELD elements must be the same as the column names (or aliases if specified in 
-the query) from the query and the datatype, arraysize, and xtype attributes of 
-FIELD elements must be set using the mapping specified in section~\ref{sec:vot-rdbms}. 
-The xtype attribute in the output must match the datatype for the column in the 
-TAP\_SCHEMA.
+the query) in the query and the datatype, arraysize, and xtype 
+attributes of FIELD elements must be set using the advice in 
+section~\ref{sec:vot-rdbms}. In cases where items in the select list do not 
+have names (e.g. function invocation) the service must generate a name; 
+generated names must be unique (within the output table) and should be valid 
+ADQL identifiers.
 
 VOTable structure follows the rules in section 2.9 and must be returned with an 
 allowed VOTable MIME type (application/x-votable+xml or text/xml). If the 
@@ -864,90 +869,20 @@ supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) and to result ta
 query execution.
 
 For input tables, the name attribute of the FIELD element is used as the column 
-name. This name must be a legal ADQL column name (i.e., a string following the 
-regular identifier production \citep{std:ADQL}. For result tables, the 
-column name or an alias specified in the query is used to set the name attribute 
-of the FIELD elements in the output table (the alias overrides the normal 
-column name). 
+name. Services must support delimited identifiers so that 
+FIELD names that are not valid ADQL column names work correctly  
+\citep{std:ADQL}. 
+For result tables, the column name or an alias specified in the query is used 
+to set the name attribute of the FIELD elements in the output table (the alias 
+overrides the normal column name). 
 
-The mapping between VOTable datatype, arraysize, and xtype attributes and 
-RDBMS datatypes are as follows:
-
-\begin{tabular}{l l l l l}
-\label{tab:vot-rdbms-mapping}
-datatype & arraysize & xtype & RDBMS datatype & required \\
-char & [1] & & CHAR or CHAR(1) & yes \\
-char & * & & VARCHAR(*) or CLOB & no \\
-char & n & & CHAR(n) & yes \\
-char & n* & & VARCHAR(n) & yes \\
-unsignedByte & [1] & & BINARY(1) & yes \\
-unsignedByte & * & & VARBINARY(*) or BLOB & no \\
-unsignedByte & n & & BINARY(n) & yes \\
-unsignedByte & n* & & VARBINARY(n) & yes \\
-short & [1] & & SMALLINT? & yes \\
-short & * & & implementation-specific & no \\
-short & n & & implementation-specific & no \\
-short & n* & & implementation-specific & no \\
-int & [1] & & INTEGER & yes \\
-int & * & & implementation-specific & no \\
-int & n & & implementation-specific & no \\
-int & n* & & implementation-specific & no \\
-long & [1] & & BIGINT & yes \\
-long & * & & implementation-specific & no \\
-long & n & & implementation-specific & no \\
-long & n* & & implementation-specific & no \\
-float & [1] & & REAL & yes \\
-float & * & & implementation-specific & no \\
-float & n & & implementation-specific & no \\
-float & n* & & implementation-specific & no \\
-double & [1] & & DOUBLE [PRECISION] & yes \\
-double & * & & implementation-specific & no \\
-double & n & & implementation-specific & no \\
-double & n* & & implementation-specific & no \\
-char & n or n* & timestamp & implementation-specific & yes \\
-double & 2 & point & implementation-specific & no \\
-double & 3 & circle & implementation-specific & no \\
-double & * & polygon & implementation-specific & no \\
-float & 2 & point & implementation-specific & no \\
-float & 3 & circle & implementation-specific & no \\
-float & * & polygon & implementation-specific & no \\
-short & 2 & interval & implementation-specific & no \\
-int & 2 & interval & implementation-specific & no \\
-long & 2 & interval & implementation-specific & no \\
-float & 2 & interval & implementation-specific & no \\
-double & 2 & interval & implementation-specific & no \\
-\end{tabular}
-
-The default mapping of data types are shown above (no arraysize or xtype). If 
-the xtype attribute is set, this is the preferred internal datatype. If xtype is 
-not set, then the datatype and arraysize indicate the most suitable internal 
-datatype. Note that the RDBMS type is not normative. 
-Implementations SHOULD try to make sure that the actual types chosen are at 
-least signature-compatible with the recommended types (i.e., integers should 
-remain integers, floating-point values floating-point values, etc.), such that 
-clients can reliably write queries against uploaded tables.
-
-In the arraysize column above, [1] means the arraysize is not set or is set to 
-1, n means arraysize is set to a specific value, * means arraysize=”*”, and n* 
-means arraysize=”n*” (variable size up to length n). Support for arrays of 
-numeric values is not required but may be implemented and described. However, such
-values can only be selected unless the query language or a custom extension or function
-is provided.
-
-Binary values (unsignedByte in VOTable, BINARY, VARBINARY, or BLOB in ADQL) can 
-be expressed as specified by the VOTable standard. By default, VOTable allows 
-them to be written as an array of decimal numbers, e.g. 12 56 0 255 0 0 255 (one 
-number per byte value).
-
-TIMESTAMP values are specified as described in \citep{std:DALI}. The 
-xtype=timestamp attribute must be specified in an uploaded VOTable in 
-order for the values to be inserted in a column of type TIMESTAMP; without the 
-xtype, the values would be inserted into a CHAR(n) or VARCHAR column.
-
-POINT, CIRCLE, and POLYGON values are specified as arrays of double values as 
-described in \citep{std:DALI}. The xtype attribute must be specified in 
-an uploaded VOTable in order for the array values to be parsed and treated as 
-geometric values and thus to be used with some of the ADQL features.
+The mapping to and from VOTable makes use of the datatype, arraysize, and xtype 
+attributes. Mapping for primitive types (numbers and strings) is 
+straightforward; services should insure that input values behave as 
+expected in query processing and output values should have correct and complete 
+metadata. Mapping for specially structured values use xtype(s) specified
+in \citep{std:DALI}. The behaviour of such structured values in queries depends 
+on the query language (section~\ref{sec:LANG}) being used. 
 
 \section{Metadata: TAP\_SCHEMA}
 \label{sec:tap-schema}
@@ -1395,6 +1330,17 @@ TODO
 \appendix
 
 \section{Changes from Previous Versions}
+
+\subsection{WD-TAP-1.1-20161011}
+
+Removed details of mapping database and VOTable data types and refer to DALI 
+instead. 
+
+Strongly recommend that VOSI resources allow anonymous access.
+
+Relax restrictions on column names in uploaded tables; clarify that services 
+must support quoted identifiers. Advise that services should assign unique 
+colum names in cases where they generate the name.
 
 \subsection{WD-TAP-1.1-20160428}
 
