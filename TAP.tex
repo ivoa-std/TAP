@@ -181,7 +181,7 @@ under the base URL.
 
 \begin{tabular}{l l l l l}
 \label{tab:resources}
-resource type & resource name & required \\
+\textbf{resource type} & \textbf{resource name} & \textbf{required} \\
 {sync} & /sync & must & \\
 {async} & /async & must & \\
 {sync} & service specific & may (alternate authentication method) & \\
@@ -349,11 +349,11 @@ might look as follows:
 <?xml version="1.0" encoding="UTF-8"?>
 
 <vosi:capabilities xmlns=""
-   xmlns:vosi="http://www.ivoa.net/xml/VOSI/v1.0"
+   xmlns:vosi="http://www.ivoa.net/xml/VOSICapabilities/v1.0"
    xmlns:vs="http://www.ivoa.net/xml/VODataService/v1.0"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.ivoa.net/xml/VOSI/v1.0
-                       http://www.ivoa.net/xml/VOSI/v1.0
+   xsi:schemaLocation="http://www.ivoa.net/xml/VOSICapabilities/v1.0
+                       http://www.ivoa.net/xml/VOSICapabilities/v1.0
              http://www.ivoa.net/xml/VODataService/v1.0
              http://www.ivoa.net/xml/VODataService/v1.0">
 
@@ -440,7 +440,10 @@ The table metadata should be accessible from a web resource with relative URL
 /tables that is a direct child of the root web resource. The /tables resource 
 must be accessible via the http GET method. The content is described by 
 \citep{std:VODS11} and is equivalent to the metadata from the 
-TAP\_SCHEMA described in section~\ref{sec:tap-schema}.
+TAP\_SCHEMA described in section~\ref{sec:tap-schema}. The use of VOTableType 
+(rather than TAPType) in the VOSI-tables output  is recommended because the values 
+map directly; TAPType may be used when VOTableType does not provide a suitable
+alternative.
 
 Services which do not implement the /tables resource must respond with an HTTP 
 response code of 404 when this resource is accessed.
@@ -509,9 +512,9 @@ and must not report errors concerning the spurious parameter.
 \subsubsection{LANG}
 \label{sec:LANG}
 
-The LANG parameter specifies the query language. The service must support LANG 
-and the client must provide a value with REQUEST=doQuery. The only standard 
-values for the LANG parameter is ADQL (a required language). Support for other 
+The LANG parameter specifies the query language. The service must support the LANG 
+parameter and the client must provide a value. The only standard 
+values for the LANG parameter is ADQL. Support for other 
 languages and the LANG value to use with them is described in the service 
 capabilities.
 
@@ -550,30 +553,20 @@ function names, and other ADQL keywords are not case sensitive.
 Within the ADQL query, the service must support the use of timestamp values as 
 described in \citep{std:DALI}.
 
-TAP-1.0 text about ADQL region functions:
+Within the ADQL query, the following ADQL functions mus be supported: INTERSECTS,
+CONTAINS, POINT, CIRCLE, and POLYGON. POINT (including a point-valued column or 
+function return value) cannot be used as an argument to INTERSECTS (even if allowed
+by older versions of ADQL).
+AREA, CENTROID, COORDSYS, COORD1, and COORD2 are optional. REGION is no longer
+supported. 
 
-If the tables that are queried through a service contain columns with spatial 
-coordinates and the service supports spatial querying via the ADQL “region” 
-constructs, the service must support the INTERSECTS function and it must support 
-the following geometry functions: REGION, POINT, BOX, CIRCLE, COORD1, COORD2, 
-COORDSYS. Support for the AREA, CONTAINS, and POLYGON functions are optional. If 
-the service supports the REGION function, it must support region encoding in 
-STC-S format (see section 6 ); the extent of STC-S support within the REGION 
-function is left up to the implementation. Coordinate system specification for 
-POINT, BOX, CIRCLE, and POLYGON must use values from STC-S as described in ???.
-
-Proposed TAP-1.1 text:
-
-INTERSECTS and CONTAINS are required. POINT, CIRCLE, and POLYGON are required. 
-POINT (and point-valued columns) cannot be used as an argument to INTERSECTS.
-AREA, CENTROID, COORDSYS, COORD1, and COORD2 are optional. REGION is not 
-supported (and hopefully gone from ADQL-2.1). 
-
-Note: Although it is allowed by the ADQL syntax, clients should be careful when 
+Note: Although it is allowed by the ADQL syntax (version 2.0 at least), clients should be careful when 
 mixing constants and column references for coordinate system and coordinate 
 values. For example, POINT('ICRS', t.ra, t.dec) does not cause t.ra and t.dec to 
 be transformed to ICRS; it simply tells the service to treat the values  as 
-being expressed in that coordinate system.
+being expressed in that coordinate system. Clients should avoid using the coordinate 
+system argument to geometric functions should not be used (use null value or use an 
+alternate function without the coordinate system argument if available).
 
 \subsubsection{FORMAT and RESPONSEFORMAT}
 \label{sec:RESPONSEFORMAT}
@@ -626,13 +619,12 @@ the
 upload of temporary tables (in \citep{std:VOTable} format) via the standard 
 UPLOAD 
 parameter. The table-name(s) must be legal ADQL table names as defined in 
-\citep{std:ADQL} but restricted as described below XREF. URIs maybe be simple 
-URLs 
-(e.g. with a URI scheme of http) or URIs (e.g. with a URI scheme of vos or 
-param) that must be resolved to give the location of the table content. See 
-section XREF for details.
+\citep{std:ADQL} but restricted as described in section~\ref{sec:tap-schema}. 
+URIs maybe be simple URLs (e.g. with a URI scheme of http or https) or 
+URIs that must be resolved (e.g. with a URI scheme of vos or param) to give 
+the location of the table content.
 
-If table upload supported, the service must accept tables in VOTable format. 
+If table upload is supported, the service must accept tables in VOTable format. 
 The client specifies the name of the uploaded table; this name must be a legal 
 ADQL table name with no catalog or schema (i.e., a string following the 
 regular identifier production of \citep{std:ADQL}). Uploaded tables must be 
@@ -654,7 +646,7 @@ UPLOAD=mytable,http://otherplace.com/path/votable.xml
 The service would retrieve the table from the provided URL and 
 make it visible to the query as TAP\_UPLOAD.mytable.
 
-If the TAP service supports VOSpace (TBD: how to declare this?), one may 
+If the TAP service supports VOSpace URIs, one may 
 specify an upload table using a URI to a table stored in a VOSpace, for example:
 \begin{verbatim}
 HTTP POST http://example.com/tap/async/42
@@ -674,6 +666,11 @@ table names within the query. Services may limit the size and number of
 uploaded tables; if the service refuses to accept the entire table it must 
 respond with an error as described in section~\ref{sec:query-error}.
 
+Table upload must support all valid VOTable content even if they do not support 
+all features and uses of extended data types; clients must be able to upload and then
+query a valid table and round-trip all values. Services should store extended types (e.g. 
+timestamp) in an appropriate database column type in order to facilitate predictable use 
+in queries.
 
 \section{Use of VOTable}
 \label{sec:votable}
@@ -779,8 +776,8 @@ The output table must include the same number and order of columns as specified
 in the SELECT clause of the query. For VOTable output, the name attribute of 
 FIELD elements must be the same as the column names (or aliases if specified in 
 the query) in the query and the datatype, arraysize, and xtype 
-attributes of FIELD elements must be set using the advice in 
-section~\ref{sec:vot-rdbms}. In cases where items in the select list do not 
+attributes of FIELD elements must be set using the values from the TAP\_SCHEMA. 
+In cases where items in the select list do not 
 have names (e.g. function invocation) the service must generate a name; 
 generated names must be unique (within the output table) and should be valid 
 ADQL identifiers.
@@ -824,7 +821,7 @@ Responses to these errors are typically generated by service containers and
 cannot be controlled by TAP implementations. There are several cases where a 
 TAP 
 service could return an HTTP error. First, the /async endpoint could return a 
-404 (not found) error if the client accesses a job within the UWS joblist that 
+404 (not found) error if the client accesses a job within the UWS job list that 
 does not exist. Second, access to a resource could result in an HTTP 401 (not 
 authorized) error if authentication is required or an HTTP 403 (forbidden) 
 error if the client is not allowed to access the resource.
@@ -915,8 +912,13 @@ The qualified names in the tables of the TAP schema must follow the rules
 defined in section 2.4. The names must be stated in a form that is acceptable as 
 an operand of a query.
 
-All columns in the TAP\_SCHEMA tables are of type VARCHAR except 
-for size,  principal, indexed, and std (in Columns) which are INTEGER values.
+Column datatypes in the TAP\_SCHEMA are specified using the same concepts used in 
+VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
+must also include the "size" column and populate it where possible. The arraysize values
+specified below for describing the TAP\_SCHEMA tables themselves is the most flexible 
+(* means variable length with no maximum); implementors should use more restrictive values
+that describe their implementation of the TAP\_SCHEMA tables (e.g. arraysize 64* to describe
+a column with database type varchar(64)).
 
 Implementors are permitted to include additional tables in the 
 TAP\_SCHEMA to describe additional aspects of their service not 
@@ -929,12 +931,12 @@ with a timestamp saying when metadata values were was last modified.
 
 The table TAP\_SCHEMA.schemas must contain the following columns:
 
-\begin{tabular}{l l l}
+\begin{tabular}{l l l l l}
 \label{tab:resources}
-column name & datatype & not-null \\
-schema\_name & VARCHAR & true \\
-utype & VARCHAR & false \\
-description & VARCHAR & false \\
+\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+schema\_name & char & * & null & true \\
+utype & char & * & null & false \\
+description & char & * & null & false \\
 \end{tabular}
 
 The schema\_name values must be unique and may be qualified by the 
@@ -947,15 +949,15 @@ used directly to construct queries.
 \label{sec:tap-schema-tables}
 The table TAP\_SCHEMA.tables must contain the following columns:
 
-\begin{tabular}{l l l}
+\begin{tabular}{l l l l l}
 \label{tab:tap-schema-tables}
-column name & datatype & not-null \\
-schema\_name & VARCHAR & true \\
-table\_name & VARCHAR & true \\
-table\_type & VARCHAR & true \\
-utype & VARCHAR & false \\
-description & VARCHAR & false \\
-table\_index & INTEGER & false \\
+\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+schema\_name & char & * & null & true \\
+table\_name & char & * & null & true \\
+table\_type & char & * & null & true \\
+utype & char & * & null & false \\
+description & char & * & null & false \\
+table\_index & char & * & null & false \\
 \end{tabular}
 
 The table\_name values must be unique. The value of the 
@@ -966,6 +968,8 @@ defined by the ADQL language and follows the pattern [[catalog.]schema.]table.
 If the table name is such that the name must be quoted (quoted identifier in 
 \citep{std:ADQL}) then the value must include the quotes.
 
+The table\_type value must be either table or view.
+
 The table\_index is used to recommended table ordering for clients. Clients 
 may order by table\_index (ascending) so lower index tables would appear 
 earlier in a listing.
@@ -974,33 +978,50 @@ earlier in a listing.
 \label{sec:tap-schema-columns}
 The table TAP\_SCHEMA.columns must contain the following columns:
 
-\begin{tabular}{l l l}
+\begin{tabular}{l l l l l}
 \label{tab:tap-schema-columns}
-column name & datatype & not-null \\
-table\_name & VARCHAR & true \\
-column\_name & VARCHAR & true \\
-datatype & VARCHAR & true \\
-arraysize & INTEGER & false \\
-"size" & INTEGER & false \\
-description & VARCHAR & false \\
-utype & VARCHAR & false \\
-unit & VARCHAR & false \\
-ucd & VARCHAR & false \\
-indexed & BOOLEAN? & true \\
-principal & BOOLEAN? & true \\
-std & BOOLEAN? & true \\
-column\_index & false \\
+\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+table\_name & char & * & null & true \\
+column\_name & char & * & null & true \\
+datatype & char & * & null & true \\
+arraysize & char & * & null & false \\
+xtype & char & * & null & false \\
+"size" & int & 1 & null & false \\
+description & char & * & null & false \\
+utype & char & * & null & false \\
+unit & char & * & null & false \\
+ucd & char & * & null & false \\
+indexed & boolean & 1 & null & true \\
+principal & boolean & 1 & null & true \\
+std & boolean & 1 & null & true \\
+column\_index & int & 1 & null & false \\
 \end{tabular}
 
 The table\_name,column\_name (pair) values must be 
 unique.
 
-Database data types and how they map to VOTable datatypes are described in Section 
-xref{sec:vot-rdbms} above. However, the datatype column in the TAP\_SCHEMA.columns
-table contains the database type: either an xtype defined in \citep{std:DALI} or a
-TAPType defined in \citep{std:VODS11}. [TODO: make this consistent with VOSI-tables]
-For columns with a datatype of BLOB or CLOB, most database systems support reference to 
-these columns in the select clause but not in any other part of the query. 
+The type of a database column is described in the TAP\_SCHEMA.columns
+table using three (3) columns with an additional (deprecated) column from TAP-1.0 
+for backwards compatibility. The allowed values for datatype and the syntax for arraysize
+are specified in VOTable \citep{std:VOTable}. Values for xtype are not restricted per se but 
+implementors should use standard values such as those defined in DALI \citep{std:DALI} before 
+inventing new xtype(s). 
+
+The arraysize column gives the length of variable length datatypes using the VOTable
+array shape syntax. For example, a database column of type varchar(256) would be 
+described with datatype "char" and arraysize "256*". Arrays, including multi-dimensional 
+arrays, are permitted for all VOTable primitive types. The "size" column is retained for backwards
+compatibility to TAP-1.0 and must contain the integer value equivalent to arraysize when 
+possible and must be null if arraysize represents a multi-dimensional or variable-length value.
+To use the size column in a query, it must be put in double quotes since it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the size column both
+clients and servers MUST always (in particular, in the creation of the 
+TAP\_SCHEMA) use lower case exclusively). In the next major version 
+of TAP, the "size" column will be removed.
+
+For columns with a database type equivalent to BLOB or CLOB, most database systems support
+reference to these columns in the select clause but not in any other part of the query. 
+
+\textbf{TODO: add a mechanism for services to say a column can only be selected. ADQL xtypes?}
 Services may use these types to indicate that columns may only be selected. For 
 example, if service implementors want to make URL(s) available as column values 
 in the results, but do not actually store the URL(s) in the database, they would 
@@ -1009,17 +1030,6 @@ referenced in the SELECT clause of a query, but could not be used in the WHERE
 clause. The service could then process the query result and insert the URL(s) 
 or, more likely, transform a column value (an identifier) into a URL while 
 writing the results.
-
-The arraysize column gives the length of variable length datatypes, for example 
-varchar(256); this arraysize does not map exactly to the VOTable arraysize attribute 
-because the latter can specify the size and shape of a multi-dimensional array as well 
-as the variable size. The "size" column is retained for backwards compatiblity 
-to TAP-1.0 and must contain the same value as arraysize. To use the size column in a 
-query, it must be put in double quotes since it collides with an ADQL reserved 
-word. Since delimited identifiers are case-sensitive, for the size column both 
-clients and servers MUST always (in particular, in the DDL for 
-TAP\_SCHEMA) use lower case exclusively. In the next major version 
-of TAP, the "size" column will be removed.
 
 The “principal” flag indicates that the column is considered a core part the 
 content; clients can use this hint to make the principal column(s) visible, for 
@@ -1045,14 +1055,14 @@ output or display.
 The table TAP\_SCHEMA.keys must contain the following columns to 
 describe foreign key relations between tables:
 
-\begin{tabular}{l l l}
+\begin{tabular}{l l l l l}
 \label{tab:tap-schema-keys}
-column name & datatype & not-null \\
-key\_id & VARCHAR & true \\
-from\_table & VARCHAR & true \\
-target\_table & VARCHAR & true \\
-description & VARCHAR & false \\
-utype & VARCHAR & false \\
+\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+key\_id & char & * & null & true \\
+from\_table & char & * & null & true \\
+target\_table & char & * & null & true \\
+description & char & * & null & false \\
+utype & char & * & null & false \\
 \end{tabular}
 
 The key\_id values are unique and used only to join with the 
@@ -1063,12 +1073,12 @@ of tables to denote one or more ways to join the tables.
 The table TAP\_SCHEMA.key\_columns must contain the 
 following columns to describe the columns that make up a foreign key:
 
-\begin{tabular}{l l l}
+\begin{tabular}{l l l l l}
 \label{tab:tap-schema-key-columns}
-column name & datatype & not-null \\
-key\_id & VARCHAR & true \\
-from\_column & VARCHAR & true \\
-target\_column & VARCHAR & true \\
+\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+key\_id & char & * & null & true \\
+from\_column & char & * & null & true \\
+target\_column & char & * & null & true \\
 \end{tabular}
 
 There may be one or more rows with a specific key\_id to 
@@ -1103,7 +1113,7 @@ LANG=ADQL
 QUERY=SELECT * FROM magnitudes AS m WHERE m.r>=10 AND m.r<=16
 \end{verbatim}
 
-The service's response to this request is an HTTP redirect with a URL fo the 
+The service's response to this request is an HTTP redirect with a URL for the 
 query job:
 
 \begin{verbatim}
@@ -1313,7 +1323,7 @@ the FORMAT parameter could be added to select a different format.
 
 Many implementations will implement synchronous query execution using the 
 common POST-redirect-GET pattern. If this is the case, the response from the 
-initial POST will be a redirect (HTTP reponse code 303) and another URL for the 
+initial POST will be a redirect (HTTP response code 303) and another URL for the 
 results, e.g.: 
 
 \begin{verbatim}
@@ -1331,6 +1341,18 @@ TODO
 
 \section{Changes from Previous Versions}
 
+\subsection{WD-TAP-1.1-20170704}
+
+Changed arraysize in TAP\_SCHEMA to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
+
+Clarified required and optional ADQL geometric functions.
+
+Format tables so column headers are bold.
+
+Added paragraph specifying allowed values for TAP\_SCHEMA.tables.table\_type.
+
+Fixed URL to schema in VOSI-capabilities example.
+
 \subsection{WD-TAP-1.1-20161011}
 
 Removed details of mapping database and VOTable data types and refer to DALI 
@@ -1340,7 +1362,7 @@ Strongly recommend that VOSI resources allow anonymous access.
 
 Relax restrictions on column names in uploaded tables; clarify that services 
 must support quoted identifiers. Advise that services should assign unique 
-colum names in cases where they generate the name.
+column names in cases where they generate the name.
 
 \subsection{WD-TAP-1.1-20160428}
 
@@ -1369,7 +1391,7 @@ Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow
 indicator.
 
 Added advice that the size column TAP\_SCHEMA.columns must always be used 
-as a quoted identifier becayse it is a reserved word in many RDBMS 
+as a quoted identifier because it is a reserved word in many RDBMS 
 servers. Added arraysize column to TAP\_SCHEMA.columns to replace size and 
 deprecated size (which will be removed in the next major version).
  
@@ -1380,7 +1402,7 @@ Rewrite the overly long introduction with some basic use cases to help define
 the scope and tell readers what TAP is supposed to accomplish.
 
 Made clarifications: restricted allowed table names for UPLOAD, clarified that 
-multiple UPLOAD pamaters accumulate, deprecated the size column in 
+multiple UPLOAD parameters accumulate, deprecated the size column in 
 TAP\_SCHEMA.columns and added advice to quote it as a delimited 
 identifier, made presence of a TABLE element on VOTable output only required for 
 successful queries, added optional DALI-examples endpoint (text TBD).
