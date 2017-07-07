@@ -10,10 +10,11 @@
 
 \ivoagroup{Data Access Layer Working Group}
 
-\author{Patrick Dowler, ...}
+\author{Patrick Dowler, Guy Rixon, Doug Tody}
 
 \editor{Patrick Dowler}
 
+\previousversion[http://www.ivoa.net/Documents/TAP/20160428/]{WD-TAP-1.1-20160428}
 \previousversion[http://www.ivoa.net/Documents/TAP/1.0]{TAP-1.0}
        
 
@@ -40,8 +41,8 @@ orchestrating a distributed query across multiple TAP services.
 
 The authors would like to acknowledge all contributors to this and previous 
 versions of this standard, especially: K. Andrews, J. Good, R. Hanisch, G. 
-Lemson, T. McGlynn, K. Noddle, F. Ochsenbein, I. Ortiz, P. Osuna, R. Plante, G. 
-Rixon, J. Salgado, A. Stebe, and A. Szalay.
+Lemson, T. McGlynn, K. Noddle, F. Ochsenbein, I. Ortiz, P. Osuna, R. Plante, 
+J. Salgado, A. Stebe, and A. Szalay.
 
 
 \section*{Conformance-related definitions}
@@ -826,15 +827,14 @@ does not exist. Second, access to a resource could result in an HTTP 401 (not
 authorized) error if authentication is required or an HTTP 403 (forbidden) 
 error if the client is not allowed to access the resource.
 
-Error documents for TAP errors must be VOTable documents;  any result-format 
-specified in the request is ignored. If the error document is being retrieved 
+Error documents should be in a format that matches the requested
+format where possible; see DALI \citep{std:DALI} for details. 
+If the error document is being retrieved 
 from the /async/<jobid>/error resource (specified by UWS) after an asynchronous 
 query, the HTTP status code should be 200. If the error document is being 
 returned directly after a synchronous query, the service may use an appropriate 
 HTTP status code, including 200 (successfully returning a response to the 
-request) and various 4xx and 5xx values. The exception condition must be 
-described to the client using a status code in the VOTable header.  Section   
-2.9 specifies the use of VOTable for error documents in TAP services. 
+request) and various 4xx and 5xx values.
 
 \subsection{Overflows}
 \label{sec:query-overflow}
@@ -1019,17 +1019,13 @@ TAP\_SCHEMA) use lower case exclusively). In the next major version
 of TAP, the "size" column will be removed.
 
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
-reference to these columns in the select clause but not in any other part of the query. 
-
-\textbf{TODO: add a mechanism for services to say a column can only be selected. ADQL xtypes?}
-Services may use these types to indicate that columns may only be selected. For 
-example, if service implementors want to make URL(s) available as column values 
-in the results, but do not actually store the URL(s) in the database, they would 
-specify a column with datatype CLOB in the TAP\_SCHEMA and the column with URL(s) could be 
-referenced in the SELECT clause of a query, but could not be used in the WHERE 
-clause. The service could then process the query result and insert the URL(s) 
-or, more likely, transform a column value (an identifier) into a URL while 
-writing the results.
+reference to these columns in the select clause but not in every other part of the query where
+character columns may be used. In addition, services may want to define generated columns where the output is dynamically generated but the content is not stored in the 
+databasase in a form that supports querying. For example, if service implementors want to make
+URL(s) available as column values in the results, but do not actually store the URL(s) in the
+database, the column with URL(s) could be referenced in the SELECT clause of a query, but could
+not sensibly be used in the WHERE clause. In general, if a query references a column in an 
+inapprpriate part of the query, the job should fail with a suitable error message.
 
 The “principal” flag indicates that the column is considered a core part the 
 content; clients can use this hint to make the principal column(s) visible, for 
@@ -1306,7 +1302,7 @@ If the job was aborted (by the client or the service), the final phase will be
 ABORTED and there is no table or results. As with errors, the client should look 
 at the error resource to find out what went wrong.
 
-\subsubsection{Example: Synchronous Query}
+\subsection{Example: Synchronous Query}
 
 Synchronous queries return the table of results in the HTTP response to the 
 initial request. This is an example of a synchronous ADQL query on r magnitude:
@@ -1333,7 +1329,7 @@ Location: http://example.com/tap/sync/53/go
 As described in \citep{std:DALI}, clients must be prepared to follow such 
 redirects to obtain the result.
 
-\subsubsection{Example: DALI-examples Document}
+\subsection{Example: DALI-examples Document}
 
 TODO
 
@@ -1341,7 +1337,7 @@ TODO
 
 \section{Changes from Previous Versions}
 
-\subsection{WD-TAP-1.1-20170704}
+\subsection{WD-TAP-1.1-20170707}
 
 Changed arraysize in TAP\_SCHEMA to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
 
@@ -1350,6 +1346,9 @@ Clarified required and optional ADQL geometric functions.
 Format tables so column headers are bold.
 
 Added paragraph specifying allowed values for TAP\_SCHEMA.tables.table\_type.
+
+Changed the principal, indexed, and std columns in TAP\_SCHEMA.columns to boolean since we
+now use the VOTabletype system.
 
 Fixed URL to schema in VOSI-capabilities example.
 
