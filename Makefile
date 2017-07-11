@@ -14,7 +14,7 @@ DOCTYPE = WD
 
 # Source files for the TeX document (but the main file must always
 # be called $(DOCNAME).tex
-SOURCES = $(DOCNAME).tex
+SOURCES = $(DOCNAME).tex examples-sample.html
 
 # List of pixel image files to be included in submitted package 
 FIGURES = archdiag.png
