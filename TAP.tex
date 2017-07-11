@@ -2,8 +2,9 @@
 \input tthdefs
 
 \usepackage{listings}
-\lstloadlanguages{XML}
-\lstset{flexiblecolumns=true,basicstyle=\small,tagstyle=\ttfamily}
+\lstloadlanguages{XML,HTML}
+\lstset{flexiblecolumns=true,basicstyle=\small,tagstyle=\ttfamily,
+  showstringspaces=False}
 \usepackage[utf8]{inputenc}
 
 \title{Table Access Protocol}
@@ -1331,13 +1332,22 @@ redirects to obtain the result.
 
 \subsection{Example: DALI-examples Document}
 
-TODO
+The following is a full document a service might serve from its
+\verb|/examples| endpoint; note that you can add arbitrary styling or
+further HTML material without impacting the document's functionality.
+
+The document also shows how operators can add links to table
+descriptions without breaking RDFa semantics.
+
+\lstinputlisting[language=HTML,basicstyle=\footnotesize]{examples-sample.html}
 
 \appendix
 
 \section{Changes from Previous Versions}
 
 \subsection{WD-TAP-1.1-20170707}
+
+Added an example for \verb|examples|.
 
 Changed arraysize in TAP\_SCHEMA to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
 

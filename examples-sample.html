@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.1//EN" 
+  "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-2.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" version="XHTML+RDFa 1.1">
+<head>
+  <title>An Example for /examples</title>
+</head>
+<body vocab="http://www.ivoa.net/rdf/examples#">
+  <h1>An Example for /examples</h1>
+
+  <p>This document illustrates how to write a DALI-compliant examples 
+  document using TAP's special table and query properties.  Apart from the 
+  actual examples blocks, you can add arbitrary additional material, for
+  instance, a table of contents:</p>
+
+  <ul id="toc">
+    <li>
+      <a href="#QueryforCALIFAobjectproperties"
+        >Query for CALIFA object properties</a>
+    </li>
+    <li>
+     <a href="#Queryagainstcoverage"
+       >Query against coverage</a>
+    </li>
+  </ul>
+
+  <p>Use the <a href="https://www.w3.org/2012/pyRdfa/Validator.html"
+  >W3C RDFa validator</a> to see what semantics your RDFa actually
+  conveys.</p>
+
+  <div typeof="example" 
+      id="QueryforCALIFAobjectproperties" 
+      resource="#QueryforCALIFAobjectproperties">
+    <h2 property="name">Query for CALIFA object properties</h2>
+    <p>This example shows how to combine the 
+    <a href="/tableinfo/califadr3.objects">&#x2197;</a
+    ><em property="table">califadr3.objects</em> table
+    of properties of CALIFA target galaxies with the 
+    <a href="/tableinfo/califadr3.cubes">&#x2197;</a
+    ><em class="dachs-ex-taptable" property="table">califadr3.cubes</em>
+    table of data cubes to select bright, early-type spirals:</p>
+    <pre class="dachs-ex-tapquery literal-block" property="query">
+SELECT target_name, accref, hubtyp, magg
+FROM califadr3.cubes
+  NATURAL JOIN califadr3.objects
+WHERE hubtyp in ('S d', 'S cd', 'S c')
+  AND magg&lt;13
+    </pre>
+  </div>
+
+  <div typeof="example" 
+      id="Queryagainstcoverage" 
+      resource="#Queryagainstcoverage">
+    <h2 property="name">Query against coverage</h2>
+    <p>When querying against geometric columns, in particular coverage, 
+    use ADQL's contains or intersect functions, like this:</p>
+    <pre class="dachs-ex-tapquery literal-block" property="query">
+SELECT accref, seeing
+  FROM cars.images
+      WHERE 1=INTERSECTS(coverage, circle('ICRS', 34, -4, 2))
+      ORDER BY seeing
+    </pre>
+    <p>Of course, this concerns all SIAP and SSAP tables 
+    (<a href="/tableinfo/cars.images">&#x2197;</a
+    ><em class="dachs-ex-taptable" property="table">cars.images</em> only
+    standing as an example here) as well as 
+    <a href="/tableinfo/ivoa.obscore">&#x2197;</a
+    ><em property="table">ivoa.obscore</em>
+    </p>
+  </div>
+</body>
+</html>
+
