@@ -520,7 +520,7 @@ and must not report errors concerning the spurious parameter.
 
 The LANG parameter specifies the query language. The service must support the LANG 
 parameter and the client must provide a value. The only standard 
-values for the LANG parameter is ADQL. Support for other 
+value for the LANG parameter is ADQL. Support for other 
 languages and the LANG value to use with them is described in the service 
 capabilities.
 
@@ -559,7 +559,7 @@ function names, and other ADQL keywords are not case sensitive.
 Within the ADQL query, the service must support the use of timestamp values as 
 described in \citep{std:DALI}.
 
-Within the ADQL query, the following ADQL functions mus be supported: INTERSECTS,
+Within the ADQL query, the following ADQL functions must be supported: INTERSECTS,
 CONTAINS, POINT, CIRCLE, and POLYGON. POINT (including a point-valued column or 
 function return value) cannot be used as an argument to INTERSECTS (even if allowed
 by older versions of ADQL).
@@ -626,7 +626,7 @@ upload of temporary tables (in \citep{std:VOTable} format) via the standard
 UPLOAD 
 parameter. The table-name(s) must be legal ADQL table names as defined in 
 \citep{std:ADQL} but restricted as described in section~\ref{sec:tap-schema}. 
-URIs maybe be simple URLs (e.g. with a URI scheme of http or https) or 
+URIs may be simple URLs (e.g. with a URI scheme of http or https) or 
 URIs that must be resolved (e.g. with a URI scheme of vos or param) to give 
 the location of the table content.
 
@@ -975,7 +975,7 @@ If the table name is such that the name must be quoted (quoted identifier in
 
 The table\_type value must be either table or view.
 
-The table\_index is used to recommended table ordering for clients. Clients 
+The table\_index is used to recommend table ordering for clients. Clients 
 may order by table\_index (ascending) so lower index tables would appear 
 earlier in a listing.
 
@@ -1020,7 +1020,7 @@ compatibility to TAP-1.0 and must contain the integer value equivalent to arrays
 possible and must be null if arraysize represents a multi-dimensional or variable-length value.
 To use the size column in a query, it must be put in double quotes since it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the size column both
 clients and servers MUST always (in particular, in the creation of the 
-TAP\_SCHEMA) use lower case exclusively). In the next major version 
+TAP\_SCHEMA) use lower case exclusively. In the next major version 
 of TAP, the "size" column will be removed.
 
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
@@ -1030,12 +1030,12 @@ databasase in a form that supports querying. For example, if service implementor
 URL(s) available as column values in the results, but do not actually store the URL(s) in the
 database, the column with URL(s) could be referenced in the SELECT clause of a query, but could
 not sensibly be used in the WHERE clause. In general, if a query references a column in an 
-inapprpriate part of the query, the job should fail with a suitable error message.
+inappropriate part of the query, the job should fail with a suitable error message.
 
-The “principal” flag indicates that the column is considered a core part the 
+The “principal” flag indicates that the column is considered a core part of the 
 content; clients can use this hint to make the principal column(s) visible, for 
 example by selecting them by default in generating an ADQL query. In cases where 
-the services selects the columns to return (such as a query language without an 
+the service selects the columns to return (such as a query language without an 
 explicit output selection), the principal column indicates those columns that 
 are returned by default. 
 
@@ -1198,7 +1198,7 @@ HTTP GET http://example.com/tap/async/42
 \end{verbatim}
 or directly from the parameters resource:
 \begin{verbatim}
-HTTP GET http://example.com/tap /async/42/parameters
+HTTP GET http://example.com/tap/async/42/parameters
 \end{verbatim}
 Individual parameters cannot be accessed as separate web resources.
 
@@ -1319,7 +1319,7 @@ LANG=ADQL
 QUERY=SELECT * FROM magnitudes as m where m.r>=10 and m.r<=16
 \end{verbatim}
 
-In this examples, the output format defaults to VOTable; 
+In this example, the output format defaults to VOTable; 
 the FORMAT parameter could be added to select a different format.
 
 Many implementations will implement synchronous query execution using the 
