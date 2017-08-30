@@ -19,6 +19,7 @@
 
 \editor{Patrick Dowler}
 
+\previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{WD-TAP-1.1-20170707}
 \previousversion[http://www.ivoa.net/Documents/TAP/20160428/]{WD-TAP-1.1-20160428}
 \previousversion[http://www.ivoa.net/Documents/TAP/1.0]{TAP-1.0}
        
@@ -156,9 +157,9 @@ columns. It is also possible that the service registration (in an IVOA Registry)
 may include sufficient table metadata to enable queries to be written directly.
 
 \subsubsection{Other Query Languages}
-A TAP service must be able to support use of other query languages, such
+A TAP service implementor must be able to include support for other query languages, such
 pass-through of native SQL directly to an underlying DBMS or simple key-vale 
-(parameter-based) constraints. The service interface must allow for 
+(parameter-based) constraints, without making their service non-compliant with the specification. The service interface must allow for 
 this and the service capabilities must be able to describe it. This mechanism 
 also allows future developments within and outside the IVOA to be used without 
 revising the TAP specification.
@@ -204,8 +205,8 @@ DALI-examples & service specific & may (alternate authentication method) & \\
 
 At least one set of {sync} and {async} resources must be named /sync and 
 /async respectively for backwards compatibility with TAP-1.0 (which required 
-these names. Other  {sync} and {async} resources may have service specific names. 
-As required by \citep{std:DALI}, all resources except the VOSI-availability must 
+these names). Other  {sync} and {async} resources may have service specific names. 
+As required by \citep{std:DALI11}, all resources except the VOSI-availability must 
 be siblings of the VOSI-capabilities resource. 
 
 The fixed name resources above (async, sync, tables) should be used for the 
@@ -228,9 +229,9 @@ clients must not depend on a specific representation of the root web-resource.
 
 A TAP service must provide one or more web resources that represents the results 
 of synchronous query execution. The {sync} resources must conform to the general rules for
-DALI-sync \citep{std:DALI} resources. The exact form of the query, and hence the 
+DALI-sync \citep{std:DALI11} resources. The exact form of the query, and hence the 
 representation of the resource, is defined by the  query parameters as listed in 
-section~\ref{sec:parameters}. Representations of results of queries if defined in 
+section~\ref{sec:parameters}. Representations of results of queries is defined in 
 section~\ref{sec:RESPONSEFORMAT} and section~\ref{sec:votable}.
 
 For query languages that produce a single result (e.g. ADQL) executed using the 
@@ -249,7 +250,7 @@ HTTP POST.
 
 A TAP service must provide one or more web resource representing controls for 
 asynchronous queries. Specifically, the web resource must conform to the general rules
-for DALI-async \citep{std:DALI} resources and thus represent a job-list 
+for DALI-async \citep{std:DALI11} resources and thus represent a job-list 
 as specified in \citep{std:UWS}.
 
 The child web resources of the /async resource are as specified by UWS. These 
@@ -317,7 +318,7 @@ standard; for examples specific to TAP see section~\ref{sec:examples} below.
 \subsection{availability}
 \label{sec:vosi-availability}
 
-The use of the VOSI-availability resource is described in \citep{std:DALI}.
+The use of the VOSI-availability resource is described in \citep{std:DALI11}.
 
 \subsection{/capabilities}
 \label{sec:vosi-capabilities}
@@ -346,7 +347,7 @@ standardID. This allows service providers to describe multiple resources that
 deliver the specified feature (e.g. with different authentication methods) in 
 the VOSI-capabilities resource.
 
-The use of the VOSI-capabilities resource is described in \citep{std:DALI}.
+The use of the VOSI-capabilities resource is described in \citep{std:DALI11}.
 
 For example, the returned capabilities document for a service supporting  TAP 
 might look as follows:
@@ -437,7 +438,7 @@ might look as follows:
 The service capabilities must be accessible from a web resource with relative 
 URL /capabilities that is a direct child of the root web resource. The 
 /capabilities resource must be accessible via the http GET method. The content 
-is described by [8].
+is described by \citep{std:VOSI}.
 
 \subsection{/tables}
 \label{sec:vosi-tables}
@@ -457,14 +458,14 @@ response code of 404 when this resource is accessed.
 \subsection{/examples}
 \label{sec:dali-examples}
 
-A GET from this endpoint MUST yield a document with a MIME type of either 
+A successful GET from this endpoint MUST yield a document with a MIME type of either 
 application/xhtml+xml or text/html. A service that does not provide examples 
 MUST return a 404 HTTP status on accessing this resource.
 
 If present, the endpoint must be represented in a capability in the TAP 
 service's registry record. The capability's \xmlel{standardID} is defined by
 DALI
-\citep{std:DALI}. A capability element could hence look like this:
+\citep{std:DALI11}. A capability element could hence look like this:
 
 \begin{lstlisting}[language=XML,basicstyle=\footnotesize]
 <capability standardID="ivo://ivoa.net/std/DALI#examples">
@@ -478,12 +479,12 @@ TAP defines two additional properties for the examples vocabulary:
 
 \begin{itemize}
 \item query -- each example MUST have a unique child element with simple text 
-content having a \xmlel{property} attribute valued query. It contains the query itself, 
+content having a \xmlel{property} attribute valued {\em query}. It contains the query itself, 
 preferably with extra whitespace for easy human consumption and editing. This 
 will usually be a HTML \xmlel{pre} element.
     
 \item table -- examples MAY also have descendants with \xmlel{property} attributes having 
-the value table. These must have pure text content and contain fully qualified 
+the value {\em table}. These must have pure text content and contain fully qualified 
 table names to which the query is somehow ``pertaining''.
 \end{itemize}
 
@@ -509,8 +510,7 @@ is run in (in the sense of UWS job execution). Specifically, asynchronous
 queries may be created with with no parameters and multiple, subsequent HTTP 
 POST actions may specify the parameters in any order.
 
-Not all combinations of the parameters are meaningful. For example, if a request 
-carries  LANG=ADQL then the SELECT parameter (from PQL) is spurious. If a 
+Not all combinations of the parameters are meaningful. If a 
 service receives a spurious parameter in an otherwise correct request, then the 
 service must ignore the spurious parameter, must respond to the request normally 
 and must not report errors concerning the spurious parameter.
@@ -529,10 +529,10 @@ For example, an ADQL query would be performed with
 LANG=ADQL
 QUERY=<ADQL query string>
 \end{verbatim}
-A PQL query would be performed with
+A query with a custom query language would be performed with
 \begin{verbatim}
-LANG=PQL
-<PQL-specific parameters>
+LANG=MySecretLang
+<MySecretLang-specific parameters>
 \end{verbatim}
 The value of LANG is a string specifying the language and optionally the 
 language version used for the query parameter(s), as defined by the service 
@@ -545,24 +545,21 @@ language version is specified.
 \subsubsection{QUERY}
 \label{sec:QUERY}
 
-The QUERY parameter is used to specify the ADQL query. It may also be used to 
+The QUERY parameter is used to specify queries that are serialised as a single character string, such as an ADQL query (with LANG=ADQL or some version thereof). The  interpretation
+of the value depends on the value of the LANG parameter. This parameter should also be used to 
 specify the query for other values of LANG (e.g. LANG=<some RDBMS-specific SQL 
-variant>) which are not specified in this document but may be described in the 
-service capabilities.
+variant>) when appropriate.
 
-A service must support the QUERY parameter because ADQL is a required language.  
-The case sensitivity of the query string is defined solely by the query language 
-specification. In the case of ADQL 2.0, for example, the query is not case 
-sensitive except for character  literals; schema, table, and column names, 
-function names, and other ADQL keywords are not case sensitive.
+A service must support the QUERY parameter because ADQL is a required language.
 
 Within the ADQL query, the service must support the use of timestamp values as 
-described in \citep{std:DALI}.
+described in \citep{std:DALI11} if applicable. Timestamp values are usable if there
+are columns with timestamp values, including in uploaded tables if table upload 
+is supported.
 
-Within the ADQL query, the following ADQL functions must be supported: INTERSECTS,
-CONTAINS, POINT, CIRCLE, and POLYGON. POINT (including a point-valued column or 
-function return value) cannot be used as an argument to INTERSECTS (even if allowed
-by older versions of ADQL).
+If the tables that are queried through a service contain columns with spatial 
+coordinates, the service should implement ADQL geometric query support by enabling
+the following functions in ADQL queries: INTERSECTS, CONTAINS, POINT, CIRCLE, and POLYGON.
 AREA, CENTROID, COORDSYS, COORD1, and COORD2 are optional. REGION is no longer
 supported. 
 
@@ -571,13 +568,13 @@ mixing constants and column references for coordinate system and coordinate
 values. For example, POINT('ICRS', t.ra, t.dec) does not cause t.ra and t.dec to 
 be transformed to ICRS; it simply tells the service to treat the values  as 
 being expressed in that coordinate system. Clients should avoid using the coordinate 
-system argument to geometric functions should not be used (use null value or use an 
+system argument to geometric functions (use null value or use an 
 alternate function without the coordinate system argument if available).
 
 \subsubsection{FORMAT and RESPONSEFORMAT}
 \label{sec:RESPONSEFORMAT}
 
-The RESPONSEFORMAT parameter is fully described in \citep{std:DALI}. For 
+The RESPONSEFORMAT parameter is fully described in \citep{std:DALI11}. For 
 backwards 
 compatibility, TAP-1.1 must also accept the FORMAT parameter as equivalent to 
 RESPONSEFORMAT.
@@ -586,7 +583,7 @@ RESPONSEFORMAT.
 \label{sec:MAXREC}
 
 The MAXREC parameter and its effect on the query result is fully described in 
-\citep{std:DALI}. If the result set is truncated in this fashion, it must 
+\citep{std:DALI11}. If the result set is truncated in this fashion, it must 
 include an overflow indicator as specified in section~\ref{sec:query-overflow}.
 
 For the special value of MAXREC=0, the service is not required to execute the 
@@ -615,12 +612,12 @@ table contains A or fewer rows then the result will not contain an overflow
 indicator.
 
 \subsubsection{RUNID}
-The RUNID parameter is fully described in \citep{std:DALI}.
+The RUNID parameter is fully described in \citep{std:DALI11}.
 
 \subsubsection{UPLOAD}
 \label{sec:UPLOAD}
 
-The UPLOAD parameter is described in \citep{std:DALI}. Services should support 
+The UPLOAD parameter is described in \citep{std:DALI11}. Services should support 
 the 
 upload of temporary tables (in \citep{std:VOTable} format) via the standard 
 UPLOAD 
@@ -641,7 +638,7 @@ transient and persist only for the lifetime of the query (although caching might
 be used behind the scenes) and are never visible in the 
 TAP\_SCHEMA metadata.
 
-The \citep{std:DALI} UPLOAD parameter supports both external resources and 
+The \citep{std:DALI11} UPLOAD parameter supports both external resources and 
 in-line 
 content. For external resources, one provides a URI (usually an HTTP URL) the 
 TAP service can use to obtain the table content. For example,
@@ -684,39 +681,12 @@ in queries.
 The \citep{std:VOTable} format is the standard format for output (query 
 results) and input (table upload) in a TAP service so most of this section 
 deals with how VOTable is used. However, rules about serialising column values 
-also apply to other formats (e.g. CSV and TSV).
+also apply to other formats (e.g. CSV and TSV). 
 
 \subsection{INFO elements}
 \label{sec:vot-info}
 
-The RESOURCE element must contain an INFO element with attribute 
-name="QUERY\_STATUS" indicating the success of the operation. For 
-RESOURCE elements that contain a TABLE element, this INFO element must appear 
-lexically before the TABLE. The following values are defined for this INFO 
-element's value attribute:
-
-“OK”, meaning that the query executed successfully and a result table is 
-included in the resource 
-
-"ERROR”, meaning that an error was detected at the level of the TAP 
-protocol or the query failed to execute 
-
-The content of the INFO element conveying the status should be a message 
-suitable for display to the user describing the status.
-
-\begin{verbatim}
-<INFO name="QUERY_STATUS" value="OK"/>
-\end{verbatim}
- 
-\begin{verbatim}
-<INFO name="QUERY_STATUS" value="OK">Successful query</INFO>
-\end{verbatim}
-
-\begin{verbatim}
-<INFO name="QUERY_STATUS" value="ERROR">
-   value out of range in POS=45,91
-</INFO>
-\end{verbatim}
+The RESOURCE element must contain INFO element(s) as described in \citep{std:DALI11}.
 
 Additional INFO elements may be provided, e.g., to echo the input parameters 
 back to the client in the query response (a useful feature for debugging or to 
@@ -724,50 +694,15 @@ self-document the query response), but clients should not depend on these.
 
 \begin{verbatim}
 <RESOURCE type=”results”>
-<INFO name="QUERY_STATUS" value="ERROR">
-    unrecognized operation
+...
+<INFO name="QUERY">
+    select * from stuff.items
 </INFO>
-<INFO name="SPECIFICATION" value="TAP"/>
-<INFO name=”VERSION” value=”1.0”/>
-<INFO name="REQUEST" value="doQuery"/>
-<INFO name="baseUrl" value="http://webtest.aoc.nrao.edu/ivoa-dal"/>
-<INFO name="serviceVersion" value="1.0"/
 ...
 </RESOURCE>
 \end{verbatim}
 
-If an overflow occurs (result exceeds MAXREC), the service must close the table 
-and append another INFO element to the RESOURCE (after the TABLE) with 
-name=”QUERY\_STATUS” and the value=”OVERFLOW”.
-\begin{verbatim}
-<RESOURCE type=”results”>
-<INFO name="QUERY_STATUS" value="OK"/>
-...
-<TABLE>...</TABLE>
-<INFO name="QUERY_STATUS" value="OVERFLOW"/>
-</RESOURCE>
-\end{verbatim}
-
-In the above example, the TABLE should have exactly MAXREC rows.
-
-If an error occurs while writing the rows of the VOTable, the service must 
-close the table and append another INFO element to the RESOURCE, after the 
-TABLE, with name=”QUERY\_STATUS” and the value=”ERROR”.
-\begin{verbatim}
-<RESOURCE type=”results”>
-<INFO name="QUERY_STATUS" value="OK"/>
-...
-<TABLE>...</TABLE>
-<INFO name="QUERY_STATUS" value="ERROR" />
-</RESOURCE>
-\end{verbatim}
-The content of these trailing INFO elements is optional and intended for users; 
-client software should not depend on it.
-
-Thus, one INFO element with name=”QUERY\_STATUS” and value=”OK” or 
-value=”ERROR” must be included before the TABLE. If the TABLE does not contain 
-the entire query result, one INFO element with value=”OVERFLOW” or 
-value=”ERROR” must be included after the table. 
+Additional INFO elements after the results may also be included as specified in \citep{std:DALI11}.
 
 \subsection{Successful Queries}
 \label{sec:query-ok}
@@ -784,7 +719,8 @@ FIELD elements must be the same as the column names (or aliases if specified in
 the query) in the query and the datatype, arraysize, and xtype 
 attributes of FIELD elements must be set using the values from the TAP\_SCHEMA. 
 In cases where items in the select list do not 
-have names (e.g. function invocation) the service must generate a name; 
+have names (e.g. expression or function invocation without an alias) the service 
+must generate a name; 
 generated names must be unique (within the output table) and should be valid 
 ADQL identifiers.
 
@@ -833,7 +769,7 @@ authorized) error if authentication is required or an HTTP 403 (forbidden)
 error if the client is not allowed to access the resource.
 
 Error documents should be in a format that matches the requested
-format where possible; see DALI \citep{std:DALI} for details. 
+format where possible; see DALI \citep{std:DALI11} for details. 
 If the error document is being retrieved 
 from the /async/<jobid>/error resource (specified by UWS) after an asynchronous 
 query, the HTTP status code should be 200. If the error document is being 
@@ -866,24 +802,21 @@ formats other than VOTable.
 
 This section describes the bi-directional mapping between VOTable and RDBMS + 
 geometric datatypes and extends the basic rules for serialising such values in 
-VOTable described in \citep{std:DALI}. These rules apply to input tables 
+VOTable described in \citep{std:DALI11}. These rules apply to input tables 
 supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) and to result tables after successful 
 query execution.
 
 For input tables, the name attribute of the FIELD element is used as the column 
 name. Services must support delimited identifiers so that 
 FIELD names that are not valid ADQL column names work correctly  
-\citep{std:ADQL}. 
-For result tables, the column name or an alias specified in the query is used 
-to set the name attribute of the FIELD elements in the output table (the alias 
-overrides the normal column name). 
+\citep{std:ADQL}.
 
 The mapping to and from VOTable makes use of the datatype, arraysize, and xtype 
 attributes. Mapping for primitive types (numbers and strings) is 
 straightforward; services should insure that input values behave as 
 expected in query processing and output values should have correct and complete 
 metadata. Mapping for specially structured values use xtype(s) specified
-in \citep{std:DALI}. The behaviour of such structured values in queries depends 
+in \citep{std:DALI11}. The behaviour of such structured values in queries depends 
 on the query language (section~\ref{sec:LANG}) being used. 
 
 \section{Metadata: TAP\_SCHEMA}
@@ -913,17 +846,14 @@ TAP\_SCHEMA may be queried to determine if any extended schema
 metadata is defined by the service. Services must provide these tables and make 
 them accessible by all supported query mechanisms.
 
-The qualified names in the tables of the TAP schema must follow the rules 
-defined in section 2.4. The names must be stated in a form that is acceptable as 
-an operand of a query.
-
 Column datatypes in the TAP\_SCHEMA are specified using the same concepts used in 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
 must also include the "size" column and populate it where possible. The arraysize values
 specified below for describing the TAP\_SCHEMA tables themselves is the most flexible 
 (* means variable length with no maximum); implementors should use more restrictive values
 that describe their implementation of the TAP\_SCHEMA tables (e.g. arraysize 64* to describe
-a column with database type varchar(64)).
+a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as
+query execution is consistent with the recommended types.
 
 Implementors are permitted to include additional tables in the 
 TAP\_SCHEMA to describe additional aspects of their service not 
@@ -962,7 +892,7 @@ table\_name & char & * & null & true \\
 table\_type & char & * & null & true \\
 utype & char & * & null & false \\
 description & char & * & null & false \\
-table\_index & char & * & null & false \\
+table\_index & int & 1 & null & false \\
 \end{tabular}
 
 The table\_name values must be unique. The value of the 
@@ -996,9 +926,9 @@ description & char & * & null & false \\
 utype & char & * & null & false \\
 unit & char & * & null & false \\
 ucd & char & * & null & false \\
-indexed & boolean & 1 & null & true \\
-principal & boolean & 1 & null & true \\
-std & boolean & 1 & null & true \\
+indexed & int & 1 & null & true \\
+principal & int & 1 & null & true \\
+std & int & 1 & null & true \\
 column\_index & int & 1 & null & false \\
 \end{tabular}
 
@@ -1009,7 +939,7 @@ The type of a database column is described in the TAP\_SCHEMA.columns
 table using three (3) columns with an additional (deprecated) column from TAP-1.0 
 for backwards compatibility. The allowed values for datatype and the syntax for arraysize
 are specified in VOTable \citep{std:VOTable}. Values for xtype are not restricted per se but 
-implementors should use standard values such as those defined in DALI \citep{std:DALI} before 
+implementors should use standard values such as those defined in DALI \citep{std:DALI11} before 
 inventing new xtype(s). 
 
 The arraysize column gives the length of variable length datatypes using the VOTable
@@ -1017,7 +947,7 @@ array shape syntax. For example, a database column of type varchar(256) would be
 described with datatype "char" and arraysize "256*". Arrays, including multi-dimensional 
 arrays, are permitted for all VOTable primitive types. The "size" column is retained for backwards
 compatibility to TAP-1.0 and must contain the integer value equivalent to arraysize when 
-possible and must be null if arraysize represents a multi-dimensional or variable-length value.
+possible and must be null if arraysize represents a multi-dimensional.
 To use the size column in a query, it must be put in double quotes since it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the size column both
 clients and servers MUST always (in particular, in the creation of the 
 TAP\_SCHEMA) use lower case exclusively. In the next major version 
@@ -1093,8 +1023,9 @@ in the TAP\_SCHEMA namespace.
 \label{sec:examples}
 
 The UWS pattern is specified in \citep{std:UWS} and its application to TAP in 
-section 
-section~\ref{sec:tap-async}. This section gives examples of the exchange of messages between a 
+section section~\ref{sec:tap-async}. TAP services may implement \citep{std:UWS} or
+a later version. 
+This section gives examples of the exchange of messages between a 
 TAP client and service when using UWS to run an asynchronous query.
 
 \subsection{Example: Asynchronous Query}
@@ -1138,8 +1069,9 @@ HTTP GET http://example.com/tap/async/42/phase
 \end{verbatim}
 
 The client may have to check the phase multiple times until the job 
-finishes. Once the returned value is COMPLETED, the results can be obtained 
-from the results resource:
+finishes. If the service implements \citep{std:UWS11} or later, a blocking call
+can be used instead of polling. Once the job reaches the COMPLETED phase, 
+the results can be obtained from the results resource:
 
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42/results/result
@@ -1162,7 +1094,7 @@ Location: http://example.com/tap/async/42
 
 While the job is in the PENDING phase, the job parameters may be modified 
 by additional POST(s) to the parameters resource (see 
-\citep{std:DALI}), for example:
+\citep{std:DALI11}), for example:
 
 \begin{verbatim}
 HTTP POST http://example.com/tap/async/42/parameters
@@ -1179,7 +1111,7 @@ specified name (but in the TAP\_UPLOAD schema).
 Parameter-value pairs accumulate when POSTed to the parameters resource, so an 
 additional POST of the UPLOAD parameter in this example would add another 
 parameter-value pair (essentially a multi-valued parameter as described in 
-\citep{std:DALI}). There is no mechanism to replace or remove a parameter in a 
+\citep{std:DALI11}). There is no mechanism to replace or remove a parameter in a 
 PENDING job.
 
 After each such POST, the service issues an HTTP redirection to the job's URL, 
@@ -1189,7 +1121,6 @@ where the modified state may be accessed:
 HTTP status 303 'See other'
 Location: http://example.com/tap/async/42
 \end{verbatim}
-
 
 All TAP-specific parameters are stored using the parameter list mechanism of 
 UWS and are included in the XML representation of the job:
@@ -1268,10 +1199,20 @@ Location: http://example.com/tap/async/42
 \end{verbatim}
 The phase will now have changed to either QUEUED or EXECUTING, depending on the 
 service implementation. The client tracks the execution by polling the phase 
-URL:
+URL (UWS-1.0):
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42/phase
 \end{verbatim}
+or by performing a blocking GET ofthe jon (UWS-1.1 or later):
+\begin{verbatim}
+HTTP GET http://example.com/tap/async/42?WAIT=30
+\end{verbatim}
+The blocking GET will block until something changes in the job (usually the phase
+change) and then return, with a maximum wait time specified by the WAIT parameter. Since
+services may impose a limit on the maximum wait time and may return before ten job reaches
+a final phase, clients must examine the job state (returned by the GET) and possibly perform
+additional requests.
+
 A job in the  QUEUED or EXECUTING phase may be aborted by posting to the phase 
 URL:
 \begin{verbatim}
@@ -1331,7 +1272,7 @@ results, e.g.:
 Location: http://example.com/tap/sync/53/go
 \end{verbatim}
 
-As described in \citep{std:DALI}, clients must be prepared to follow such 
+As described in \citep{std:DALI11}, clients must be prepared to follow such 
 redirects to obtain the result.
 
 \subsection{Example: DALI-examples Document}
@@ -1349,9 +1290,24 @@ descriptions without breaking RDFa semantics.
 
 \section{Changes from Previous Versions}
 
-\subsection{XX-TAP-1.1-XXXXXXXXXX}
+\subsection{PR-TAP-1.1-20170830}
 
 Added an example for \verb|examples|.
+
+Clarified that the QUERY param is intended for use with other values of LANG and is not
+reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value.
+
+Removed remaining uses of PQL; replaced one example with something more clearly non-standard.
+
+Removed restriction from previous WD that the "size" column must be null for variable length arrays. In fact, "size" can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column.
+
+Changed language about mandatory ADQL geometry function support back to optional (should in
+the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
+
+Removed some VOTable content and reference DALI. Explicitly relaxed datatype and
+arraysize used in TAP\_SCHEMA tables. Fixed various cross-references and typos. 
+
+Added example use of UWS-1.1 blocking requests.
 
 \subsection{WD-TAP-1.1-20170707}
 
