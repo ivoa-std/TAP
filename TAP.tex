@@ -11,6 +11,8 @@
   showstringspaces=False}
 \usepackage[utf8]{inputenc}
 
+\hyphenation{asyn-chro-n-ous-ly}
+
 \title{Table Access Protocol}
 
 \ivoagroup{Data Access Layer Working Group}
@@ -111,6 +113,58 @@ NOTE: not in TAP-1.0
 
 Fig.~section~\ref{fig:archdiag} shows the role this document plays within the
 IVOA architecture \citep{note:VOARCH}.
+
+TAP depends on the following other IVOA standards:
+
+\begin{description}
+
+\item[UWS \citep{2016ivoa.spec.1024H}] TAP services can be queried
+asynchronously; the Universal Worker Service UWS defines the
+corresponding communication pattern.  Note that while TAP 1.1 does not
+require the use of any particular minor version of the standards it
+depends on, UWS 1.1 can significantly streamline the communication, and
+implementors of TAP 1.1 are encouraged to support UWS 1.1 or later.
+
+\item[ADQL \citep{2008ivoa.spec.1030O}] A standards-compliant TAP
+services must support queries written in the Astronomical Data Query
+Language.
+
+\item[VOSI \citep{std:VOSI11}] The VO Support Interfaces standard
+defines endpoints for metadata discovery; for TAP, this is the tables,
+capabilities, and availability endpoints.
+
+\item[VOTable \citep{2013ivoa.spec.0920O}] All TAP services must be able
+to serve query results in the VOTable format.
+\end{description}
+
+
+TAP is related in other ways to the following IVOA standards:
+
+\begin{description}
+\item[DALI \citep{std:DALI11}]  The Data Access Layer Interface standard
+gives general rules for the construction of DAL standards.  TAP has been
+written against version 1.1 of DALI.  In particular, TAP directly
+references DALI 1.1's serialisation rules for geometries and timestamps
+and recommends implementing the examples endpoint defined by DALI.
+
+\item[Obscore \citep{2011ivoa.spec.1028T}] The Obscore data model
+facilitates the publication of metadata of observational data products.
+TAP is used to access compliant metadata collections.
+
+\item[RegTAP \citep{2014ivoa.spec.1208D}]  The relational model for the
+VO Registry provides a data model for publishing service metadata.
+TAP is used to access compliant metadata collections.
+
+\item[TAPRegExt \citep{2012ivoa.spec.0827D}] While there is no formal
+requirement to that effect, the response on a TAP service's capabilities
+endpoint should contain instances \xmlel{tr:TableAccess}-typed
+capabilities in order to allow clients to discover several important
+aspects of a TAP service's capabilities (e.g., resource limits, output
+formats, user defined functions).
+
+\end{description}
+
+
 
 \subsection{Motivating Use Cases}
 Below are some of the more common use cases that have motivated the development 
@@ -867,7 +921,7 @@ with a timestamp saying when metadata values were was last modified.
 The table TAP\_SCHEMA.schemas must contain the following columns:
 
 \begin{tabular}{l l l l l}
-\label{tab:resources}
+\label{tab:tap_schema}
 \textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
 schema\_name & char & * & null & true \\
 utype & char & * & null & false \\
@@ -1383,7 +1437,7 @@ allow for multiple of each resource (typically to support authentication). The
 fixed paths /async and /sync are still required and are to provide anonymous 
 query access, which should be compatible with existing services.
 
-\bibliography{ivoatex/ivoabib}
+\bibliography{ivoatex/ivoabib,ivoatex/docrepo}
 
 
 \end{document}
