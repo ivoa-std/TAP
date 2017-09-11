@@ -240,22 +240,28 @@ and consume modest internal resources.
 An implementation of a TAP service provides the following RESTful resources 
 under the base URL.
 
-\begin{tabular}{l l l l l}
-\label{tab:resources}
+\medskip
+\begin{inlinetable}
+\begin{tabular}{l l l}
+\sptablerule
 \textbf{resource type} & \textbf{resource name} & \textbf{required} \\
-{sync} & /sync & must & \\
-{async} & /async & must & \\
-{sync} & service specific & may (alternate authentication method) & \\
-{async} & service specific & may (alternate authentication method) & \\
-VOSI-availability & service specific & must (should be anonymous) & \\
-VOSI-availability & service specific & may (alternate authentication method) & \\
-VOSI-capabilities & /capabilities & must (should be anonymous) & \\
-VOSI-capabilities & service specific & may (alternate authentication method) & \\
-VOSI-tables & /tables & should & \\
-VOSI-tables & service specific & may (alternate authentication method) & \\
-DALI-examples & /examples & should & \\
-DALI-examples & service specific & may (alternate authentication method) & \\
+\sptablerule
+{sync} & /sync & must \\
+{async} & /async & must \\
+{sync} & service specific & may (alternate authentication method) \\
+{async} & service specific & may (alternate authentication method) \\
+VOSI-availability & service specific & must (should be anonymous) \\
+VOSI-availability & service specific & may (alternate authentication method) \\
+VOSI-capabilities & /capabilities & must (should be anonymous) \\
+VOSI-capabilities & service specific & may (alternate authentication method) \\
+VOSI-tables & /tables & should \\
+VOSI-tables & service specific & may (alternate authentication method) \\
+DALI-examples & /examples & should \\
+DALI-examples & service specific & may (alternate authentication method) \\
+\sptablerule
 \end{tabular}
+\end{inlinetable}
+\medskip
 
 At least one set of {sync} and {async} resources must be named /sync and 
 /async respectively for backwards compatibility with TAP-1.0 (which required 
@@ -920,13 +926,17 @@ with a timestamp saying when metadata values were was last modified.
 
 The table TAP\_SCHEMA.schemas must contain the following columns:
 
+\begin{inlinetable}
 \begin{tabular}{l l l l l}
-\label{tab:tap_schema}
+\sptablerule
 \textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\sptablerule
 schema\_name & char & * & null & true \\
 utype & char & * & null & false \\
 description & char & * & null & false \\
+\sptablerule
 \end{tabular}
+\end{inlinetable}
 
 The schema\_name values must be unique and may be qualified by the 
 catalog name or not depending on the implementation requirements. The fully 
@@ -938,16 +948,20 @@ used directly to construct queries.
 \label{sec:tap-schema-tables}
 The table TAP\_SCHEMA.tables must contain the following columns:
 
+\begin{inlinetable}
 \begin{tabular}{l l l l l}
-\label{tab:tap-schema-tables}
+\sptablerule
 \textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\sptablerule
 schema\_name & char & * & null & true \\
 table\_name & char & * & null & true \\
 table\_type & char & * & null & true \\
 utype & char & * & null & false \\
 description & char & * & null & false \\
 table\_index & int & 1 & null & false \\
+\sptablerule
 \end{tabular}
+\end{inlinetable}
 
 The table\_name values must be unique. The value of the 
 table\_name should be the string that is recommended for use in 
@@ -967,9 +981,11 @@ earlier in a listing.
 \label{sec:tap-schema-columns}
 The table TAP\_SCHEMA.columns must contain the following columns:
 
+\begin{inlinetable}
 \begin{tabular}{l l l l l}
-\label{tab:tap-schema-columns}
+\sptablerule
 \textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\sptablerule
 table\_name & char & * & null & true \\
 column\_name & char & * & null & true \\
 datatype & char & * & null & true \\
@@ -984,7 +1000,9 @@ indexed & int & 1 & null & true \\
 principal & int & 1 & null & true \\
 std & int & 1 & null & true \\
 column\_index & int & 1 & null & false \\
+\sptablerule
 \end{tabular}
+\end{inlinetable}
 
 The table\_name,column\_name (pair) values must be 
 unique.
@@ -1040,15 +1058,19 @@ output or display.
 The table TAP\_SCHEMA.keys must contain the following columns to 
 describe foreign key relations between tables:
 
+\begin{inlinetable}
 \begin{tabular}{l l l l l}
-\label{tab:tap-schema-keys}
+\sptablerule
 \textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\sptablerule
 key\_id & char & * & null & true \\
 from\_table & char & * & null & true \\
 target\_table & char & * & null & true \\
 description & char & * & null & false \\
 utype & char & * & null & false \\
+\sptablerule
 \end{tabular}
+\end{inlinetable}
 
 The key\_id values are unique and used only to join with the 
 TAP\_SCHEMA.key\_columns table below. There may be 
@@ -1058,13 +1080,17 @@ of tables to denote one or more ways to join the tables.
 The table TAP\_SCHEMA.key\_columns must contain the 
 following columns to describe the columns that make up a foreign key:
 
+\begin{inlinetable}
 \begin{tabular}{l l l l l}
-\label{tab:tap-schema-key-columns}
+\sptablerule
 \textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\sptablerule
 key\_id & char & * & null & true \\
 from\_column & char & * & null & true \\
 target\_column & char & * & null & true \\
+\sptablerule
 \end{tabular}
+\end{inlinetable}
 
 There may be one or more rows with a specific key\_id to 
 denote single or multi-column keys.
