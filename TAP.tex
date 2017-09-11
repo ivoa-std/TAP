@@ -412,9 +412,7 @@ The use of the VOSI-capabilities resource is described in \citep{std:DALI11}.
 For example, the returned capabilities document for a service supporting  TAP 
 might look as follows:
 
-\begin{lstlisting}[language=XML]
-<?xml version="1.0" encoding="UTF-8"?>
-
+\begin{lstlisting}[language=XML,basicstyle=\footnotesize]
 <vosi:capabilities xmlns=""
    xmlns:vosi="http://www.ivoa.net/xml/VOSICapabilities/v1.0"
    xmlns:vs="http://www.ivoa.net/xml/VODataService/v1.0"
@@ -430,7 +428,7 @@ might look as follows:
     </interface>
     <interface xsi:type="vod:ParamHTTP" role="std" version="1.0">
       <accessURL use="base">https://example.net/myTAP</accessURL>
-      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
     </interface>
 
   </vosi:capability>
@@ -441,11 +439,13 @@ might look as follows:
     </interface>
     <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
       <accessURL use="base">http://example.net/myTAP/auth-async</accessURL>
-      <securityMethod standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA" />
+      <securityMethod 
+        standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA"/>
     </interface>
     <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
       <accessURL use="base">https://example.net/myTAP/async</accessURL>
-      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
+      <securityMethod 
+        standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
     </interface>
   </vosi:capability>
 
@@ -455,11 +455,12 @@ might look as follows:
     </interface>
     <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
       <accessURL use="base">http://example.net/myTAP/auth-sync</accessURL>
-      <securityMethod standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA" />
+      <securityMethod 
+        standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA"/>
     </interface>
     <interface xsi:type="vod:ParamHTTP" role="std" version="1.1">
       <accessURL use="base">https://example.net/myTAP/sync</accessURL>
-      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
     </interface>
   </vosi:capability>
 
@@ -484,11 +485,14 @@ might look as follows:
     </interface>
     <interface xsi:type="vs:ParamHTTP">
       <accessURL use="full"> https://myarchive.net/myTAP/tables </accessURL>
-        <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate" />
+        <securityMethod 
+          standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
     </interface>
     <interface xsi:type="vs:ParamHTTP">
-      <accessURL use="full"> http://myarchive.net/myTAP/auth-tables </accessURL>
-      <securityMethod standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA" />
+      <accessURL use="full"
+        > http://myarchive.net/myTAP/auth-tables </accessURL>
+      <securityMethod 
+        standardID="http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA"/>
     </interface>
   </vosi:capability>
 
@@ -530,7 +534,8 @@ DALI
 \begin{lstlisting}[language=XML,basicstyle=\footnotesize]
 <capability standardID="ivo://ivoa.net/std/DALI#examples">
    <interface xsi:type="vr:WebBrowser">
-      <accessURL use="full">http://myarchive.net/myTAP/examples</accessURL>
+      <accessURL use="full"
+        >http://myarchive.net/myTAP/examples</accessURL>
    </interface>
 </capability>
 \end{lstlisting}
@@ -1179,8 +1184,8 @@ by additional POST(s) to the parameters resource (see
 \begin{verbatim}
 HTTP POST http://example.com/tap/async/42/parameters
 UPLOAD=mytable,http://a.b.c/mytable.xml
-QUERY=select * from TAP_UPLOAD.mytable t join magnitudes m on t.target = 
-m.target
+QUERY=select * from TAP_UPLOAD.mytable t join magnitudes 
+  m on t.target = m.target
 \end{verbatim}
 
 Here we have specified with the UPLOAD parameter that the service create a 
