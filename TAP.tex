@@ -833,12 +833,8 @@ them accessible by all supported query mechanisms.
 
 Column datatypes in the TAP\_SCHEMA are specified using the same concepts used in 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
-must also include the "size" column and populate it where possible. The arraysize values
-specified below for describing the TAP\_SCHEMA tables themselves is the most flexible 
-(* means variable length with no maximum); implementors should use more restrictive values
-that describe their implementation of the TAP\_SCHEMA tables (e.g. arraysize 64* to describe
-a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as
-query execution is consistent with the recommended types.
+must also include the ``size'' column and populate it where possible. In the descriptions 
+below we only specify the column types as \em{string} or \em{integer}. Implementors may use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as query execution is consistent with the recommended types. The ``size'' and arraysize values for (self) describing TAP\_SCHEMA columns is implementation-specific.
 
 Implementors are permitted to include additional tables in the 
 TAP\_SCHEMA to describe additional aspects of their service not 
@@ -854,11 +850,11 @@ The table TAP\_SCHEMA.schemas must contain the following columns:
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
 \sptablerule
-\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\textbf{column name} & \textbf{type} & \textbf{not-null} \\
 \sptablerule
-schema\_name & char & * & null & true \\
-utype & char & * & null & false \\
-description & char & * & null & false \\
+schema\_name & string & true \\
+utype & string & false \\
+description & string & false \\
 \sptablerule
 \end{tabular}
 \end{inlinetable}
@@ -876,14 +872,14 @@ The table TAP\_SCHEMA.tables must contain the following columns:
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
 \sptablerule
-\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\textbf{column name} & \textbf{type} & \textbf{not-null} \\
 \sptablerule
-schema\_name & char & * & null & true \\
-table\_name & char & * & null & true \\
-table\_type & char & * & null & true \\
-utype & char & * & null & false \\
-description & char & * & null & false \\
-table\_index & int & 1 & null & false \\
+schema\_name & string & true \\
+table\_name & string & true \\
+table\_type & string & true \\
+utype & string & false \\
+description & string & false \\
+table\_index & integer & false \\
 \sptablerule
 \end{tabular}
 \end{inlinetable}
@@ -909,22 +905,22 @@ The table TAP\_SCHEMA.columns must contain the following columns:
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
 \sptablerule
-\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\textbf{column name} & \textbf{type} & \textbf{not-null} \\
 \sptablerule
-table\_name & char & * & null & true \\
-column\_name & char & * & null & true \\
-datatype & char & * & null & true \\
-arraysize & char & * & null & false \\
-xtype & char & * & null & false \\
-"size" & int & 1 & null & false \\
-description & char & * & null & false \\
-utype & char & * & null & false \\
-unit & char & * & null & false \\
-ucd & char & * & null & false \\
-indexed & int & 1 & null & true \\
-principal & int & 1 & null & true \\
-std & int & 1 & null & true \\
-column\_index & int & 1 & null & false \\
+table\_name & string & true \\
+column\_name & string & true \\
+datatype & string & true \\
+arraysize & string & false \\
+xtype & string & false \\
+``size'' & integer & false \\
+description & string & false \\
+utype & string & false \\
+unit & string & false \\
+ucd & string & false \\
+indexed & integer & true \\
+principal & integer & true \\
+std & integer & true \\
+column\_index & integer & false \\
 \sptablerule
 \end{tabular}
 \end{inlinetable}
@@ -941,14 +937,14 @@ inventing new xtype(s).
 
 The arraysize column gives the length of variable length datatypes using the VOTable
 array shape syntax. For example, a database column of type varchar(256) would be 
-described with datatype "char" and arraysize "256*". Arrays, including multi-dimensional 
-arrays, are permitted for all VOTable primitive types. The "size" column is retained for backwards
+described with datatype ``char'' and arraysize ``256*''. Arrays, including multi-dimensional 
+arrays, are permitted for all VOTable primitive types. The ``size'' column is retained for backwards
 compatibility to TAP-1.0 and must contain the integer value equivalent to arraysize when 
 possible and must be null if arraysize represents a multi-dimensional.
 To use the size column in a query, it must be put in double quotes since it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the size column both
 clients and servers MUST always (in particular, in the creation of the 
 TAP\_SCHEMA) use lower case exclusively. In the next major version 
-of TAP, the "size" column will be removed.
+of TAP, the ``size'' column will be removed.
 
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
 reference to these columns in the select clause but not in every other part of the query where
@@ -959,17 +955,20 @@ database, the column with URL(s) could be referenced in the SELECT clause of a q
 not sensibly be used in the WHERE clause. In general, if a query references a column in an 
 inappropriate part of the query, the job should fail with a suitable error message.
 
-The “principal” flag indicates that the column is considered a core part of the 
+The principal, indexed, and std columns are boolean values implemented as integers. As such, 
+the value must be 0 or 1; no other values are allowed.
+
+The principal flag indicates that the column is considered a core part of the 
 content; clients can use this hint to make the principal column(s) visible, for 
 example by selecting them by default in generating an ADQL query. In cases where 
 the service selects the columns to return (such as a query language without an 
 explicit output selection), the principal column indicates those columns that 
 are returned by default. 
 
-The “indexed” flag indicates that the column is indexed, potentially 
+The indexed flag indicates that the column is indexed, potentially 
 making queries run much faster if this column is used in a constraint. 
 
-The “std” is included for compatibility with the registry, which uses this value 
+The std flag is included for compatibility with the registry, which uses this value 
 to indicate that a given column is defined by some standard, as opposed to a 
 custom column defined by a particular service.
 
@@ -986,13 +985,13 @@ describe foreign key relations between tables:
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
 \sptablerule
-\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\textbf{column name} & \textbf{type} & \textbf{not-null} \\
 \sptablerule
-key\_id & char & * & null & true \\
-from\_table & char & * & null & true \\
-target\_table & char & * & null & true \\
-description & char & * & null & false \\
-utype & char & * & null & false \\
+key\_id & string & true \\
+from\_table & string & true \\
+target\_table & string & true \\
+description & string & false \\
+utype & string & false \\
 \sptablerule
 \end{tabular}
 \end{inlinetable}
@@ -1008,17 +1007,29 @@ following columns to describe the columns that make up a foreign key:
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
 \sptablerule
-\textbf{column name} & \textbf{datatype} & \textbf{arraysize} & \textbf{xtype} & \textbf{not-null} \\
+\textbf{column name} & \textbf{type} & \textbf{not-null} \\
 \sptablerule
-key\_id & char & * & null & true \\
-from\_column & char & * & null & true \\
-target\_column & char & * & null & true \\
+key\_id & string & true \\
+from\_column & string & true \\
+target\_column & string & true \\
 \sptablerule
 \end{tabular}
 \end{inlinetable}
 
 There may be one or more rows with a specific key\_id to 
 denote single or multi-column keys.
+
+For the TAP\_SCHEMA itself, servcies are should enforce and list the following foreign keys:
+
+\begin{verbatim}
+TAP_SCHEMA.tables.schema_name -> TAP_SCHEMA.schemas.schema_name
+TAP_SCHEMA.columns.table_name -> TAP_SCHEMA.tables.table_name
+TAP_SCHEMA.keys.from_table -> TAP_SCHEMA.tables.table_name
+TAP_SCHEMA.keys.target_table -> TAP_SCHEMA.tables.table_name
+TAP_SCHEMA.key_columns.from_column -> TAP_SCHEMA.columns.column_name
+TAP_SCHEMA.key_columns.target_column -> TAP_SCHEMA.colums.column_name
+TAP_SCHEMA.key_columns.key_id -> TAP_SCHEMA.keys.key_id
+\end{verbatim}
 
 A TAP service must provide the tables listed above and may provide other tables 
 in the TAP\_SCHEMA namespace.
@@ -1296,6 +1307,14 @@ descriptions without breaking RDFa semantics.
 
 \section{Changes from Previous Versions}
 
+\subsection{PR-TAP-1.1-??}
+
+Removed explicit datatype/arraysize/xtype from TAP\_SCHEMA description in favour of string and integer. Specified which integers are actually booleans (0 or 1). Added list of foreign keys for TAP\_SCHEMA relational model.
+
+Fixed use of double-quotes which misbehaved inside tables. 
+
+Fixed BasicAA security method in capabilities example.
+
 \subsection{PR-TAP-1.1-20170830}
 
 Added an example for \verb|examples|.
@@ -1305,7 +1324,7 @@ reserved for ADQL only. Removed text concerning the case sensitivity of QUERY va
 
 Removed remaining uses of PQL; replaced one example with something more clearly non-standard.
 
-Removed restriction from previous WD that the "size" column must be null for variable length arrays. In fact, "size" can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column.
+Removed restriction from previous WD that the ``size'' column must be null for variable length arrays. In fact, ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column.
 
 Changed language about mandatory ADQL geometry function support back to optional (should in
 the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
