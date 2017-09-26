@@ -24,7 +24,9 @@
 \previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{WD-TAP-1.1-20170707}
 \previousversion[http://www.ivoa.net/Documents/TAP/20160428/]{WD-TAP-1.1-20160428}
 \previousversion[http://www.ivoa.net/Documents/TAP/1.0]{TAP-1.0}
-       
+
+
+\newcommand{\tapschema}{TAP\discretionary{-}{}{\kern-2pt\_}SCHEMA{}}
 
 \begin{document}
 
@@ -427,7 +429,7 @@ The table metadata should be accessible from a web resource with relative URL
 /tables that is a direct child of the root web resource. The /tables resource 
 must be accessible via the http GET method. The content is described by 
 VOSI and is equivalent to the metadata from the 
-TAP\_SCHEMA described in section~\ref{sec:tap-schema}. The use of VOTableType 
+\tapschema{} described in section~\ref{sec:tap-schema}. The use of VOTableType 
 (rather than TAPType) in the VOSI-tables output  is recommended because the values 
 map directly; TAPType may be used when VOTableType does not provide a suitable
 alternative.
@@ -620,7 +622,7 @@ to in queries as TAP\_UPLOAD.<tablename>, where <tablename> is the
 specified by the user. Tables in the TAP\_UPLOAD schema are 
 transient and persist only for the lifetime of the query (although caching might 
 be used behind the scenes) and are never visible in the 
-TAP\_SCHEMA metadata.
+\tapschema{} metadata.
 
 The DALI UPLOAD parameter supports both external resources and 
 in-line 
@@ -702,7 +704,7 @@ The output table must include the same number and order of columns as specified
 in the SELECT clause of the query. For VOTable output, the name attribute of 
 FIELD elements must be the same as the column names (or aliases if specified in 
 the query) in the query and the datatype, arraysize, and xtype 
-attributes of FIELD elements must be set using the values from the TAP\_SCHEMA. 
+attributes of FIELD elements must be set using the values from the \tapschema. 
 In cases where items in the select list do not 
 have names (e.g. expression or function invocation without an alias) the service 
 must generate a name; 
@@ -804,40 +806,44 @@ metadata. Mapping for specially structured values use xtype(s) specified
 in DALI. The behaviour of such structured values in queries depends 
 on the query language (section~\ref{sec:LANG}) being used. 
 
-\section{Metadata: TAP\_SCHEMA}
+\section{Metadata: \tapschema}
 \label{sec:tap-schema}
 
 There are several approaches to getting metadata for a given TAP service. All 
 TAP services must support a set of tables in a schema named 
-TAP\_SCHEMA that describe the tables and columns included in the 
-service. In addition to the TAP\_SCHEMA, there are two other ways 
+\tapschema{} that describe the tables and columns included in the 
+service. In addition to the \tapschema, there are two other ways 
 to get metadata from a TAP service. First, the VOSI tables resource provides 
 metadata on all tables and columns; this resource is described in 
 (section~\ref{sec:vosi-tables}). The 
-VOSI tables resource provides the same metadata as the TAP\_SCHEMA 
+VOSI tables resource provides the same metadata as the \tapschema{}
 but in a rigorously controlled format; the information in the 
-TAP\_SCHEMA is equivalent to that defined by the  VODataService 
+\tapschema{} is equivalent to that defined by the  VODataService 
 \citep{std:VODS11}. Second, the client may specify a query of one or more 
 tables setting the 
 MAXREC parameter to 0 so that only the metadata regarding the requested fields 
 is returned. Use of MAXREC is described in section~\ref{sec:MAXREC}.
 
-The TAP\_SCHEMA provides access to table, column, and join key 
+The \tapschema{} provides access to table, column, and join key 
 metadata through the TAP query mechanisms themselves. Users can discover tables 
 or columns that meet their specific criteria by querying the tables described 
-below.  The service may enhance the TAP\_SCHEMA with additional 
+below.  The service may enhance the \tapschema{} with additional 
 metadata where that seems appropriate; since it is self-describing, the 
-TAP\_SCHEMA may be queried to determine if any extended schema 
+\tapschema{} may be queried to determine if any extended schema 
 metadata is defined by the service. Services must provide these tables and make 
 them accessible by all supported query mechanisms.
 
-Column datatypes in the TAP\_SCHEMA are specified using the same concepts used in 
+Column datatypes in the \tapschema{} are specified using the same concepts used in 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
-must also include the ``size'' column and populate it where possible. In the descriptions 
-below we only specify the column types as \em{string} or \em{integer}. Implementors may use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as query execution is consistent with the recommended types. The ``size'' and arraysize values for (self) describing TAP\_SCHEMA columns is implementation-specific.
+must also include the \verb|"size"| column and populate it where possible. The arraysize values
+specified below for describing the \tapschema{} tables themselves is the most flexible 
+(``*'' means variable length with no maximum); implementors should use more restrictive values
+that describe their implementation of the \tapschema{} tables (e.g. arraysize 64* to describe
+a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as
+query execution is consistent with the recommended types.
 
 Implementors are permitted to include additional tables in the 
-TAP\_SCHEMA to describe additional aspects of their service not 
+\tapschema{} to describe additional aspects of their service not 
 covered by this specification. Implementors may also include additional columns 
 in the standard tables described below. For example, one could include a column 
 with a timestamp saying when metadata values were was last modified.
@@ -845,7 +851,7 @@ with a timestamp saying when metadata values were was last modified.
 \subsection{Schemas}
 \label{sec:tap-schema-schemas}
 
-The table TAP\_SCHEMA.schemas must contain the following columns:
+The table \tapschema.schemas must contain the following columns:
 
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
@@ -867,7 +873,7 @@ used directly to construct queries.
 
 \subsection{Tables}
 \label{sec:tap-schema-tables}
-The table TAP\_SCHEMA.tables must contain the following columns:
+The table \tapschema.tables must contain the following columns:
 
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
@@ -889,7 +895,7 @@ table\_name should be the string that is recommended for use in
 querying the table; it may or may not be qualified by schema and catalog name(s) 
 depending on the implementation requirements. The fully qualified table name is 
 defined by the ADQL language and follows the pattern [[catalog.]schema.]table. 
-If the table name is such that the name must be quoted (quoted identifier in 
+If the table name is such that the name must be quoted (delimited identifier in 
 ADQL) then the value must include the quotes.
 
 The table\_type value must be either table or view.
@@ -900,7 +906,7 @@ earlier in a listing.
 
 \subsection{Columns}
 \label{sec:tap-schema-columns}
-The table TAP\_SCHEMA.columns must contain the following columns:
+The table \tapschema.columns must contain the following columns:
 
 \begin{inlinetable}
 \begin{tabular}{l l l l l}
@@ -928,7 +934,7 @@ column\_index & integer & false \\
 The table\_name,column\_name (pair) values must be 
 unique.
 
-The type of a database column is described in the TAP\_SCHEMA.columns
+The type of a database column is described in the \tapschema.columns
 table using three (3) columns with an additional (deprecated) column from TAP-1.0 
 for backwards compatibility. The allowed values for datatype and the syntax for arraysize
 are specified in VOTable \citep{std:VOTable}. Values for xtype are not restricted per se but 
@@ -943,7 +949,7 @@ compatibility to TAP-1.0 and must contain the integer value equivalent to arrays
 possible and must be null if arraysize represents a multi-dimensional.
 To use the size column in a query, it must be put in double quotes since it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the size column both
 clients and servers MUST always (in particular, in the creation of the 
-TAP\_SCHEMA) use lower case exclusively. In the next major version 
+\tapschema) use lower case exclusively. In the next major version 
 of TAP, the ``size'' column will be removed.
 
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
@@ -979,7 +985,7 @@ output or display.
 
 \subsection{Foreign Keys}
 \label{sec:tap-schema-keys}
-The table TAP\_SCHEMA.keys must contain the following columns to 
+The table \tapschema.keys must contain the following columns to 
 describe foreign key relations between tables:
 
 \begin{inlinetable}
@@ -997,11 +1003,11 @@ utype & string & false \\
 \end{inlinetable}
 
 The key\_id values are unique and used only to join with the 
-TAP\_SCHEMA.key\_columns table below. There may be 
+\tapschema.key\_columns table below. There may be 
 one or more rows with different key\_id values and a pair 
 of tables to denote one or more ways to join the tables.
 
-The table TAP\_SCHEMA.key\_columns must contain the 
+The table \tapschema.key\_columns must contain the 
 following columns to describe the columns that make up a foreign key:
 
 \begin{inlinetable}
@@ -1019,7 +1025,7 @@ target\_column & string & true \\
 There may be one or more rows with a specific key\_id to 
 denote single or multi-column keys.
 
-For the TAP\_SCHEMA itself, servcies are should enforce and list the following foreign keys:
+For the \tapschema{} itself, servcies are should enforce and list the following foreign keys:
 
 \begin{verbatim}
 TAP_SCHEMA.tables.schema_name -> TAP_SCHEMA.schemas.schema_name
@@ -1032,7 +1038,7 @@ TAP_SCHEMA.key_columns.key_id -> TAP_SCHEMA.keys.key_id
 \end{verbatim}
 
 A TAP service must provide the tables listed above and may provide other tables 
-in the TAP\_SCHEMA namespace.
+in the \tapschema{} namespace.
 
 
 \section{Examples}
@@ -1309,7 +1315,10 @@ descriptions without breaking RDFa semantics.
 
 \subsection{PR-TAP-1.1-??}
 
-Removed explicit datatype/arraysize/xtype from TAP\_SCHEMA description in favour of string and integer. Specified which integers are actually booleans (0 or 1). Added list of foreign keys for TAP\_SCHEMA relational model.
+Removed explicit datatype/arraysize/xtype from \tapschema{} description
+in favour of string and integer. Specified which integers are actually
+booleans (0 or 1). Added list of foreign keys for \tapschema{}
+relational model.
 
 Fixed use of double-quotes which misbehaved inside tables. 
 
@@ -1329,22 +1338,21 @@ Removed restriction from previous WD that the ``size'' column must be null for v
 Changed language about mandatory ADQL geometry function support back to optional (should in
 the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
 
-Removed some VOTable content and reference DALI. Explicitly relaxed datatype and
-arraysize used in TAP\_SCHEMA tables. Fixed various cross-references and typos. 
+Removed some VOTable content and reference DALI. Explicitly relaxed datatype and arraysize used in \tapschema{} tables. Fixed various cross-references and typos. 
 
 Added example use of UWS-1.1 blocking requests.
 
 \subsection{WD-TAP-1.1-20170707}
 
-Changed arraysize in TAP\_SCHEMA to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
+Changed arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
 
 Clarified required and optional ADQL geometric functions.
 
 Format tables so column headers are bold.
 
-Added paragraph specifying allowed values for TAP\_SCHEMA.tables.table\_type.
+Added paragraph specifying allowed values for \tapschema.tables.table\_type.
 
-Changed the principal, indexed, and std columns in TAP\_SCHEMA.columns to boolean since we
+Changed the principal, indexed, and std columns in \tapschema.columns to boolean since we
 now use the VOTabletype system.
 
 Fixed URL to schema in VOSI-capabilities example.
@@ -1374,21 +1382,21 @@ Clarified that MAXREC always overrides limitations in the query (e.g.
 TOP in an ADQL query).
 
 Clarified that services are not required to support queries that reference tables 
-in different schema. This is primarily to allow the TAP\_SCHEMA to be implemented 
+in different schema. This is primarily to allow the \tapschema{} to be implemented 
 in a different server from the content.
 
 Completed the references section.
 
 \subsection{Changes from TAP-1.0}
 
-Added table\_index and column\_index to TAP\_SCHEMA.
+Added table\_index and column\_index to \tapschema.
 
 Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
 indicator.
 
-Added advice that the size column TAP\_SCHEMA.columns must always be used 
+Added advice that the size column \tapschema.columns must always be used 
 as a quoted identifier because it is a reserved word in many RDBMS 
-servers. Added arraysize column to TAP\_SCHEMA.columns to replace size and 
+servers. Added arraysize column to \tapschema.columns to replace size and 
 deprecated size (which will be removed in the next major version).
  
 Removed REQUEST and VERSION parameters from interface.
@@ -1399,7 +1407,7 @@ the scope and tell readers what TAP is supposed to accomplish.
 
 Made clarifications: restricted allowed table names for UPLOAD, clarified that 
 multiple UPLOAD parameters accumulate, deprecated the size column in 
-TAP\_SCHEMA.columns and added advice to quote it as a delimited 
+\tapschema.columns and added advice to quote it as a delimited 
 identifier, made presence of a TABLE element on VOTable output only required for 
 successful queries, added optional DALI-examples endpoint (text TBD).
 
