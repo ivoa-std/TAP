@@ -6,6 +6,7 @@
 \SVN$URL$
 
 \usepackage{listings}
+\usepackage{relsize}
 \lstloadlanguages{XML,HTML}
 \lstset{flexiblecolumns=true,basicstyle=\small,tagstyle=\ttfamily,
   showstringspaces=False}
@@ -26,7 +27,15 @@
 \previousversion[http://www.ivoa.net/Documents/TAP/1.0]{TAP-1.0}
 
 
-\newcommand{\tapschema}{TAP\discretionary{-}{}{\kern-2pt\_}SCHEMA{}}
+\iftth
+\newcommand{\tapschema}{TAP\_SCHEMA}
+\newcommand{\tapupload}{TAP\_UPLOAD}
+\else
+\newcommand{\tapschema}{{%
+  \relsize{-0.5}TAP\discretionary{-}{}{\kern-2pt\_}SCHEMA}}
+\newcommand{\tapupload}{%
+  {\relsize{-0.5}TAP\discretionary{-}{}{\kern-2pt\_}UPLOAD}}
+\fi
 
 \begin{document}
 
@@ -618,8 +627,8 @@ The client specifies the name of the uploaded table; this name must be a legal
 ADQL table name with no catalog or schema (i.e., a string following the 
 regular identifier production of ADQL). Uploaded tables must be 
 referred 
-to in queries as TAP\_UPLOAD.<tablename>, where <tablename> is the 
-specified by the user. Tables in the TAP\_UPLOAD schema are 
+to in queries as \tapupload.<tablename>, where <tablename> is the 
+specified by the user. Tables in the \tapupload{} schema are 
 transient and persist only for the lifetime of the query (although caching might 
 be used behind the scenes) and are never visible in the 
 \tapschema{} metadata.
@@ -633,7 +642,7 @@ HTTP POST http://example.com/tap/async/42
 UPLOAD=mytable,http://otherplace.com/path/votable.xml
 \end{verbatim}
 The service would retrieve the table from the provided URL and 
-make it visible to the query as TAP\_UPLOAD.mytable.
+make it visible to the query as \tapupload.mytable.
 
 If the TAP service supports VOSpace URIs, one may 
 specify an upload table using a URI to a table stored in a VOSpace, for example:
@@ -642,10 +651,10 @@ HTTP POST http://example.com/tap/async/42
 UPLOAD=mytable,vos://space/path/votable.xml
 \end{verbatim}
 The service would resolve the URI, contact the VOSpace, retrieve the table, and 
-make it visible to the query as TAP\_UPLOAD.mytable.
+make it visible to the query as \tapupload.mytable.
 
 UPLOADs are accumulating, i.e., each UPLOAD parameter given will create one or 
-more tables in TAP\_UPLOAD. When the table names from two or more 
+more tables in \tapupload. When the table names from two or more 
 upload items agree after case folding, the service behaviour is unspecified. 
 Clients thus cannot reliably overwrite uploaded tables; to correct errors, they 
 have to tear down the existing job and create a new one. In principle, any 
@@ -806,7 +815,7 @@ metadata. Mapping for specially structured values use xtype(s) specified
 in DALI. The behaviour of such structured values in queries depends 
 on the query language (section~\ref{sec:LANG}) being used. 
 
-\section{Metadata: \tapschema}
+\section{Metadata: TAP\kern-3pt\_SCHEMA}
 \label{sec:tap-schema}
 
 There are several approaches to getting metadata for a given TAP service. All 
@@ -1128,7 +1137,7 @@ QUERY=select * from TAP_UPLOAD.mytable t join magnitudes
 Here we have specified with the UPLOAD parameter that the service create a 
 temporary table named mytable with content from the VOTable at the specified 
 URL. The QUERY parameter can then reference the uploaded table with the 
-specified name (but in the TAP\_UPLOAD schema).
+specified name (but in the \tapupload{} schema).
 
 Parameter-value pairs accumulate when POSTed to the parameters resource, so an 
 additional POST of the UPLOAD parameter in this example would add another 
