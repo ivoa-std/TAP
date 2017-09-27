@@ -1034,7 +1034,7 @@ target\_column & string & true \\
 There may be one or more rows with a specific key\_id to 
 denote single or multi-column keys.
 
-For the \tapschema{} itself, servcies are should enforce and list the following foreign keys:
+For the \tapschema{} itself, services should enforce and list the following foreign keys:
 
 \begin{verbatim}
 TAP_SCHEMA.tables.schema_name -> TAP_SCHEMA.schemas.schema_name
@@ -1053,8 +1053,8 @@ in the \tapschema{} namespace.
 \section{Examples}
 \label{sec:examples}
 
-The UWS pattern is specified in \citep{std:UWS} and its application to TAP in 
-section section~\ref{sec:tap-async}. TAP services may implement UWS 1.0
+The UWS pattern is specified in the UWS specification \citep{std:UWS} and its application to TAP in 
+section~\ref{sec:tap-async}. TAP services may implement UWS 1.0
 or a later version. 
 This section gives examples of the exchange of messages between a 
 TAP client and service when using UWS to run an asynchronous query.
@@ -1234,13 +1234,13 @@ URL (UWS-1.0):
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42/phase
 \end{verbatim}
-or by performing a blocking GET ofthe jon (UWS-1.1 or later):
+or by performing a blocking GET of the job url (UWS-1.1 or later):
 \begin{verbatim}
 HTTP GET http://example.com/tap/async/42?WAIT=30
 \end{verbatim}
 The blocking GET will block until something changes in the job (usually the phase
 change) and then return, with a maximum wait time specified by the WAIT parameter. Since
-services may impose a limit on the maximum wait time and may return before ten job reaches
+services may impose a limit on the maximum wait time and may return before the job reaches
 a final phase, clients must examine the job state (returned by the GET) and possibly perform
 additional requests.
 
