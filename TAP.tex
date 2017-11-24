@@ -413,18 +413,15 @@ The TAP-1.0 standard is identified using
 ivo://ivoa.net/std/TAP
 \end{verbatim}
 
-For TAP-1.1 we define new (versioned) standard identifier for then query feature: 
-
-\begin{verbatim}
-ivo://ivoa.net/std/TAP#query-1.1 
-\end{verbatim}
+For TAP-1.1 we use the same standardID but the version attribute of the capability should
+use the minor version (e.g. version=``1.1'').
 
 In TAP, the base URL is described with a single standard identifier and the mandatory
 chilsd resources have specific names (section~\ref{sec:resources}). One or more DALI-async 
 and DALI-sync interfaces to the query capability may be described using the prototype UWS 
 registry extension (UWSRegExt). This allows service 
-providers to describe multiple resources that 
-deliver the query features (e.g. with different authentication methods) in 
+providers to describe multiple resources (interfaces) that 
+deliver the query features (e.g. with different protocols or authentication methods) in 
 the VOSI-capabilities resource.
 
 The use of the VOSI-capabilities resource is described in DALI.
@@ -858,10 +855,9 @@ them accessible by all supported query mechanisms.
 
 Column datatypes in the \tapschema{} are specified using the same concepts used in 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
-must also include the \verb|"size"| column and populate it where possible. The arraysize values
-specified below for describing the \tapschema{} tables themselves is the most flexible 
-(``*'' means variable length with no maximum); implementors should use more restrictive values
-that describe their implementation of the \tapschema{} tables (e.g. arraysize 64* to describe
+must also include the \verb|"size"| column and populate it where possible. 
+Implementors should use arraysize values
+that best describe their implementation of the \tapschema{} tables (e.g. arraysize 64* to describe
 a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as
 query execution is consistent with the recommended types.
 
@@ -965,16 +961,20 @@ are specified in VOTable \citep{std:VOTable}. Values for xtype are not restricte
 implementors should use standard values such as those defined in DALI before 
 inventing new xtype(s). 
 
-The arraysize column gives the length of variable length datatypes using the VOTable
+The arraysize column gives the length of fixed and variable length datatypes using the VOTable
 array shape syntax. For example, a database column of type varchar(256) would be 
 described with datatype ``char'' and arraysize ``256*''. Arrays, including multi-dimensional 
-arrays, are permitted for all VOTable primitive types. The ``size'' column is retained for backwards
+arrays, are permitted for all VOTable primitive types. The \verb|"size"| column is retained for backwards
 compatibility to TAP-1.0 and must contain the integer value equivalent to arraysize when 
-possible and must be null if arraysize represents a multi-dimensional array.
-To use the size column in a query, it must be put in double quotes since it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the size column both
+possible and must be null if arraysize is null or represents a multi-dimensional array. Both arraysize 
+and \verb|"size"| must be null for scalar numeric columns.
+
+To use the \verb|"size"| column in a query, the column name must be put in double quotes since 
+it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the 
+\verb|"size"| column both
 clients and servers MUST always (in particular, in the creation of the 
 \tapschema) use lower case exclusively. In the next major version 
-of TAP, the ``size'' column will be removed.
+of TAP, the \verb|"size"| column will be removed.
 
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
 reference to these columns in the select clause but not in every other part of the query where
@@ -1346,7 +1346,9 @@ Removed explicit datatype/arraysize/xtype from \tapschema{} description
 in favour of string and integer. Specified which integers are actually
 booleans (0 or 1). Added list of foreign keys for \tapschema{}
 relational model. Clarified use of quoted identifiers for column names in 
-\tapschema. Added schema\_index column.
+\tapschema. Added schema\_index column. Clarified when the \verb|"size"| column 
+in \tapschema can contain a value. Clarified that both arraysize and \verb|"size"|
+must be null for scalar numeric columns.
 
 Fixed use of double-quotes which misbehaved inside tables. 
 
