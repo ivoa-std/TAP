@@ -591,7 +591,13 @@ alternate function without the coordinate system argument if available).
 The RESPONSEFORMAT parameter is fully described in DALI. For 
 backwards 
 compatibility, TAP-1.1 must also accept the FORMAT parameter as equivalent to 
-RESPONSEFORMAT.
+RESPONSEFORMAT.  
+Specifying both FORMAT and RESPONSEFORMAT is undefined.
+
+If both the FORMAT and RESPONSEFORMAT parameters are omitted, the
+default format is VOTable.  A TAP service must support VOTable as an
+output format, should support CSV and TSV output, and may support other
+formats.
 
 \subsubsection{MAXREC}
 \label{sec:MAXREC}
