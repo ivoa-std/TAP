@@ -7,7 +7,7 @@ DOCNAME = TAP
 DOCVERSION = 1.1
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 2017-11-24
+DOCDATE = 2018-04-16
 
 # What is it you're writing: NOTE, WD, PR, or REC
 DOCTYPE = PR
@@ -17,7 +17,7 @@ DOCTYPE = PR
 SOURCES = $(DOCNAME).tex examples-sample.html sample-capability.xml
 
 # List of pixel image files to be included in submitted package 
-FIGURES = archdiag.png
+FIGURES = role_diagram.pdf
 
 # List of PDF figures (for vector graphics)
 VECTORFIGURES = 

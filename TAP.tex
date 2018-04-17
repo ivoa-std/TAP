@@ -118,7 +118,7 @@ NOTE: not in TAP-1.0
 % Oh -- Notes don't need this; you'd have to remove archdiag.png
 % from FIGURES in the Makefile, too.
 
-\includegraphics[width=0.9\textwidth]{archdiag.png}
+\includegraphics[width=0.9\textwidth]{role_diagram.pdf}
 \caption{Architecture diagram for this document}
 \label{fig:archdiag}
 \end{figure}
@@ -187,9 +187,14 @@ endpoint should contain instances \xmlel{uws:Async}-typed and
 \xmlel{uws:Sync}-typed interfaces in order to allow clients to discover 
 interfaces that support different authentication mechanisms via alternate
 resources within the service.
+
+\item[CDP \citep{std:CDP}] TAP services that support authenticated requests may require 
+delegation of user credentials in order for some features to work; such services
+will have an associated credential service and could use delegated credentials for 
+remote calls that require authentication. For example, a URL specified in the UPLOAD
+parameter may require authentication and the service would use delegated credentials
+to perform the retrieval.
 \end{description}
-
-
 
 \subsection{Motivating Use Cases}
 Below are some of the more common use cases that have motivated the development 
@@ -1342,7 +1347,9 @@ descriptions without breaking RDFa semantics.
 
 \section{Changes from Previous Versions}
 
-\subsection{PR-TAP-1.1-20171124}
+\subsection{PR-TAP-1.1-20180416}
+
+Added updated IVOA architecture diagram showing role of TAP.
 
 Removed language that somehow defined or restricted usage of ADQL constructs in
 favour of just referring to the AQDL spec. Clarified use of serialisation
