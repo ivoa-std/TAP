@@ -30,9 +30,11 @@
 
 \iftth
 \newcommand{\tapschema}{TAP\_SCHEMA}
+\hyphenation{TAP\_SCHEMA}
+\hyphenation{\tapschema}
 \newcommand{\tapupload}{TAP\_UPLOAD}
 \else
-\newcommand{\tapschema}{{%
+\newcommand{\tapschema}{\mbox{%
   \relsize{-0.5}TAP\discretionary{-}{}{\kern-2pt\_}SCHEMA}}
 \newcommand{\tapupload}{%
   {\relsize{-0.5}TAP\discretionary{-}{}{\kern-2pt\_}UPLOAD}}
@@ -151,7 +153,7 @@ implementors of TAP 1.1 are encouraged to support VOSI 1.1 or later.
 \item[VOTable \citep{2013ivoa.spec.0920O}] All TAP services must be able
 to serve query results in the VOTable format. Note that while TAP 1.1 does not
 require the use of any particular minor version of the VOtable standard, older 
-versions are missing features that are required and may be ususable in practice.
+versions are missing features that are required and may be unusable in practice.
 For example, the overflow reporting and xtype attribute were introduced in 
 VOTable 1.2 so that is the minimum viable version that must be used.
 \end{description}
@@ -422,7 +424,7 @@ For TAP-1.1 we use the same standardID but the version attribute of the capabili
 use the minor version (e.g. version=``1.1'').
 
 In TAP, the base URL is described with a single standard identifier and the mandatory
-chilsd resources have specific names (section~\ref{sec:resources}). One or more DALI-async 
+child resources have specific names (section~\ref{sec:resources}). One or more DALI-async 
 and DALI-sync interfaces to the query capability may be described using the prototype UWS 
 registry extension (UWSRegExt). This allows service 
 providers to describe multiple resources (interfaces) that 
@@ -646,8 +648,8 @@ The UPLOAD parameter is described in DALI. Services should support
 the 
 upload of temporary tables in VOTable \citep{std:VOTable} format via the standard 
 UPLOAD 
-parameter. The table-name(s) must be legal ADQL table names as defined in 
-\citet{std:ADQL} but restricted as described in section~\ref{sec:tap-schema}. 
+parameter. The table-name(s) must be legal table names as defined in 
+ADQL \citep{std:ADQL} but restricted as described in section~\ref{sec:tap-schema}. 
 URIs may be simple URLs (e.g. with a URI scheme of http or https) or 
 URIs that must be resolved (e.g. with a URI scheme of vos or param) to give 
 the location of the table content.
@@ -842,7 +844,7 @@ on the query language (section~\ref{sec:LANG}) being used.
 
 There are several approaches to getting metadata for a given TAP service. All 
 TAP services must support a set of tables in a schema named 
-\tapschema{} that describe the tables and columns included in the 
+\tapschema\ that describe the tables and columns included in the 
 service. In addition to the \tapschema, there are two other ways 
 to get metadata from a TAP service. First, the VOSI tables resource provides 
 metadata on all tables and columns; this resource is described in 
