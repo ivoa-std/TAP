@@ -140,7 +140,7 @@ UWS 1.1 can significantly streamline the communication, and
 implementors of TAP 1.1 are encouraged to support UWS 1.1 or later.
 
 \item[ADQL \citep{2008ivoa.spec.1030O}] A standards-compliant TAP
-services must support queries written in the Astronomical Data Query
+service must support queries written in the Astronomical Data Query
 Language.
 
 \item[VOSI \citep{std:VOSI11}] The VO Support Interfaces standard
@@ -152,7 +152,7 @@ implementors of TAP 1.1 are encouraged to support VOSI 1.1 or later.
 
 \item[VOTable \citep{2013ivoa.spec.0920O}] All TAP services must be able
 to serve query results in the VOTable format. Note that while TAP 1.1 does not
-require the use of any particular minor version of the VOtable standard, older 
+require the use of any particular minor version of the VOTable standard, older 
 versions are missing features that are required and may be unusable in practice.
 For example, the overflow reporting and xtype attribute were introduced in 
 VOTable 1.2 so that is the minimum viable version that must be used.
@@ -178,14 +178,14 @@ TAP is used to access compliant metadata collections.
 
 \item[TAPRegExt \citep{2012ivoa.spec.0827D}] While there is no formal
 requirement to that effect, the response on a TAP service's capabilities
-endpoint should contain instances \xmlel{tr:TableAccess}-typed
+endpoint should contain instances of \xmlel{tr:TableAccess}-typed
 capabilities in order to allow clients to discover several important
 aspects of a TAP service's capabilities (e.g., resource limits, output
 formats, user defined functions).
 
 \item[UWSRegExt (prototype)] While there is no formal
 requirement to that effect, the response on a TAP service's capabilities
-endpoint should contain instances \xmlel{uws:Async}-typed and
+endpoint should contain instances of \xmlel{uws:Async}-typed and
 \xmlel{uws:Sync}-typed interfaces in order to allow clients to discover 
 interfaces that support different authentication mechanisms via alternate
 resources within the service.
@@ -243,8 +243,8 @@ columns. It is also possible that the service registration (in an IVOA Registry)
 may include sufficient table metadata to enable queries to be written directly.
 
 \subsubsection{Other Query Languages}
-A TAP service implementor must be able to include support for other query languages, such
-pass-through of native SQL directly to an underlying DBMS or simple key-vale 
+A TAP service implementor must be able to include support for other query languages, such as
+pass-through of native SQL directly to an underlying DBMS or simple key-value 
 (parameter-based) constraints, without making their service non-compliant with the specification. The service interface must allow for 
 this and the service capabilities must be able to describe it. This mechanism 
 also allows future developments within and outside the IVOA to be used without 
@@ -319,7 +319,7 @@ clients must not depend on a specific representation of the root web-resource.
 \subsection{\{sync\}}
 \label{sec:tap-sync}
 
-A TAP service must provide one or more web resources that represents the results 
+A TAP service must provide one or more web resources that represent the results 
 of synchronous query execution. The {sync} resources must conform to the general rules for
 DALI-sync  resources. The exact form of the query, and hence the 
 representation of the resource, is defined by the  query parameters as listed in 
@@ -1070,7 +1070,7 @@ TAP_SCHEMA.columns.table_name -> TAP_SCHEMA.tables.table_name
 TAP_SCHEMA.keys.from_table -> TAP_SCHEMA.tables.table_name
 TAP_SCHEMA.keys.target_table -> TAP_SCHEMA.tables.table_name
 TAP_SCHEMA.key_columns.from_column -> TAP_SCHEMA.columns.column_name
-TAP_SCHEMA.key_columns.target_column -> TAP_SCHEMA.colums.column_name
+TAP_SCHEMA.key_columns.target_column -> TAP_SCHEMA.columns.column_name
 TAP_SCHEMA.key_columns.key_id -> TAP_SCHEMA.keys.key_id
 \end{verbatim}
 
