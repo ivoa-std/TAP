@@ -22,6 +22,7 @@
 
 \editor{Patrick Dowler}
 
+\previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{PR-TAP-1.1-20180416}
 \previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{PR-TAP-1.1-20170830}
 \previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{WD-TAP-1.1-20170707}
 \previousversion[http://www.ivoa.net/Documents/TAP/20160428/]{WD-TAP-1.1-20160428}
@@ -183,19 +184,16 @@ capabilities in order to allow clients to discover several important
 aspects of a TAP service's capabilities (e.g., resource limits, output
 formats, user defined functions).
 
-\item[UWSRegExt (prototype)] While there is no formal
-requirement to that effect, the response on a TAP service's capabilities
-endpoint should contain instances of \xmlel{uws:Async}-typed and
-\xmlel{uws:Sync}-typed interfaces in order to allow clients to discover 
-interfaces that support different authentication mechanisms via alternate
-resources within the service.
-
 \item[CDP \citep{std:CDP}] TAP services that support authenticated requests may require 
 delegation of user credentials in order for some features to work; such services
 will have an associated credential service and could use delegated credentials for 
 remote calls that require authentication. For example, a URL specified in the UPLOAD
 parameter may require authentication and the service would use delegated credentials
 to perform the retrieval.
+
+\item[UWSRegExt \citep{note:UWSRegExt}] TAP services that support authenticated access may provide additional endpoints (under the base URL) that process authenticated requests. This allows clients to discover the appropriate endpoint (one that is usable with current credentials). VOSI-capabilities 
+does not provide a way to completely describe this; UWSRegExt describes a usable mechanism that 
+can be used until a standard is developed.
 \end{description}
 
 \subsection{Motivating Use Cases}
@@ -423,23 +421,22 @@ ivo://ivoa.net/std/TAP
 For TAP-1.1 we use the same standardID but the version attribute of the capability should
 use the minor version (e.g. version=``1.1'').
 
-In TAP, the base URL is described with a single standard identifier and the mandatory
-child resources have specific names (section~\ref{sec:resources}). One or more DALI-async 
-and DALI-sync interfaces to the query capability may be described using the prototype UWS 
-registry extension (UWSRegExt). This allows service 
-providers to describe multiple resources (interfaces) that 
-deliver the query features (e.g. with different protocols or authentication methods) in 
-the VOSI-capabilities resource.
+A TAP service consists of a related set of resource types, as listed above (section~\ref{sec:resources} : TAP-sync, TAP-async, VOSI-capabilities, VOSI-availability, and optionally VOSI-tables and DALI-examples. In some cases a client needs to identify a related "bundle" of endpoints providing one each of some or all of these resources in order to orchestrate its interaction with the TAP service. In TAP 1.0, this identification was straightforward, since only one instance of each resource type existed, and these were present at fixed locations relative to the TAP service base URL. In TAP 1.1, the capabilities document may declare multiple variants for some or all of these resource types, for instance to support different authentication contexts, and identifying the related bundle of endpoints that should be used given particular authentication requirements is therefore no longer trivial. 
 
-The use of the VOSI-capabilities resource is described in DALI.
-
-For example, the returned capabilities document for a service supporting TAP 
-might look as follows:
+For example, the returned capabilities document for a service supporting TAP and using the prototype UWSRegExt \citep{note:UWSRegExt} extension might look as follows:
 
 \lstinputlisting[language=XML,basicstyle=\footnotesize]
   {sample-capability.xml}
 
-The first interface with type vs:ParamHTTP gives the base URL; this is expected to be 
+Clients are free to combine the declared interfaces in any way they see fit, but the recommended way to interpret a TAP capabilities document as a list of TAP endpoint bundles is as follows:
+\begin{itemize}
+\item There is one default bundle, corresponding to the TAP 1.0 endpoints. If the service allows unauthenticated access at all, it should usually be provided by this default bundle.
+\item There may also be one or more authenticated bundles. Each distinct security method declared on an interface in the capabilities document (value of an interface/securityMethod/@standardId XPath) defines one authenticated bundle. Each endpoint sharing the same security method is in the same bundle; if no endpoint is declared with that security method, the corresponding default endpoint is used. 
+\end{itemize}
+
+The example above therefore defines the default bundle and two authenticated bundles, defined by the security methods \verb|ivo://ivoa.net/sso#BasicAA| and \verb|ivo://ivoa.net/sso#tls-with-certificate| respectively. Each of these authenticated bundles explicitly declares its TAP-sync, TAP-async and VOSI-tables endpoints, and implicitly uses the default endpoints for VOSI-capabilities and VOSI-availability.
+
+The base URL is given by the interface with type vs:ParamHTTP; this is expected to be 
 included in registry records and support finding TAP services in a simple and backwards 
 compatible manner. The subsequent interface elements describe combinations of access URL
 and security method(s) that can be used by clients to make authenticated calls. They also 
@@ -584,7 +581,7 @@ the previous STC-S convention may be supported for backwards compatibility. Inpu
 all values must be supported (e.g. selecting all columns from an uploaded table) for all types 
 even if comparisons are not supported.
 
-Note: Although it is allowed by the ADQL syntax (version 2.0 at least), clients should be careful when 
+Note: Although it is allowed by the ADQL-2.0 syntax, clients should be careful when 
 mixing constants and column references for coordinate system and coordinate 
 values. For example, POINT('ICRS', t.ra, t.dec) does not cause t.ra and t.dec to 
 be transformed to ICRS; it simply tells the service to treat the values  as 
@@ -623,7 +620,7 @@ some\_table) to extract and examine the VOTable metadata (assuming
 FORMAT=votable). Note: in this version of TAP, this is the only mechanism to 
 learn some of the detailed metadata, such as coordinate systems used.
 
-The output truncation caused by the MAXREC parameter occurs after any 
+The output truncation caused by non-zero values the MAXREC parameter occurs after any 
 limitations imposed by the query and the overflow indicator is only added if 
 the query result is actually truncated. For example:
 
@@ -1348,6 +1345,10 @@ descriptions without breaking RDFa semantics.
 \appendix
 
 \section{Changes from Previous Versions}
+
+\subsection{PR-TAP-1.1-20180830}
+
+Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities.
 
 \subsection{PR-TAP-1.1-20180416}
 
