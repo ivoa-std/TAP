@@ -83,6 +83,8 @@ applications.
 
 
 \section{Introduction}
+\label{sec:Introduction}
+
 The Table Access Protocol (TAP) is a web-service protocol that gives access to 
 collections of tabular data referred to collectively as a tableset.  TAP 
 services accept queries posed against the tableset available via the service and 
@@ -108,6 +110,7 @@ cross match are also possible, but require combining the results of multiple TAP
 services.
 
 \subsection{Role within the VO Architecture}
+\label{sec:Role}
 
 NOTE: not in TAP-1.0
 
@@ -228,6 +231,8 @@ models that are (partially or fully) implemented by the service. Services must
 be able to declare their support for data models as well as the way that model 
 elements are mapped to tables and columns.
 
+\subsection{Query Languages}
+
 \subsubsection{ADQL Queries}
 The Astronomical Data Query Language ADQL \citep{std:ADQL} is the standard 
 query language for the IVOA. Support for ADQL queries is mandatory. ADQL can be 
@@ -247,6 +252,8 @@ pass-through of native SQL directly to an underlying DBMS or simple key-value
 this and the service capabilities must be able to describe it. This mechanism 
 also allows future developments within and outside the IVOA to be used without 
 revising the TAP specification.
+
+\subsection{Query Execution}
 
 \subsubsection{Asynchronous Queries}
 Asynchronous queries allow for long running queries to complete without 
@@ -505,7 +512,7 @@ descriptions).  As discussed in DALI 1.1, sect.~2.3, this would result
 in invalid RDF statements.
 
 An example of a response from a TAP service's examples endpoint is given
-in section~\ref{sect:example-example}.
+in section~\ref{sec:example-example}.
 
 \subsection{Parameters}
 \label{sec:parameters}
@@ -1236,6 +1243,7 @@ In general, clients should fully specify the query job parameters and then
 check and possibly negotiate the UWS job control parameters.
 
 \subsubsection{Running a Query}
+\label{sec:example-RunningQuery}
 The phase URL shows the progress of the job. When the job is created by the 
 service it will normally be set to PENDING, but might be set to ERROR if the 
 service has rejected the job. If the phase is ERROR, then the error URL should 
@@ -1331,7 +1339,7 @@ As described in DALI, clients must be prepared to follow such
 redirects to obtain the result.
 
 \subsection{Example: DALI-examples Document}
-\label{sect:example-example}
+\label{sec:example-example}
 
 The following is a full document a service might serve from its
 \verb|/examples| endpoint; note that you can add arbitrary styling or
@@ -1348,43 +1356,43 @@ descriptions without breaking RDFa semantics.
 
 \subsection{General Improvements and Clarifications}
 
-Added updated IVOA architecture diagram showing role of TAP.
+Added updated IVOA architecture diagram showing role of TAP  (\ref{sec:Role}). 
 
 Clarified dependency on minor versions of related standards with some recommendations on
-using newer versions.
+using newer versions (\ref{sec:Role}).
 
 Removed text that duplicates material from DALI. 
 
 Rewrite the introduction with some basic use cases to help define 
-the scope and tell readers what TAP is supposed to accomplish.
+the scope and tell readers what TAP is supposed to accomplish (\ref{sec:Introduction}).
 
-Made presence of a TABLE element on VOTable output only required for 
-successful queries.
+% Made presence of a TABLE element on VOTable output only required for 
+% successful queries.
 
 \subsection{New Features (including changes from related specifications}
 
-Added example use of UWS-1.1 blocking requests.
+Added example use of UWS-1.1 blocking requests (\ref{sec:example-RunningQuery}). 
 
-Added an example for \verb|examples|.
+Added an example for \verb|examples| (\ref{sec:example-example}).
 
 \subsection{Removed specifications}
 
 Removed remaining uses and examples of PQL; replaced one example with something more clearly non-standard.
 
-Removed REQUEST and VERSION parameters from interface. Removed obsolete REQUEST=doQuery from examples.
+Removed REQUEST and VERSION parameters from interface. Removed obsolete REQUEST=doQuery from examples (\ref{sec:parameters}).
 
 \subsection{ADQL Clarifications}
 
 Clarified that the QUERY param is intended for use with other values of LANG and is not
-reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value.
+reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value. (\ref{sec:QUERY})
 
 Clarified required and optional ADQL geometric functions.
 Changed language about mandatory ADQL geometry function support back to optional (should in
-the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
+the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries. (\ref{sec:QUERY})
 
 Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
 indicator and that MAXREC always overrides limitations in the query (e.g. 
-TOP in an ADQL query).
+TOP in an ADQL query). (\ref{sec:MAXREC})
 
 Removed language that somehow defined or restricted usage of ADQL constructs in
 favour of just referring to the AQDL spec. Clarified use of serialisation
@@ -1392,49 +1400,56 @@ rules for extended types defined in DALI.
 
 \subsection{Datatype mapping}
 
-Added arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
+Added arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype (\ref{sec:tap-schema-columns}).
+Recommend use of VOTableType in VOSI-tables output (\ref{sec:vosi-tables}). 
 
 \subsection{TAP\_SCHEMA Changes}
 
-Added schema\_index, table\_index and column\_index to \tapschema.
+Added schema\_index, table\_index and column\_index to \tapschema (\ref{sec:tap-schema}).
 
-Changed the principal, indexed, and std columns in \tapschema.columns to boolean since we
-now use the VOTabletype system.
+% Changed the principal, indexed, and std columns in \tapschema.columns to boolean since we
+% now use the VOTabletype system.
 
-Added paragraph specifying allowed values for \tapschema.tables.table\_type.
+Added paragraph specifying allowed values for \tapschema.tables.table\_type\ (\ref{sec:tap-schema-tables}).
 
 Removed explicit datatype/arraysize/xtype from \tapschema{} description
 in favour of string and integer. Specified which integers are actually
 booleans (0 or 1). Added list of foreign keys for \tapschema{}
 relational model. Clarified use of quoted identifiers for column names in 
-\tapschema. Added schema\_index column.
+\tapschema. 
+% Added schema\_index column.
 Clarified ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column).
+(\ref{sec:tap-schema-columns})
 
 Added advice that the ``size'' column \tapschema.columns must always be used 
 as a quoted identifier because it is a reserved word in many RDBMS 
 servers. Note: ``size'' is now deprecated (will be removed in the next major version).
+(\ref{sec:tap-schema-columns})
 
 Improved guidance for allowed table names for UPLOAD, clarified that 
 multiple UPLOAD parameters accumulate. Clarified that services 
 must support quoted identifiers. Advise that services should assign unique 
 column names in cases where they generate the name.
+(\ref{sec:UPLOAD})
 
-Clarified that services are not required to support queries that reference tables 
-in different schema. This is primarily to allow the \tapschema{} to be implemented 
-in a different server from the content.
+% Clarified that services are not required to support queries that reference tables 
+% in different schema. This is primarily to allow the \tapschema{} to be implemented 
+% in a different server from the content.
 
 \subsection{VOSI/UWS related changes}
 
-Made use of prototype UWSREgExt to tag interfaces values for the async and sync resources. This allows
+Made use of prototype UWSRegExt to tag interfaces values for the async and sync resources. This allows
 services to provide alternate resources for authenticated queries (using differnet securityMethod(s) within 
-each interface). Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities.
+each interface). (\ref{sec:vosi-capabilities})
+Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities. (\ref{sec:Role})
 
 Added details and VOSI-capabilities example for providing multiple resources with different 
-authentication requirements. Clarified that VOSI-availability is no longer restricted to a
-specific name or location.
+authentication requirements (\ref{sec:vosi-capabilities}).
+Clarified that VOSI-availability is no longer restricted to a
+specific name or location (\ref{sec:resources}).
 
 Added explicit reference to VOSI-tables. Updates capabilities example to describe a
-tables-1.1 capability.
+tables-1.1 capability (\ref{sec:resources}).
 
 \section{Detailed Changes from Previous Versions}
 
