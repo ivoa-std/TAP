@@ -30,7 +30,7 @@
 
 
 \iftth
-\newcommand{\tapschema}{TAP\_SCHEMA}
+\newcommand{\tapschema}{TAP\_SCHE\-MA}
 \hyphenation{TAP\_SCHEMA}
 \hyphenation{\tapschema}
 \newcommand{\tapupload}{TAP\_UPLOAD}
@@ -91,7 +91,7 @@ services accept queries posed against the tableset available via the service and
 return the query response as another table, in accord with the relational model. 
  Queries may be submitted using various query languages and may execute 
 synchronously or asynchronously. Support for the Astronomical Data Query 
-Language ADQL \citep{std:ADQL} is mandatory; support for other query languages is 
+Language ADQL \citep{2008ivoa.spec.1030O} is mandatory; support for other query languages is 
 supported 
 but optional.
 
@@ -147,7 +147,7 @@ implementors of TAP 1.1 are encouraged to support UWS 1.1 or later.
 service must support queries written in the Astronomical Data Query
 Language.
 
-\item[VOSI \citep{std:VOSI11}] The VO Support Interfaces standard
+\item[VOSI \citep{2017ivoa.spec.0524G}] The VO Support Interfaces standard
 defines endpoints for metadata discovery; for TAP, this is the tables,
 capabilities, and availability endpoints. Note that while TAP 1.1 does not
 require the use of any particular minor version of the VOSI standard, 
@@ -166,7 +166,7 @@ VOTable 1.2 so that is the minimum viable version that must be used.
 TAP is related in other ways to the following IVOA standards:
 
 \begin{description}
-\item[DALI \citep{std:DALI11}]  The Data Access Layer Interface standard
+\item[DALI \citep{2017ivoa.spec.0517D}]  The Data Access Layer Interface standard
 gives general rules for the construction of DAL standards.  TAP has been
 written against version 1.1 of DALI.  In particular, TAP directly
 references DALI 1.1's serialisation rules for geometries and timestamps
@@ -187,7 +187,7 @@ capabilities in order to allow clients to discover several important
 aspects of a TAP service's capabilities (e.g., resource limits, output
 formats, user defined functions).
 
-\item[CDP \citep{std:CDP}] TAP services that support authenticated requests may require 
+\item[CDP \citep{2010ivoa.spec.0218P}] TAP services that support authenticated requests may require 
 delegation of user credentials in order for some features to work; such services
 will have an associated credential service and could use delegated credentials for 
 remote calls that require authentication. For example, a URL specified in the UPLOAD
@@ -234,7 +234,7 @@ elements are mapped to tables and columns.
 \subsection{Query Languages}
 
 \subsubsection{ADQL Queries}
-The Astronomical Data Query Language ADQL \citep{std:ADQL} is the standard 
+The Astronomical Data Query Language ADQL \citep{2008ivoa.spec.1030O} is the standard 
 query language for the IVOA. Support for ADQL queries is mandatory. ADQL can be 
 used to specify queries  that access one or more tables provided by the TAP 
 service, including the standard metadata tables. In general, the client must 
@@ -303,7 +303,7 @@ DALI-examples & service specific & may (alternate authentication method) \\
 At least one set of {sync} and {async} resources must be named /sync and 
 /async respectively for backwards compatibility with TAP-1.0 (which required 
 these names). Other  {sync} and {async} resources may have service specific names. 
-As required by DALI \citep{std:DALI11}, all resources except the VOSI-availability must 
+As required by DALI \citep{2017ivoa.spec.0517D}, all resources except the VOSI-availability must 
 be siblings of the VOSI-capabilities resource. 
 
 The fixed name resources above (async, sync, tables) should be used for the 
@@ -348,7 +348,7 @@ HTTP POST.
 A TAP service must provide one or more web resource representing controls for 
 asynchronous queries. Specifically, the web resource must conform to the general rules
 for DALI-async resources and thus represent a job-list 
-as specified in UWS \citep{std:UWS}.
+as specified in UWS \citep{2016ivoa.spec.1024H}.
 
 The child web resources of the /async resource are as specified by UWS. These 
 are descendants of the /async web-resource, and they include a web resource that 
@@ -426,9 +426,9 @@ ivo://ivoa.net/std/TAP
 \end{verbatim}
 
 For TAP-1.1 we use the same standardID but the version attribute of the capability should
-use the minor version (e.g. version=``1.1'').
+use the minor version (e.g. \verb|version="1.1"|).
 
-A TAP service consists of a related set of resource types, as listed above (section~\ref{sec:resources} : TAP-sync, TAP-async, VOSI-capabilities, VOSI-availability, and optionally VOSI-tables and DALI-examples. In some cases a client needs to identify a related "bundle" of endpoints providing one each of some or all of these resources in order to orchestrate its interaction with the TAP service. In TAP 1.0, this identification was straightforward, since only one instance of each resource type existed, and these were present at fixed locations relative to the TAP service base URL. In TAP 1.1, the capabilities document may declare multiple variants for some or all of these resource types, for instance to support different authentication contexts, and identifying the related bundle of endpoints that should be used given particular authentication requirements is therefore no longer trivial. 
+A TAP service consists of a related set of resource types, as listed above (section~\ref{sec:resources} : TAP-sync, TAP-async, VOSI-capabilities, VOSI-availability, and optionally VOSI-tables and DALI-examples. In some cases a client needs to identify a related ``bundle'' of endpoints providing one each of some or all of these resources in order to orchestrate its interaction with the TAP service. In TAP 1.0, this identification was straightforward, since only one instance of each resource type existed, and these were present at fixed locations relative to the TAP service base URL. In TAP 1.1, the capabilities document may declare multiple variants for some or all of these resource types, for instance to support different authentication contexts, and identifying the related bundle of endpoints that should be used given particular authentication requirements is therefore no longer trivial. 
 
 For example, the returned capabilities document for a service supporting TAP and using the prototype UWSRegExt \citep{note:UWSRegExt} extension might look as follows:
 
@@ -456,7 +456,7 @@ registry queries and should include all relevant UWS-typed interfaces for direct
 The service capabilities must be accessible from a web resource with relative 
 URL /capabilities that is a direct child of the root web resource. The 
 /capabilities resource must be accessible via the http GET method. The content 
-is described by VOSI \citep{std:VOSI11}.
+is described by VOSI \citep{2017ivoa.spec.0524G}.
 
 \subsection{/tables}
 \label{sec:vosi-tables}
@@ -624,7 +624,7 @@ least one row satisfying the query. The service may perform validation and may
 try to execute the query, in which case a MAXREC=0 request can fail. A query 
 with MAXREC=0 can be used with a simple query (e.g. SELECT * FROM  
 some\_table) to extract and examine the VOTable metadata (assuming 
-FORMAT=votable). Note: in this version of TAP, this is the only mechanism to 
+RESPONSEFORMAT=votable). Note: in this version of TAP, this is the only mechanism to 
 learn some of the detailed metadata, such as coordinate systems used.
 
 The output truncation caused by non-zero values of the MAXREC parameter occurs after any 
@@ -650,10 +650,10 @@ The RUNID parameter is fully described in DALI.
 
 The UPLOAD parameter is described in DALI. Services should support 
 the 
-upload of temporary tables in VOTable \citep{std:VOTable} format via the standard 
+upload of temporary tables in VOTable \citep{2013ivoa.spec.0920O} format via the standard 
 UPLOAD 
 parameter. The table-name(s) must be legal table names as defined in 
-ADQL \citep{std:ADQL} but restricted as described in section~\ref{sec:tap-schema}. 
+ADQL \citep{2008ivoa.spec.1030O} but restricted as described in section~\ref{sec:tap-schema}. 
 URIs may be simple URLs (e.g. with a URI scheme of http or https) or 
 URIs that must be resolved (e.g. with a URI scheme of vos or param) to give 
 the location of the table content.
@@ -713,7 +713,7 @@ in queries.
 \section{Use of VOTable}
 \label{sec:votable}
 
-VOTable \citep{std:VOTable} is the standard format for output (query 
+VOTable \citep{2013ivoa.spec.0920O} is the standard format for output (query 
 results) and input (table upload) in a TAP service so most of this section 
 deals with how VOTable is used. However, rules about serialising column values 
 also apply to other formats (e.g. CSV and TSV).
@@ -745,7 +745,7 @@ self-document the query response), but clients should not depend on these.
 
 The result of a query depends on the query language used and may be one or more 
 tables in one or more resources. Unsupportable combinations of query result and 
-FORMAT (e.g. queries that produce multiple tables and an inherently 
+RESPONSEFORMAT (e.g. queries that produce multiple tables and an inherently 
 single-table format like CSV) will cause the request to fail. Currently, an ADQL 
 query result must be a single table (in a single file).
 
@@ -784,10 +784,13 @@ If the service detects an exceptional condition, it must return an error
 document with an appropriate HTTP-status code. TAP distinguishes three classes 
 of exceptions.
 
-Errors in the use of the HTTP protocol. 
+\begin{itemize}
+\item Errors in the use of the HTTP protocol. 
 
-Errors in the use of the TAP protocol, including both invalid requests and 
-failure of the service to complete valid requests. 
+\item TAP-level errors: Invalid TAP requests
+
+\item TAP-level errors: Failure of the service to complete a valid request.
+\end{itemize}
 
 Error documents for HTTP-level errors are not specified in the TAP protocol. 
 Responses to these errors are typically generated by service containers and 
@@ -814,7 +817,7 @@ request) and various 4xx and 5xx values.
 If a query is executed by a TAP service, the number of rows in the table of 
 results may exceed a limit requested by the user (using the MAXREC parameter) 
 or a limit set by the service implementation (the default or maximum value of 
-MAXREC). In these cases, the query is said to have 'overflowed'. Typically, a 
+MAXREC). In these cases, the query is said to have ``overflowed''. Typically, a 
 TAP service will not detect an overflow until some part of the table of results 
 has been sent to the client.
 
@@ -829,15 +832,16 @@ Reporting of overflow depends on the output format and is described in DALI.
 \subsection{Mapping Table Datatypes}
 \label{sec:vot-rdbms}
 
-This section describes the bi-directional mapping between VOTable and RDBMS + 
-geometric datatypes and extends the basic rules for serialising such values in 
+This section describes the bi-directional mapping between VOTable on the
+one and the RDBMS (including its 
+geometric datatypes) on the other side.  It extends the basic rules for serialising such values in 
 VOTable described in DALI. These rules apply to input tables 
 supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) and to result tables after successful 
 query execution.
 
 The mapping to and from VOTable makes use of the datatype, arraysize, and xtype 
 attributes. Mapping for primitive types (numbers and strings) is 
-straightforward; services should insure that input values behave as 
+straightforward; services should ensure that input values behave as 
 expected in query processing and output values should have correct and complete 
 metadata. Mapping for specially structured values use xtype(s) specified
 in DALI. The behaviour of such structured values in queries depends 
@@ -852,11 +856,11 @@ TAP services must support a set of tables in a schema named
 service. In addition to the \tapschema, there are two other ways 
 to get metadata from a TAP service. First, the VOSI tables resource provides 
 metadata on all tables and columns; this resource is described in 
-(section~\ref{sec:vosi-tables}). The 
+section~\ref{sec:vosi-tables}. The 
 VOSI tables resource provides the same metadata as the \tapschema{}
 but in a rigorously controlled format; the information in the 
-\tapschema{} is equivalent to that defined by the  VODataService 
-\citep{std:VODS11}. Second, the client may specify a query of one or more 
+\tapschema{} is equivalent to that defined by VODataService 
+\citep{2010ivoa.spec.1202P}. Second, the client may specify a query of one or more 
 tables setting the 
 MAXREC parameter to 0 so that only the metadata regarding the requested fields 
 is returned. Use of MAXREC is described in section~\ref{sec:MAXREC}.
@@ -874,11 +878,11 @@ Column datatypes in the \tapschema{} are specified using the same concepts used 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
 must also include the \verb|"size"| column and populate it where possible. 
 Implementors should use arraysize values
-that best describe their implementation of the \tapschema{} tables (e.g. arraysize 64* to describe
-a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g. short or long instead of int or unicodeChar instead of char) as long as
+that best describe their implementation of the \tapschema{} tables (e.g., arraysize 64* to describe,
+a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g., short or long instead of int or unicodeChar instead of char) as long as
 query execution is consistent with the recommended types.
 
-Implementors are permitted to include additional tables in the 
+Implementors may include additional tables in the 
 \tapschema{} to describe additional aspects of their service not 
 covered by this specification. Implementors may also include additional columns 
 in the standard tables described below. For example, one could include a column 
@@ -972,9 +976,9 @@ The table\_name,column\_name (pair) values must be unique. If the column name is
 the name must be quoted (quoted identifier in ADQL) then the value must include the quotes.
 
 The type of a database column is described in the \tapschema.columns
-table using three (3) columns with an additional (deprecated) column from TAP-1.0 
+table using three columns with an additional (deprecated) column from TAP-1.0 
 for backwards compatibility. The allowed values for datatype and the syntax for arraysize
-are specified in VOTable \citep{std:VOTable}. Values for xtype are not restricted per se but 
+are specified in VOTable \citep{2013ivoa.spec.0920O}. Values for xtype are not restricted per se but 
 implementors should use standard values such as those defined in DALI before 
 inventing new xtype(s). 
 
@@ -1044,12 +1048,12 @@ utype & string & false \\
 \end{inlinetable}
 
 The key\_id values are unique and used only to join with the 
-\tapschema.key\_columns table below. There may be 
+key\_columns table below. There may be 
 one or more rows with different key\_id values and a pair 
 of tables to denote one or more ways to join the tables.
 
 The table \tapschema.key\_columns must contain the 
-following columns to describe the columns that make up a foreign key:
+following columns to describe the col\-umns that make up a foreign key:
 
 \begin{inlinetable}
 \begin{tabular}{l l l}
@@ -1085,7 +1089,7 @@ in the \tapschema{} namespace.
 \section{Examples}
 \label{sec:examples}
 
-The UWS pattern is specified in the UWS specification \citep{std:UWS} and its application to TAP in 
+The UWS pattern is specified in the UWS specification \citep{2016ivoa.spec.1024H} and its application to TAP in 
 section~\ref{sec:tap-async}. TAP services may implement UWS 1.0
 or a later version. 
 This section gives examples of the exchange of messages between a 
@@ -1094,8 +1098,8 @@ TAP client and service when using UWS to run an asynchronous query.
 \subsection{Example: Asynchronous Query}
 Consider a TAP service at http://example.com/tap. TAP mandates that the 
 asynchronous requests be directed to http://example.com/tap/async (e.g. for 
-anonymous queries). This URL points to the list of 'jobs'; i.e. the list of 
-queries currently or recently executed.
+anonymous queries). This URL points to the list of ``jobs'', i.e., the list of 
+queries currently executing or recently executed.
 
 \subsubsection{Creating and Executing a Simple Query}
 
@@ -1132,7 +1136,7 @@ HTTP GET http://example.com/tap/async/42/phase
 \end{verbatim}
 
 The client may have to check the phase multiple times until the job 
-finishes. If the service implements UWS 1.1 \citep{std:UWS11} or later, a blocking call
+finishes. If the service implements UWS 1.1 \citep{2016ivoa.spec.1024H} or later, a blocking call
 can be used instead of polling. Once the job reaches the COMPLETED phase, 
 the results can be obtained from the results resource:
 
@@ -1157,7 +1161,7 @@ Location: http://example.com/tap/async/42
 
 While the job is in the PENDING phase, the job parameters may be modified 
 by additional POST(s) to the parameters resource (see 
-\citet{std:DALI11}), for example:
+\citet{2017ivoa.spec.0517D}), for example:
 
 \begin{verbatim}
 HTTP POST http://example.com/tap/async/42/parameters
@@ -1324,7 +1328,7 @@ QUERY=SELECT * FROM magnitudes as m where m.r>=10 and m.r<=16
 \end{verbatim}
 
 In this example, the output format defaults to VOTable; 
-the FORMAT parameter could be added to select a different format.
+the RESPONSEFORMAT parameter could be added to select a different format.
 
 Many implementations will implement synchronous query execution using the 
 common POST-redirect-GET pattern. If this is the case, the response from the 
@@ -1356,77 +1360,91 @@ descriptions without breaking RDFa semantics.
 
 \subsection{General Improvements and Clarifications}
 
-Added updated IVOA architecture diagram showing role of TAP  (\ref{sec:Role}). 
+\begin{itemize}
 
-Clarified dependency on minor versions of related standards with some recommendations on
+\item Added updated IVOA architecture diagram showing role of TAP  (\ref{sec:Role}). 
+
+\item Clarified dependency on minor versions of related standards with some recommendations on
 using newer versions (\ref{sec:Role}).
 
-Removed text that duplicates material from DALI. 
+\item Removed text that duplicates material from DALI. 
 
-Rewrite the introduction with some basic use cases to help define 
+\item Rewrote the introduction with some basic use cases to help define 
 the scope and tell readers what TAP is supposed to accomplish (\ref{sec:Introduction}).
 
 % Made presence of a TABLE element on VOTable output only required for 
 % successful queries.
+\end{itemize}
 
 \subsection{New Features (including changes from related specifications}
 
-Added example use of UWS-1.1 blocking requests (\ref{sec:example-RunningQuery}). 
+\begin{itemize}
+\item Added example use of UWS-1.1 blocking requests (\ref{sec:example-RunningQuery}). 
 
-Added an example for \verb|examples| (\ref{sec:example-example}).
+\item Added an example for \verb|examples| (\ref{sec:example-example}).
+\end{itemize}
 
 \subsection{Removed specifications}
 
-Removed remaining uses and examples of PQL; replaced one example with something more clearly non-standard.
+\begin{itemize}
+\item Removed remaining uses and examples of PQL; replaced one example with something more clearly non-standard.
 
-Removed REQUEST and VERSION parameters from interface. Removed obsolete REQUEST=doQuery from examples (\ref{sec:parameters}).
+\item Removed REQUEST and VERSION parameters from interface. Removed obsolete REQUEST=doQuery from examples (\ref{sec:parameters}).
+\end{itemize}
 
 \subsection{ADQL Clarifications}
 
-Clarified that the QUERY param is intended for use with other values of LANG and is not
+\begin{itemize}
+\item Clarified that the QUERY param is intended for use with other values of LANG and is not
 reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value. (\ref{sec:QUERY})
 
-Clarified required and optional ADQL geometric functions.
+\item Clarified required and optional ADQL geometric functions.
 Changed language about mandatory ADQL geometry function support back to optional (should in
 the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries. (\ref{sec:QUERY})
 
-Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
+\item Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
 indicator and that MAXREC always overrides limitations in the query (e.g. 
 TOP in an ADQL query). (\ref{sec:MAXREC})
 
-Removed language that somehow defined or restricted usage of ADQL constructs in
+\item Removed language that somehow defined or restricted usage of ADQL constructs in
 favour of just referring to the AQDL spec. Clarified use of serialisation
 rules for extended types defined in DALI.
+\end{itemize}
 
 \subsection{Datatype mapping}
 
-Added arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype (\ref{sec:tap-schema-columns}).
-Recommend use of VOTableType in VOSI-tables output (\ref{sec:vosi-tables}). 
+\begin{itemize}
+\item Added arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype (\ref{sec:tap-schema-columns}).
+
+\item Recommend use of VOTableType in VOSI-tables output (\ref{sec:vosi-tables}). 
+\end{itemize}
 
 \subsection{TAP\_SCHEMA Changes}
 
-Added schema\_index, table\_index and column\_index to \tapschema (\ref{sec:tap-schema}).
+\begin{itemize}
+\item Added schema\_index, table\_index and column\_index to \tapschema (\ref{sec:tap-schema}).
 
 % Changed the principal, indexed, and std columns in \tapschema.columns to boolean since we
 % now use the VOTabletype system.
 
-Added paragraph specifying allowed values for \tapschema.tables.table\_type\ (\ref{sec:tap-schema-tables}).
+\item Added paragraph specifying allowed values for \tapschema.tables.table\_type\ (\ref{sec:tap-schema-tables}).
 
-Removed explicit datatype/arraysize/xtype from \tapschema{} description
+\item Removed explicit datatype/arraysize/xtype from \tapschema{} description
 in favour of string and integer. Specified which integers are actually
 booleans (0 or 1). Added list of foreign keys for \tapschema{}
 relational model. Clarified use of quoted identifiers for column names in 
 \tapschema. 
 % Added schema\_index column.
-Clarified ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column).
+
+\item Clarified ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column).
 (\ref{sec:tap-schema-columns})
 
-Added advice that the ``size'' column \tapschema.columns must always be used 
+\item Added advice that the ``size'' column \tapschema.columns must always be used 
 as a quoted identifier because it is a reserved word in many RDBMS 
 servers. Note: ``size'' is now deprecated (will be removed in the next major version).
 (\ref{sec:tap-schema-columns})
 
-Improved guidance for allowed table names for UPLOAD, clarified that 
+\item Improved guidance for allowed table names for UPLOAD, clarified that 
 multiple UPLOAD parameters accumulate. Clarified that services 
 must support quoted identifiers. Advise that services should assign unique 
 column names in cases where they generate the name.
@@ -1435,21 +1453,24 @@ column names in cases where they generate the name.
 % Clarified that services are not required to support queries that reference tables 
 % in different schema. This is primarily to allow the \tapschema{} to be implemented 
 % in a different server from the content.
+\end{itemize}
 
 \subsection{VOSI/UWS related changes}
 
-Made use of prototype UWSRegExt to tag interfaces values for the async and sync resources. This allows
+\begin{itemize}
+\item Made use of prototype UWSRegExt to tag interfaces values for the async and sync resources. This allows
 services to provide alternate resources for authenticated queries (using different securityMethod(s) within 
 each interface). (\ref{sec:vosi-capabilities})
 Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities. (\ref{sec:Role})
 
-Added details and VOSI-capabilities example for providing multiple resources with different 
+\item Added details and VOSI-capabilities example for providing multiple resources with different 
 authentication requirements (\ref{sec:vosi-capabilities}).
 Clarified that VOSI-availability is no longer restricted to a
 specific name or location (\ref{sec:resources}).
 
-Added explicit reference to VOSI-tables. Updates capabilities example to describe a
+\item Added explicit reference to VOSI-tables. Updates capabilities example to describe a
 tables-1.1 capability (\ref{sec:resources}).
+\end{itemize}
 
 \section{Detailed Changes from Previous Versions}
 
