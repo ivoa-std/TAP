@@ -527,7 +527,7 @@ Requirements on the presence and values of parameters described below are
 enforced only when the TAP request is executed (not when individual HTTP 
 requests are handled). Thus, for asynchronous TAP queries, the parameter 
 requirements must be satisfied (and errors returned if not) only when the query 
-is run in (in the sense of UWS job execution). Specifically, asynchronous 
+is run (in the sense of UWS job execution). Specifically, asynchronous 
 queries may be created with with no parameters and multiple, subsequent HTTP 
 POST actions may specify the parameters in any order.
 
@@ -627,7 +627,7 @@ some\_table) to extract and examine the VOTable metadata (assuming
 FORMAT=votable). Note: in this version of TAP, this is the only mechanism to 
 learn some of the detailed metadata, such as coordinate systems used.
 
-The output truncation caused by non-zero values the MAXREC parameter occurs after any 
+The output truncation caused by non-zero values of the MAXREC parameter occurs after any 
 limitations imposed by the query and the overflow indicator is only added if 
 the query result is actually truncated. For example:
 
@@ -731,7 +731,7 @@ back to the client in the query response (a useful feature for debugging or to
 self-document the query response), but clients should not depend on these. 
 
 \begin{verbatim}
-<RESOURCE type=”results”>
+<RESOURCE type="results">
 ...
 <INFO name="QUERY">
     select * from stuff.items
@@ -882,7 +882,7 @@ Implementors are permitted to include additional tables in the
 \tapschema{} to describe additional aspects of their service not 
 covered by this specification. Implementors may also include additional columns 
 in the standard tables described below. For example, one could include a column 
-with a timestamp saying when metadata values were was last modified.
+with a timestamp saying when metadata values were last modified.
 
 \subsection{Schemas}
 \label{sec:tap-schema-schemas}
@@ -1439,7 +1439,7 @@ column names in cases where they generate the name.
 \subsection{VOSI/UWS related changes}
 
 Made use of prototype UWSRegExt to tag interfaces values for the async and sync resources. This allows
-services to provide alternate resources for authenticated queries (using differnet securityMethod(s) within 
+services to provide alternate resources for authenticated queries (using different securityMethod(s) within 
 each interface). (\ref{sec:vosi-capabilities})
 Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities. (\ref{sec:Role})
 
@@ -1483,7 +1483,7 @@ Fixed numerous typos and gramnmatical errors.
 
 Removed obsolete REQUEST=doQuery from examples.
 
-Added explicit reference to VOSI-tables. Updates capabilitioes example to describe a
+Added explicit reference to VOSI-tables. Updated capabilities example to describe a
 tables-1.1 capability.
 
 Clarified dependency on minor versions of related standards with some recommendations on
@@ -1498,7 +1498,7 @@ reserved for ADQL only. Removed text concerning the case sensitivity of QUERY va
 
 Removed remaining uses of PQL; replaced one example with something more clearly non-standard.
 
-Removed restriction from previous WD that the ``size'' column must be null for variable length arrays. In fact, ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column.
+Removed restriction from previous WD that the ``size'' column must be null for variable length arrays. In fact, ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column).
 
 Changed language about mandatory ADQL geometry function support back to optional (should in
 the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
