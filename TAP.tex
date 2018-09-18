@@ -283,14 +283,13 @@ under the base URL.
 \sptablerule
 \textbf{resource type} & \textbf{resource name} & \textbf{required} \\
 \sptablerule
-{sync} & /sync & must \\
-{async} & /async & must \\
-{sync} & service specific & may (alternate authentication method) \\
-{async} & service specific & may (alternate authentication method) \\
+TAP-sync & /sync & must \\
+TAP-async & /async & must \\
+TAP-sync & service specific & may (alternate authentication method) \\
+TAP-async & service specific & may (alternate authentication method) \\
 VOSI-availability & service specific & must (should be anonymous) \\
 VOSI-availability & service specific & may (alternate authentication method) \\
-VOSI-capabilities & /capabilities & must (should be anonymous) \\
-VOSI-capabilities & service specific & may (alternate authentication method) \\
+VOSI-capabilities & /capabilities & must (must be anonymous) \\
 VOSI-tables & /tables & should \\
 VOSI-tables & service specific & may (alternate authentication method) \\
 DALI-examples & /examples & should \\
@@ -321,7 +320,7 @@ response to requests for the root web-resource. One possible representation is
 an HTML page describing the scientific usage and content of the service. TAP 
 clients must not depend on a specific representation of the root web-resource.
 
-\subsection{\{sync\}}
+\subsection{TAP-sync}
 \label{sec:tap-sync}
 
 A TAP service must provide one or more web resources that represent the results 
@@ -342,7 +341,7 @@ client and the service, and the service may also maintain its own cache. Clients
 which require an up-to-date representation of volatile data or metadata must use 
 HTTP POST.
 
-\subsection{\{async\}}
+\subsection{TAP-async}
 \label{sec:tap-async}
 
 A TAP service must provide one or more web resource representing controls for 
@@ -412,12 +411,12 @@ If the query returned no rows, the result resource must exist and contain no
 data rows. Details on interacting with these resources are specified in the UWS 
 standard; for examples specific to TAP see section~\ref{sec:examples} below.
 
-\subsection{availability}
+\subsection{VOSI-availability}
 \label{sec:vosi-availability}
 
 The use of the VOSI-availability resource is described in DALI.
 
-\subsection{/capabilities}
+\subsection{VOSI-capabilities}
 \label{sec:vosi-capabilities}
 
 The TAP-1.0 standard is identified using 
@@ -425,12 +424,12 @@ The TAP-1.0 standard is identified using
 ivo://ivoa.net/std/TAP
 \end{verbatim}
 
-For TAP-1.1 we use the same standardID but the version attribute of the capability should
+For TAP-1.1 we use the same standardID but the version attribute of the interfaces should
 use the minor version (e.g. \verb|version="1.1"|).
 
 A TAP service consists of a related set of resource types, as listed above (section~\ref{sec:resources} : TAP-sync, TAP-async, VOSI-capabilities, VOSI-availability, and optionally VOSI-tables and DALI-examples. In some cases a client needs to identify a related ``bundle'' of endpoints providing one each of some or all of these resources in order to orchestrate its interaction with the TAP service. In TAP 1.0, this identification was straightforward, since only one instance of each resource type existed, and these were present at fixed locations relative to the TAP service base URL. In TAP 1.1, the capabilities document may declare multiple variants for some or all of these resource types, for instance to support different authentication contexts, and identifying the related bundle of endpoints that should be used given particular authentication requirements is therefore no longer trivial. 
 
-For example, the returned capabilities document for a service supporting TAP and using the prototype UWSRegExt \citep{note:UWSRegExt} extension might look as follows:
+For example, the returned capabilities document for a service supporting TAP and using the prototype UWSRegExt \citep{note:UWSRegExt} extension might look as follows. Note: this use of the extended interface types is non-normative in that the namespace and values shown here may not be the same as those recommended by a future standard; this is simply a prototype extension schema that can be used to describe alternate interfaces.
 
 \lstinputlisting[language=XML,basicstyle=\footnotesize]
   {sample-capability.xml}
@@ -443,22 +442,23 @@ Clients are free to combine the declared interfaces in any way they see fit, but
 
 The example above therefore defines the default bundle and two authenticated bundles, defined by the security methods \verb|ivo://ivoa.net/sso#BasicAA| and \verb|ivo://ivoa.net/sso#tls-with-certificate| respectively. Each of these authenticated bundles explicitly declares its TAP-sync, TAP-async and VOSI-tables endpoints, and implicitly uses the default endpoints for VOSI-capabilities and VOSI-availability.
 
-The base URL is given by the interface with type vs:ParamHTTP; this is expected to be 
-included in registry records and support finding TAP services in a simple and backwards 
+The base URL is given by the interface with type vs:ParamHTTP; this interface supports 
+finding and using TAP services in a simple and backwards 
 compatible manner. The subsequent interface elements describe combinations of access URL
 and security method(s) that can be used by clients to make authenticated calls. They also 
 use the type of the interface to specify that the particular access URL uses an async or sync 
 invocation pattern. Note that in this example the anonymous async and sync endpoints are 
 described explicitly but could also be inferred from the base service URL using the standard 
-names. Service implementors must include the base interface for backwards compatibility in
-registry queries and should include all relevant UWS-typed interfaces for direct client use.
+names. Service implementors must include the base interface in registry records and VOSI-capabilities documents
+for backwards compatibility in registry queries and must include relevant UWS-typed interfaces in the 
+VOSI-capabilities document for direct client use.
 
 The service capabilities must be accessible from a web resource with relative 
 URL /capabilities that is a direct child of the root web resource. The 
 /capabilities resource must be accessible via the http GET method. The content 
 is described by VOSI \citep{2017ivoa.spec.0524G}.
 
-\subsection{/tables}
+\subsection{VOSI-tables}
 \label{sec:vosi-tables}
 
 The table metadata should be accessible from a web resource with relative URL 
@@ -473,7 +473,7 @@ alternative.
 Services which do not implement the /tables resource must respond with an HTTP 
 response code of 404 when this resource is accessed.
 
-\subsection{/examples}
+\subsection{DALI-examples}
 \label{sec:dali-examples}
 
 A successful GET from this endpoint MUST yield a document with a MIME type of either 
@@ -653,7 +653,7 @@ the
 upload of temporary tables in VOTable \citep{2013ivoa.spec.0920O} format via the standard 
 UPLOAD 
 parameter. The table-name(s) must be legal table names as defined in 
-ADQL \citep{2008ivoa.spec.1030O} but restricted as described in section~\ref{sec:tap-schema}. 
+ADQL \citep{2008ivoa.spec.1030O} but restricted as described in section~\ref{sec:tap-schema-tables}. 
 URIs may be simple URLs (e.g. with a URI scheme of http or https) or 
 URIs that must be resolved (e.g. with a URI scheme of vos or param) to give 
 the location of the table content.
@@ -1070,17 +1070,26 @@ target\_column & string & true \\
 There may be one or more rows with a specific key\_id to 
 denote single or multi-column keys.
 
-For the \tapschema{} itself, services should enforce and list the following foreign keys:
+For the \tapschema{} itself, services should enforce and describe the following foreign keys:
 
 \begin{verbatim}
 TAP_SCHEMA.tables.schema_name -> TAP_SCHEMA.schemas.schema_name
 TAP_SCHEMA.columns.table_name -> TAP_SCHEMA.tables.table_name
 TAP_SCHEMA.keys.from_table -> TAP_SCHEMA.tables.table_name
 TAP_SCHEMA.keys.target_table -> TAP_SCHEMA.tables.table_name
-TAP_SCHEMA.key_columns.from_column -> TAP_SCHEMA.columns.column_name
-TAP_SCHEMA.key_columns.target_column -> TAP_SCHEMA.columns.column_name
 TAP_SCHEMA.key_columns.key_id -> TAP_SCHEMA.keys.key_id
 \end{verbatim}
+
+In addition, the following constraints are expected to be satisfied by the \tapschema{} model, but 
+RDBMS systems may not allow the creation of foreign key constraints because the target column(s) 
+are not unique:
+
+\begin{verbatim}
+TAP_SCHEMA.key_columns.from_column -> TAP_SCHEMA.columns.column_name
+TAP_SCHEMA.key_columns.target_column -> TAP_SCHEMA.columns.column_name
+\end{verbatim}
+
+These relations can be described in the \tapschema{} and should be enforced in the table content.
 
 A TAP service must provide the tables listed above and may provide other tables 
 in the \tapschema{} namespace.
@@ -1398,9 +1407,9 @@ the scope and tell readers what TAP is supposed to accomplish (\ref{sec:Introduc
 \item Clarified that the QUERY param is intended for use with other values of LANG and is not
 reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value. (\ref{sec:QUERY})
 
-\item Clarified required and optional ADQL geometric functions.
-Changed language about mandatory ADQL geometry function support back to optional (should in
-the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries. (\ref{sec:QUERY})
+\item Defer to other standards concerning required and optional ADQL geometric functions (ADQL specifies,
+TAPRegExt describes). 
+Clarified that DALI timestamp format support is required only in services where it can be used in queries. (\ref{sec:QUERY})
 
 \item Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
 indicator and that MAXREC always overrides limitations in the query (e.g. 
@@ -1414,7 +1423,7 @@ rules for extended types defined in DALI.
 \subsection{Datatype mapping}
 
 \begin{itemize}
-\item Added arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype (\ref{sec:tap-schema-columns}).
+\item Added arraysize and xtype to \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype (\ref{sec:tap-schema-columns}).
 
 \item Recommend use of VOTableType in VOSI-tables output (\ref{sec:vosi-tables}). 
 \end{itemize}

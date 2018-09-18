@@ -56,7 +56,7 @@ WHERE hubtyp in ('S d', 'S cd', 'S c')
     <pre class="dachs-ex-tapquery literal-block" property="query">
 SELECT accref, seeing
   FROM cars.images
-      WHERE 1=INTERSECTS(coverage, circle('ICRS', 34, -4, 2))
+      WHERE 1=INTERSECTS(coverage, circle(NULL, 34, -4, 2))
       ORDER BY seeing
     </pre>
     <p>Of course, this concerns all SIAP and SSAP tables 
