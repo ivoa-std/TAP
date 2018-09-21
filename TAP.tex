@@ -424,8 +424,10 @@ The TAP-1.0 standard is identified using
 ivo://ivoa.net/std/TAP
 \end{verbatim}
 
-For TAP-1.1 we use the same standardID but the version attribute of the interfaces should
-use the minor version (e.g. \verb|version="1.1"|).
+For TAP-1.1 we use the same standardID for the capability but the version attribute of the interfaces must
+use the minor version (e.g. \verb|version="1.1"|). Services are permitted to include interfaces with other
+values of the version attribute to describe additional alternate interfaces; omitting the version attribute 
+is equivalent to \verb|version="1.0"|. 
 
 A TAP service consists of a related set of resource types, as listed above (section~\ref{sec:resources} : TAP-sync, TAP-async, VOSI-capabilities, VOSI-availability, and optionally VOSI-tables and DALI-examples. In some cases a client needs to identify a related ``bundle'' of endpoints providing one each of some or all of these resources in order to orchestrate its interaction with the TAP service. In TAP 1.0, this identification was straightforward, since only one instance of each resource type existed, and these were present at fixed locations relative to the TAP service base URL. In TAP 1.1, the capabilities document may declare multiple variants for some or all of these resource types, for instance to support different authentication contexts, and identifying the related bundle of endpoints that should be used given particular authentication requirements is therefore no longer trivial. 
 
@@ -436,7 +438,7 @@ For example, the returned capabilities document for a service supporting TAP and
 
 Clients are free to combine the declared interfaces in any way they see fit, but the recommended way to interpret a TAP capabilities document as a list of TAP endpoint bundles is as follows:
 \begin{itemize}
-\item There is one default bundle, corresponding to the TAP 1.0 endpoints. If the service allows unauthenticated access at all, it should usually be provided by this default bundle.
+\item There is one default bundle, corresponding to the TAP 1.0 endpoints. If the service allows unauthenticated access at all, it should be provided by this default bundle.
 \item There may also be one or more authenticated bundles. Each distinct security method declared on an interface in the capabilities document (value of an interface/securityMethod/@standardId XPath) defines one authenticated bundle. Each endpoint sharing the same security method is in the same bundle; if no endpoint is declared with that security method, the corresponding default endpoint is used. 
 \end{itemize}
 
@@ -446,8 +448,8 @@ The base URL is given by the interface with type vs:ParamHTTP; this interface su
 finding and using TAP services in a simple and backwards 
 compatible manner. The subsequent interface elements describe combinations of access URL
 and security method(s) that can be used by clients to make authenticated calls. They also 
-use the type of the interface to specify that the particular access URL uses an async or sync 
-invocation pattern. Note that in this example the anonymous async and sync endpoints are 
+use the type of the interface to specify that the particular access URL is a TAP-async or TAP-sync 
+resource. Note that in this example the anonymous async and sync endpoints are 
 described explicitly but could also be inferred from the base service URL using the standard 
 names. Service implementors must include the base interface in registry records and VOSI-capabilities documents
 for backwards compatibility in registry queries and must include relevant UWS-typed interfaces in the 
@@ -876,11 +878,13 @@ them accessible by all supported query mechanisms.
 
 Column datatypes in the \tapschema{} are specified using the same concepts used in 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
-must also include the \verb|"size"| column and populate it where possible. 
-Implementors should use arraysize values
-that best describe their implementation of the \tapschema{} tables (e.g., arraysize 64* to describe,
-a column with database type varchar(64)). Implementors may also use alternate character or numeric types (e.g., short or long instead of int or unicodeChar instead of char) as long as
-query execution is consistent with the recommended types.
+must also include the \verb|"size"| column and populate it where possible. In the details
+below, \tapschema{} column types are either string or integer; implementers may chose an 
+appropriate data type that behaves the same way in queries and output (e.g. varchar(16) or
+varchar(64) for string and smallint, int, or bigint for integer.
+Implementors should use datatype and arraysize values
+that best describe their implementation of the \tapschema{} tables (e.g., datatype char 
+and arraysize 64* to describe a column with database type varchar(64)).
 
 Implementors may include additional tables in the 
 \tapschema{} to describe additional aspects of their service not 
