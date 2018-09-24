@@ -595,7 +595,7 @@ mixing constants and column references for coordinate system and coordinate
 values. For example, POINT('ICRS', t.ra, t.dec) does not cause t.ra and t.dec to 
 be transformed to ICRS; it simply tells the service to treat the values  as 
 being expressed in that coordinate system. Clients should avoid using the coordinate 
-system argument to geometric functions (use null value or use an 
+system argument to geometric functions (supply the empty string, or use an 
 alternate function without the coordinate system argument if available).
 
 \subsubsection{FORMAT and RESPONSEFORMAT}
@@ -879,7 +879,7 @@ them accessible by all supported query mechanisms.
 Column datatypes in the \tapschema{} are specified using the same concepts used in 
 VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
 must also include the \verb|"size"| column and populate it where possible. In the details
-below, \tapschema{} column types are either string or integer; implementers may chose an 
+below, \tapschema{} column types are either string or integer; implementers may choose an 
 appropriate data type that behaves the same way in queries and output (e.g. varchar(16) or
 varchar(64) for string and smallint, int, or bigint for integer.
 Implementors should use datatype and arraysize values
