@@ -977,7 +977,7 @@ column\_index & integer & false \\
 \end{inlinetable}
 
 The table\_name,column\_name (pair) values must be unique. If the column name is such that 
-the name must be quoted (quoted identifier in ADQL) then the value must include the quotes.
+the name must be quoted (delimited identifier in ADQL) then the value must include the quotes.
 
 The type of a database column is described in the \tapschema.columns
 table using three columns with an additional (deprecated) column from TAP-1.0 
@@ -1445,7 +1445,7 @@ rules for extended types defined in DALI.
 \item Removed explicit datatype/arraysize/xtype from \tapschema{} description
 in favour of string and integer. Specified which integers are actually
 booleans (0 or 1). Added list of foreign keys for \tapschema{}
-relational model. Clarified use of quoted identifiers for column names in 
+relational model. Clarified use of delimited identifiers for column names in 
 \tapschema. 
 % Added schema\_index column.
 
@@ -1453,13 +1453,13 @@ relational model. Clarified use of quoted identifiers for column names in
 (\ref{sec:tap-schema-columns})
 
 \item Added advice that the ``size'' column \tapschema.columns must always be used 
-as a quoted identifier because it is a reserved word in many RDBMS 
+as a delimited identifier because it is a reserved word in many RDBMS 
 servers. Note: ``size'' is now deprecated (will be removed in the next major version).
 (\ref{sec:tap-schema-columns})
 
 \item Improved guidance for allowed table names for UPLOAD, clarified that 
 multiple UPLOAD parameters accumulate. Clarified that services 
-must support quoted identifiers. Advise that services should assign unique 
+must support delimited identifiers. Advise that services should assign unique 
 column names in cases where they generate the name.
 (\ref{sec:UPLOAD})
 
@@ -1502,7 +1502,7 @@ rules for extended types defined in DALI.
 Removed explicit datatype/arraysize/xtype from \tapschema{} description
 in favour of string and integer. Specified which integers are actually
 booleans (0 or 1). Added list of foreign keys for \tapschema{}
-relational model. Clarified use of quoted identifiers for column names in 
+relational model. Clarified use of delimited identifiers for column names in 
 \tapschema. Added schema\_index column. Clarified when the \verb|"size"| column 
 in \tapschema\ can contain a value. Clarified that both arraysize and \verb|"size"|
 must be null for scalar numeric columns.
@@ -1564,7 +1564,7 @@ instead.
 Strongly recommend that VOSI resources allow anonymous access.
 
 Relax restrictions on column names in uploaded tables; clarify that services 
-must support quoted identifiers. Advise that services should assign unique 
+must support delimited identifiers. Advise that services should assign unique 
 column names in cases where they generate the name.
 
 \subsection{WD-TAP-1.1-20160428}
@@ -1594,7 +1594,7 @@ Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow
 indicator.
 
 Added advice that the size column \tapschema.columns must always be used 
-as a quoted identifier because it is a reserved word in many RDBMS 
+as a delimited identifier because it is a reserved word in many RDBMS 
 servers. Added arraysize column to \tapschema.columns to replace size and 
 deprecated size (which will be removed in the next major version).
  
