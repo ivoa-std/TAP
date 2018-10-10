@@ -991,8 +991,9 @@ array shape syntax. For example, a database column of type varchar(256) would be
 described with datatype ``char'' and arraysize ``256*''. Arrays, including multi-dimensional 
 arrays, are permitted for all VOTable primitive types. The \verb|"size"| column is retained for backwards
 compatibility to TAP-1.0 and must contain the integer value equivalent to arraysize when 
-possible and must be null if arraysize is null or represents a multi-dimensional array. Both arraysize 
-and \verb|"size"| must be null for scalar numeric columns.
+possible (ignoring the variable-size indicator in arraysize) and must be null if arraysize is null or 
+represents a multi-dimensional array. For example, a column description with arraysize=``256*'' must also have 
+\verb|"size"|=``256''. Both arraysize and \verb|"size"| must be null for scalar numeric columns.
 
 To use the \verb|"size"| column in a query, the column name must be put in double quotes since 
 it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the 
