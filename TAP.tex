@@ -22,8 +22,9 @@
 
 \editor{Patrick Dowler}
 
-\previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{PR-TAP-1.1-20180416}
-\previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{PR-TAP-1.1-20170830}
+\previousversion[http://www.ivoa.net/Documents/TAP/20180830/]{PR-TAP-1.1-20180830}
+\previousversion[http://www.ivoa.net/Documents/TAP/20180416/]{PR-TAP-1.1-20180416}
+\previousversion[http://www.ivoa.net/Documents/TAP/20170830/]{PR-TAP-1.1-20170830}
 \previousversion[http://www.ivoa.net/Documents/TAP/20170707/]{WD-TAP-1.1-20170707}
 \previousversion[http://www.ivoa.net/Documents/TAP/20160428/]{WD-TAP-1.1-20160428}
 \previousversion[http://www.ivoa.net/Documents/TAP/1.0]{TAP-1.0}
@@ -1058,7 +1059,7 @@ one or more rows with different key\_id values and a pair
 of tables to denote one or more ways to join the tables.
 
 The table \tapschema.key\_columns must contain the 
-following columns to describe the col\-umns that make up a foreign key:
+following columns to describe the columns that make up a foreign key:
 
 \begin{inlinetable}
 \begin{tabular}{l l l}
@@ -1072,8 +1073,7 @@ target\_column & string & true \\
 \end{tabular}
 \end{inlinetable}
 
-There may be one or more rows with a specific key\_id to 
-denote single or multi-column keys.
+There may be one or more rows with a specific key\_id to denote single or multi-column keys.
 
 For the \tapschema{} itself, services should enforce and describe the following foreign keys:
 
@@ -1085,16 +1085,9 @@ TAP_SCHEMA.keys.target_table -> TAP_SCHEMA.tables.table_name
 TAP_SCHEMA.key_columns.key_id -> TAP_SCHEMA.keys.key_id
 \end{verbatim}
 
-In addition, the following constraints are expected to be satisfied by the \tapschema{} model, but 
-RDBMS systems may not allow the creation of foreign key constraints because the target column(s) 
-are not unique:
-
-\begin{verbatim}
-TAP_SCHEMA.key_columns.from_column -> TAP_SCHEMA.columns.column_name
-TAP_SCHEMA.key_columns.target_column -> TAP_SCHEMA.columns.column_name
-\end{verbatim}
-
-These relations can be described in the \tapschema{} and should be enforced in the table content.
+In addition to the above constraints, the from\_table and from\_column (in \tapschema.keys and 
+\tapschema.key\_columns respectively) must refer to column in the \tapschema.columns table. Likewise, 
+the target\_table and target\_column must also refer to a column in \tapschema.columns.
 
 A TAP service must provide the tables listed above and may provide other tables 
 in the \tapschema{} namespace.
