@@ -1086,8 +1086,8 @@ TAP_SCHEMA.key_columns.key_id -> TAP_SCHEMA.keys.key_id
 \end{verbatim}
 
 In addition to the above constraints, the from\_table and from\_column (in \tapschema.keys and 
-\tapschema.key\_columns respectively) must refer to column in the \tapschema.columns table. Likewise, 
-the target\_table and target\_column must also refer to a column in \tapschema.columns.
+\tapschema.key\_columns respectively) must refer to an entry in the \tapschema.columns table. Likewise, 
+the target\_table and target\_column must also refer to an entry in \tapschema.columns.
 
 A TAP service must provide the tables listed above and may provide other tables 
 in the \tapschema{} namespace.
