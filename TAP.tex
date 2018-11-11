@@ -288,7 +288,7 @@ TAP-sync & /sync & must \\
 TAP-async & /async & must \\
 TAP-sync & service specific & may (alternate authentication method) \\
 TAP-async & service specific & may (alternate authentication method) \\
-VOSI-availability & service specific & must (should be anonymous) \\
+VOSI-availability & service specific & must (must be anonymous) \\
 VOSI-availability & service specific & may (alternate authentication method) \\
 VOSI-capabilities & /capabilities & must (must be anonymous) \\
 VOSI-tables & /tables & should \\
@@ -310,16 +310,15 @@ The fixed name resources above (async, sync, tables) should be used for the
 primary access mode of the service; this is typically anonymous access and 
 other resource names may be used for authenticated access. However, if a 
 service only supports authenticated access to these resources, the fixed names 
-may be used for authenticated access. The VOSI resources should allow anonymous 
-access as they can be used by clients to determine if the service is available 
+may be used for authenticated access. The VOSI-availabilty and -capabilities resources 
+must allow anonymous access as they can be used by clients to determine if the service is available 
 and which resources to use with available security (authentication) methods. 
 
-The web resource at the root of the tree must represent the service as a whole. 
+The web resource at the root of the tree represents the service as a whole. 
 This specification defines no standard representation for this root resource. 
-Implementations may provide a representation, or may return a '404 not found' 
-response to requests for the root web-resource. One possible representation is 
-an HTML page describing the scientific usage and content of the service. TAP 
-clients must not depend on a specific representation of the root web-resource.
+Implementations should return a human readable document (HTML) describing 
+the service as a whole. TAP 
+clients should not depend on a specific representation of the root resource.
 
 \subsection{TAP-sync}
 \label{sec:tap-sync}
