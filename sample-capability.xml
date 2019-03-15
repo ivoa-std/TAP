@@ -2,73 +2,44 @@
    xmlns:vosi="http://www.ivoa.net/xml/VOSICapabilities/v1.0"
    xmlns:vs="http://www.ivoa.net/xml/VODataService/v1.1"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:urx="http://www.ivoa.net/xml/UWSRegExt/v0.1"
    xsi:schemaLocation=
     "http://www.ivoa.net/xml/VOSICapabilities/v1.0
      http://www.ivoa.net/xml/VOSICapabilities/v1.0
      http://www.ivoa.net/xml/VODataService/v1.1
      http://www.ivoa.net/xml/VODataService/v1.1">
 
+  <!-- base URL for clients that apppend /async, /sync, etc -->
   <capability standardID="ivo://ivoa.net/std/TAP">
-      <!-- TAP base URL -->
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
-      <accessURL use="base"> http://example.net/myTAP </accessURL>
-    </interface>
-    
-    <!-- explicit declaration of anon endpoints -->
-    <interface xsi:type="urx:Async" role="std" version="1.1">
-      <accessURL use="base"> http://example.net/myTAP/async </accessURL>
-    </interface>
-    <interface xsi:type="urx:Sync" role="std" version="1.1">
-      <accessURL use="base"> http://example.net/myTAP/sync </accessURL>
-    </interface>
-    
-    <!-- BasicAA authentication bundle -->
-    <interface xsi:type="urx:Async" role="std" version="1.1">
-      <accessURL use="base">https://example.net/myTAP/auth-async</accessURL>
-      <securityMethod standardID="ivo://ivoa.net/sso#BasicAA"/>
-    </interface>
-    <interface xsi:type="urx:Sync" role="std" version="1.1">
-      <accessURL use="base">https://example.net/myTAP/auth-sync</accessURL>
-      <securityMethod standardID="ivo://ivoa.net/sso#BasicAA"/>
-    </interface>
-    
-    <!-- tls-with-certificate authentication bundle -->
-    <interface xsi:type="urx:Async" role="std" version="1.1">
-      <accessURL use="base">https://example.net/myTAP/cert-async</accessURL>
-      <securityMethod 
-        standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
-    </interface>
-    <interface xsi:type="urx:Sync" role="std" version="1.1">
-      <accessURL use="base">https://example.net/myTAP/cert-sync</accessURL>
+      <accessURL use="base"> https://example.net/srv </accessURL>
+      <!-- anonymous or cookie or client certificate -->
+      <securityMethod/>
+      <securityMethod standardID="ivo://ivoa.net/sso#cookie"/>
       <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
     </interface>
-    
   </capability>
-
+  
   <capability standardID="ivo://ivoa.net/std/VOSI#capabilities">
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
-      <accessURL use="full"> http://example.net/myTAP/capabilities </accessURL>
+      <accessURL use="full"> https://example.net/srv/capabilities </accessURL>
+      <!-- anonymous only -->
     </interface>
   </capability>
 
   <capability standardID="ivo://ivoa.net/std/VOSI#availability">
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
-      <accessURL use="full"> http://example.net/myTAP/availability </accessURL>
+      <accessURL use="full"> https://example.net/srv/availability </accessURL>
+      <!-- anonymous only -->
     </interface>
   </capability>
 
   <capability standardID="ivo://ivoa.net/std/VOSI#tables-1.1">
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
-      <accessURL use="base"> http://example.net/myTAP/tables </accessURL>
-    </interface>
-    <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
-      <accessURL use="base"> https://example.net/myTAP/cert-tables </accessURL>
+      <accessURL use="base"> https://example.net/srv/cert-tables </accessURL>
+      <!-- anonymous or cookie or client certificate -->
+      <securityMethod/>
+      <securityMethod standardID="ivo://ivoa.net/sso#cookie"/>
       <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
-    </interface>
-    <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
-      <accessURL use="base"> https://example.net/myTAP/auth-tables </accessURL>
-      <securityMethod standardID="ivo://ivoa.net/sso#BasicAA"/>
     </interface>
   </capability>
 

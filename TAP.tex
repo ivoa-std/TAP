@@ -22,6 +22,7 @@
 
 \editor{Patrick Dowler}
 
+\previousversion[http://www.ivoa.net/Documents/TAP/20181024/]{PR-TAP-1.1-20181024}
 \previousversion[http://www.ivoa.net/Documents/TAP/20180830/]{PR-TAP-1.1-20180830}
 \previousversion[http://www.ivoa.net/Documents/TAP/20180416/]{PR-TAP-1.1-20180416}
 \previousversion[http://www.ivoa.net/Documents/TAP/20170830/]{PR-TAP-1.1-20170830}
@@ -194,10 +195,6 @@ will have an associated credential service and could use delegated credentials f
 remote calls that require authentication. For example, a URL specified in the UPLOAD
 parameter may require authentication and the service would use delegated credentials
 to perform the retrieval.
-
-\item[UWSRegExt \citep{note:UWSRegExt}] TAP services that support authenticated access may provide additional endpoints (under the base URL) that process authenticated requests. This allows clients to discover the appropriate endpoint (one that is usable with current credentials). VOSI-capabilities 
-does not provide a way to completely describe this; UWSRegExt describes a usable mechanism that 
-can be used until a standard is developed.
 \end{description}
 
 \subsection{Motivating Use Cases}
@@ -286,39 +283,29 @@ under the base URL.
 \sptablerule
 TAP-sync & /sync & must \\
 TAP-async & /async & must \\
-TAP-sync & service specific & may (alternate authentication method) \\
-TAP-async & service specific & may (alternate authentication method) \\
 VOSI-availability & service specific & must (must be anonymous) \\
-VOSI-availability & service specific & may (alternate authentication method) \\
 VOSI-capabilities & /capabilities & must (must be anonymous) \\
 VOSI-tables & /tables & should \\
-VOSI-tables & service specific & may (alternate authentication method) \\
 DALI-examples & /examples & should \\
-DALI-examples & service specific & may (alternate authentication method) \\
 \sptablerule
 \end{tabular}
 \end{inlinetable}
 \medskip
 
-At least one set of {sync} and {async} resources must be named /sync and 
-/async respectively for backwards compatibility with TAP-1.0 (which required 
-these names). Other  {sync} and {async} resources may have service specific names. 
-As required by DALI \citep{2017ivoa.spec.0517D}, all resources except the VOSI-availability must 
-be siblings of the VOSI-capabilities resource. 
+A TAP service provides a single base URL with child resources for the various features in tbe table above. 
+As required by DALI \citep{2017ivoa.spec.0517D}, all resources (including the optional VOSI-tables 
+resource) except the VOSI-availability must be siblings of the VOSI-capabilities resource.
 
-The fixed name resources above (async, sync, tables) should be used for the 
-primary access mode of the service; this is typically anonymous access and 
-other resource names may be used for authenticated access. However, if a 
-service only supports authenticated access to these resources, the fixed names 
-may be used for authenticated access. The VOSI-availabilty and -capabilities resources 
-must allow anonymous access as they can be used by clients to determine if the service is available 
-and which resources to use with available security (authentication) methods. 
+The fixed name resources above (async, sync, tables, and examples) are used for both anonynous and 
+authenticated access to the service; the consequences of having a single base URL are detailed below in 
+section~\ref{sec:vosi-capabilities}. The VOSI-availabilty and VOSI-capabilities resources must allow anonymous access as they can be used by clients to determine if the service is available and which resources to use with
+available security (authentication) methods.
 
 The web resource at the root of the tree represents the service as a whole. 
 This specification defines no standard representation for this root resource. 
 Implementations should return a human readable document (HTML) describing 
-the service as a whole. TAP 
-clients should not depend on a specific representation of the root resource.
+the service as a whole. TAP clients should not depend on a specific representation 
+of the root resource.
 
 \subsection{TAP-sync}
 \label{sec:tap-sync}
@@ -424,41 +411,39 @@ The TAP-1.0 standard is identified using
 ivo://ivoa.net/std/TAP
 \end{verbatim}
 
-For TAP-1.1 we use the same standardID for the capability but the version attribute of the interfaces must
-use the minor version (e.g. \verb|version="1.1"|). Services are permitted to include interfaces with other
-values of the version attribute to describe additional alternate interfaces; omitting the version attribute 
-is equivalent to \verb|version="1.0"|. 
+For TAP-1.1 we use the same standardID value. The version attribute of the interfaces 
+must use the minor version (e.g. \verb|version="1.1"|) of the TAP standard; clients 
+should treat a missing version attribute is equivalent to \verb|version="1.0"|.
 
-A TAP service consists of a related set of resource types, as listed above (section~\ref{sec:resources} : TAP-sync, TAP-async, VOSI-capabilities, VOSI-availability, and optionally VOSI-tables and DALI-examples. In some cases a client needs to identify a related ``bundle'' of endpoints providing one each of some or all of these resources in order to orchestrate its interaction with the TAP service. In TAP 1.0, this identification was straightforward, since only one instance of each resource type existed, and these were present at fixed locations relative to the TAP service base URL. In TAP 1.1, the capabilities document may declare multiple variants for some or all of these resource types, for instance to support different authentication contexts, and identifying the related bundle of endpoints that should be used given particular authentication requirements is therefore no longer trivial. 
-
-For example, the returned capabilities document for a service supporting TAP and using the prototype UWSRegExt \citep{note:UWSRegExt} extension might look as follows. Note: this use of the extended interface types is non-normative in that the namespace and values shown here may not be the same as those recommended by a future standard; this is simply a prototype extension schema that can be used to describe alternate interfaces.
+The interface element within the TAP capability specifies the base URL of the service 
+under which the fixed-name resources specified above (section~\ref{sec:resources}) are located.
+In addition to the accessURL element, the interface element may also contain zero or more securityMethod 
+elements that specify the supported authention methods. Zero such elements and a securityMethod with no standardID attribute are both interpretted as meaning anonymous; the latter should only be used if other securityMethod(s) are also specified and zero such elements is preferrable in an anonymous-only service.
 
 \lstinputlisting[language=XML,basicstyle=\footnotesize]
   {sample-capability.xml}
 
-Clients are free to combine the declared interfaces in any way they see fit, but the recommended way to interpret a TAP capabilities document as a list of TAP endpoint bundles is as follows:
-\begin{itemize}
-\item There is one default bundle, corresponding to the TAP 1.0 endpoints. If the service allows unauthenticated access at all, it should be provided by this default bundle.
-\item There may also be one or more authenticated bundles. Each distinct security method declared on an interface in the capabilities document (value of an interface/securityMethod/@standardId XPath) defines one authenticated bundle. Each endpoint sharing the same security method is in the same bundle; if no endpoint is declared with that security method, the corresponding default endpoint is used. 
-\end{itemize}
+The example above descibes a TAP service that can be accessed anonymously or by autheticating with a cookie
+(\verb|ivo://ivoa.net/sso#cookie|) or an X509 client certificate (\verb|ivo://ivoa.net/sso#tls-with-certificate|).
+The same URL (e.g. \verb|https://example.net/tap/sync| for a synchronous query) would be used for both anonymous and authenticated access. 
 
-The example above therefore defines the default bundle and two authenticated bundles, defined by the security methods \verb|ivo://ivoa.net/sso#BasicAA| and \verb|ivo://ivoa.net/sso#tls-with-certificate| respectively. Each of these authenticated bundles explicitly declares its TAP-sync, TAP-async and VOSI-tables endpoints, and implicitly uses the default endpoints for VOSI-capabilities and VOSI-availability.
+As a consequence of using a single base URL with fixed name child resources, all supported authentication 
+methods must be able to co-exist on the same URL. At this time, both anonymous and other authentication 
+methods can be made to work in this way except for HTTP Basic and Digest authentication. In general, 
+challenge-reponse methods will likely not be able to co-exist with methods that simply deliver credentials
+(e.g. cookies or tokens via HTTP headers) with the request. While client certificate usage is technically also
+a challenge-response method, this occurs during SSL socket setup and does not interfere with the HTTP request itself and can co-exist with anonymous https access (by making client certificate optional in the server 
+configuration). As a result of having a single base URL, one can provide an anonymous-only TAP service with http or https; once support for \verb|ivo://ivoa.net/sso#tls-with-certificate| is added, however, the entire service
+must use https only. While one can provide a service with \verb|securityMethod="ivo://ivoa.net/sso#BasicAA"|, 
+this authentication method uses the HTTP protocol and thus cannot co-exist with other methods (including
+anonymous); such a service would only be able to describe that single method.
 
-The base URL is given by the interface with type vs:ParamHTTP; this interface supports 
-finding and using TAP services in a simple and backwards 
-compatible manner. The subsequent interface elements describe combinations of access URL
-and security method(s) that can be used by clients to make authenticated calls. They also 
-use the type of the interface to specify that the particular access URL is a TAP-async or TAP-sync 
-resource. Note that in this example the anonymous async and sync endpoints are 
-described explicitly but could also be inferred from the base service URL using the standard 
-names. Service implementors must include the base interface in registry records and VOSI-capabilities documents
-for backwards compatibility in registry queries and must include relevant UWS-typed interfaces in the 
-VOSI-capabilities document for direct client use.
+In the example above, the VOSI-availability and VOSI-capabilities interfaces are anonymous (no securityMethod). 
+The VOSI-tables interface is typically also anonymous-only, but in the example we show that it may also support
+anonymous and/or authenticated access. In general, clients that support authentication should be prepared to discover and use anonymous-only endpoints for some requests. 
 
-The service capabilities must be accessible from a web resource with relative 
-URL /capabilities that is a direct child of the root web resource. The 
-/capabilities resource must be accessible via the http GET method. The content 
-is described by VOSI \citep{2017ivoa.spec.0524G}.
+In addition to the basic service descrption in the example above, services should use the TAPRegExt
+\citep{std:TAPREGEXT} extension to provide additional metadata within the TAP capability.
 
 \subsection{VOSI-tables}
 \label{sec:vosi-tables}
@@ -1464,14 +1449,11 @@ column names in cases where they generate the name.
 \subsection{VOSI/UWS related changes}
 
 \begin{itemize}
-\item Made use of prototype UWSRegExt to tag interfaces values for the async and sync resources. This allows
-services to provide alternate resources for authenticated queries (using different securityMethod(s) within 
-each interface). (\ref{sec:vosi-capabilities})
-Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities. (\ref{sec:Role})
+\item Added details and VOSI-capabilities example to clarify that there is one accessURL for a TAP service and
+multiple authentication methods must co-exist in that single URL (\ref{sec:vosi-capabilities}). Clients are
+expected to append the TAP-specific resource names (async and sync) to execute queries (\ref{sec:resources}).
 
-\item Added details and VOSI-capabilities example for providing multiple resources with different 
-authentication requirements (\ref{sec:vosi-capabilities}).
-Clarified that VOSI-availability is no longer restricted to a
+\item Clarified that VOSI-availability is no longer restricted to a
 specific name or location (\ref{sec:resources}).
 
 \item Added explicit reference to VOSI-tables. Updates capabilities example to describe a
@@ -1479,6 +1461,12 @@ tables-1.1 capability (\ref{sec:resources}).
 \end{itemize}
 
 \section{Detailed Changes from Previous Versions}
+
+\subsection{PR-TAP-20190315}
+
+Modified the resources section to only allow the fixed name resources on a single base URL. Adapted the 
+VOSI-capabilities example and explanation to demonstrate the single base URL design and specify the meaning
+of having zero or more securityMethod(s). Removed all use to the previously proposed UWSRegExt.
 
 \subsection{PR-TAP-1.1-20180830}
 
