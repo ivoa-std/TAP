@@ -435,9 +435,9 @@ As a consequence of using a single base URL with fixed name child resources, all
 methods must be able to co-exist on the same URL. At this time, both anonymous and other authentication 
 methods described in SSO can be made to work in this way, with the exception of HTTP Basic and Digest authentication. With a single base URL, one can provide an anonymous-only TAP service with http or https; once support for \verb|ivo://ivoa.net/sso#tls-with-certificate| is added, however, the entire service
 must use https only. While one can provide a service with \verb|securityMethod="ivo://ivoa.net/sso#BasicAA"|, 
-this authentication method uses the HTTP protocol to implement it's challenge-response and thus cannot co-exist with other methods (including anonymous); such a service would only be able to describe that single method. However, the SSO standard recommends that usernme-password authentication (including BasicAA) be used to login
+this authentication method uses the HTTP protocol to implement it's challenge-response and thus cannot co-exist with other methods (including anonymous); such a service would only be able to describe that single method. However, the SSO standard recommends that username-password authentication (including BasicAA) be used to login
 and obtain another type of credential (e.g. a cookie) and that services should not directly use username-password
-for authentication, so this limitation in TAP services should not be a problem.
+for authentication; the single base URL design here is consistent with the recommendations of SSO. 
 
 In the example above, the VOSI-availability and VOSI-capabilities interfaces are anonymous (no securityMethod). 
 The VOSI-tables interface is typically also anonymous-only, but in the example we show that it may also support
