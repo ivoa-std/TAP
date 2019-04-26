@@ -35,7 +35,7 @@
 
   <capability standardID="ivo://ivoa.net/std/VOSI#tables-1.1">
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
-      <accessURL use="base"> https://example.net/srv/cert-tables </accessURL>
+      <accessURL use="base"> https://example.net/srv/tables </accessURL>
       <!-- anonymous or cookie or client certificate -->
       <securityMethod/>
       <securityMethod standardID="ivo://ivoa.net/sso#cookie"/>

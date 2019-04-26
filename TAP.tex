@@ -162,6 +162,10 @@ require the use of any particular minor version of the VOTable standard, older
 versions are missing features that are required and may be unusable in practice.
 For example, the overflow reporting and xtype attribute were introduced in 
 VOTable 1.2 so that is the minimum viable version that must be used.
+
+\item[SSO \citep{std:SSOAUTH2}] TAP services that support authenticated 
+access declare this in their capabilities using recommendations and security method 
+identifiers from the SSO standard.
 \end{description}
 
 
@@ -429,14 +433,11 @@ The same URL (e.g. \verb|https://example.net/tap/sync| for a synchronous query) 
 
 As a consequence of using a single base URL with fixed name child resources, all supported authentication 
 methods must be able to co-exist on the same URL. At this time, both anonymous and other authentication 
-methods can be made to work in this way except for HTTP Basic and Digest authentication. In general, 
-challenge-reponse methods will likely not be able to co-exist with methods that simply deliver credentials
-(e.g. cookies or tokens via HTTP headers) with the request. While client certificate usage is technically also
-a challenge-response method, this occurs during SSL socket setup and does not interfere with the HTTP request itself and can co-exist with anonymous https access (by making client certificate optional in the server 
-configuration). As a result of having a single base URL, one can provide an anonymous-only TAP service with http or https; once support for \verb|ivo://ivoa.net/sso#tls-with-certificate| is added, however, the entire service
+methods described in SSO can be made to work in this way, with the exception of HTTP Basic and Digest authentication. With a single base URL, one can provide an anonymous-only TAP service with http or https; once support for \verb|ivo://ivoa.net/sso#tls-with-certificate| is added, however, the entire service
 must use https only. While one can provide a service with \verb|securityMethod="ivo://ivoa.net/sso#BasicAA"|, 
-this authentication method uses the HTTP protocol and thus cannot co-exist with other methods (including
-anonymous); such a service would only be able to describe that single method.
+this authentication method uses the HTTP protocol to implement it's challenge-response and thus cannot co-exist with other methods (including anonymous); such a service would only be able to describe that single method. However, the SSO standard recommends that usernme-password authentication (including BasicAA) be used to login
+and obtain another type of credential (e.g. a cookie) and that services should not directly use username-password
+for authentication, so this limitation in TAP services should not be a problem.
 
 In the example above, the VOSI-availability and VOSI-capabilities interfaces are anonymous (no securityMethod). 
 The VOSI-tables interface is typically also anonymous-only, but in the example we show that it may also support
@@ -1462,11 +1463,13 @@ tables-1.1 capability (\ref{sec:resources}).
 
 \section{Detailed Changes from Previous Versions}
 
-\subsection{PR-TAP-20190315}
+\subsection{PR-TAP-20190420}
 
 Modified the resources section to only allow the fixed name resources on a single base URL. Adapted the 
 VOSI-capabilities example and explanation to demonstrate the single base URL design and specify the meaning
 of having zero or more securityMethod(s). Removed all use to the previously proposed UWSRegExt.
+
+Added explicit mention of SSO-2.0 in related standards.
 
 \subsection{PR-TAP-1.1-20180830}
 
