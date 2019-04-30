@@ -20,6 +20,7 @@
   </capability>
   
   <capability standardID="ivo://ivoa.net/std/VOSI#capabilities">
+  	<!-- VOSI capabilities endpoint as per VOSI 1.1 -->
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
       <accessURL use="full"> https://example.net/srv/capabilities </accessURL>
       <!-- anonymous only -->
@@ -27,6 +28,7 @@
   </capability>
 
   <capability standardID="ivo://ivoa.net/std/VOSI#availability">
+  	<!-- VOSI availability endpoint as per VOSI 1.1 -->
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
       <accessURL use="full"> https://example.net/srv/availability </accessURL>
       <!-- anonymous only -->
@@ -34,6 +36,7 @@
   </capability>
 
   <capability standardID="ivo://ivoa.net/std/VOSI#tables-1.1">
+  	<!-- VOSI table endpoint as per VOSI 1.1 -->
     <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
       <accessURL use="base"> https://example.net/srv/tables </accessURL>
       <!-- anonymous or cookie or client certificate -->

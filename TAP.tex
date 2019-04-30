@@ -424,8 +424,24 @@ under which the fixed-name resources specified above (section~\ref{sec:resources
 In addition to the accessURL element, the interface element may also contain zero or more securityMethod 
 elements that specify the supported authention methods. Zero such elements and a securityMethod with no standardID attribute are both interpreted as meaning anonymous; the latter should only be used if other securityMethod(s) are also specified and zero such elements is preferrable in an anonymous-only service.
 
+Here is an example for a document as it might be returned from a VOSI
+capabilities endpoint of a TAP service:
+
 \lstinputlisting[language=XML,basicstyle=\footnotesize]
   {sample-capability.xml}
+
+This specification only requires that exactly one capability with a
+standardID of \nolinkurl{ivo://ivoa.net/std/TAP} is present.
+In addition to this basic service description, production services
+should use the TAPRegExt \citep{std:TAPREGEXT} extension to provide
+additional metadata within the TAP capability.
+
+The VOSI capability declarations shown above are not required by this
+specification.  Clients should obtain the corresponding endpoint URLs through
+appending the fixed endpoint names to the access URL(s) given in the
+interface(s) defined in the TAP capability.  This specifiation leaves the
+association of availability endpoint(s) -- which no longer have a fixed
+name -- to access and mirror URLs open.
 
 The example above descibes a TAP service that can be accessed anonymously or by autheticating with a cookie
 (\verb|ivo://ivoa.net/sso#cookie|) or an X509 client certificate (\verb|ivo://ivoa.net/sso#tls-with-certificate|).
@@ -442,9 +458,6 @@ for authentication; the single base URL design here is consistent with the recom
 In the example above, the VOSI-availability and VOSI-capabilities interfaces are anonymous (no securityMethod). 
 The VOSI-tables interface is typically also anonymous-only, but in the example we show that it may also support
 anonymous and/or authenticated access. In general, clients that support authentication should be prepared to discover and use anonymous-only endpoints for some requests. 
-
-In addition to the basic service descrption in the example above, services should use the TAPRegExt
-\citep{std:TAPREGEXT} extension to provide additional metadata within the TAP capability.
 
 \subsection{VOSI-tables}
 \label{sec:vosi-tables}
