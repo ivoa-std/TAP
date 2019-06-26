@@ -318,7 +318,7 @@ A TAP service must provide one or more web resources that represent the results
 of synchronous query execution. The {sync} resources must conform to the general rules for
 DALI-sync  resources. The exact form of the query, and hence the 
 representation of the resource, is defined by the  query parameters as listed in 
-section~\ref{sec:parameters}. Representations of results of queries is defined in 
+section~\ref{sec:parameters}. The representation of results of queries is defined in 
 section~\ref{sec:RESPONSEFORMAT} and section~\ref{sec:votable}.
 
 For query languages that produce a single result (e.g. ADQL) executed using the 
@@ -430,18 +430,27 @@ capabilities endpoint of a TAP service:
 \lstinputlisting[language=XML,basicstyle=\footnotesize]
   {sample-capability.xml}
 
-This specification only requires that exactly one capability with a
+This specification requires that exactly one capability with a
 standardID of \nolinkurl{ivo://ivoa.net/std/TAP} is present.
 In addition to this basic service description, production services
 should use the TAPRegExt \citep{std:TAPREGEXT} extension to provide
-additional metadata within the TAP capability.
+additional metadata within the TAP capability. Clients should create
+the endpoint URLs by appending the fixed endpoint names to the access URL
+given in the interface defined in the TAP capability. The TAP capabilty normally
+has a single interface; multiple interfaces are permitted in order to support multiple
+versions (different version attribute on the interface element and different
+accessURL).
 
-The VOSI capability declarations shown above are not required by this
-specification.  Clients should obtain the corresponding endpoint URLs through
-appending the fixed endpoint names to the access URL(s) given in the
-interface(s) defined in the TAP capability.  This specifiation leaves the
-association of availability endpoint(s) -- which no longer have a fixed
-name -- to access and mirror URLs open.
+This specification does not require that the capabilities document includes a capability
+description for the VOSI features themselves. However, these are needed in the document 
+and in registry records until such time that another standard (DALI or VOResource) 
+provides an alternative mechanism to convey required information to clients 
+(standardID or equivalent, version, accessURL(s), supported securityMethod(s), etc.). 
+In the example above, the VOSI-tables capability conveys the version (1.1) and that multiple 
+securityMethod(s) are supported. The version tells clients that a returned tableset may not 
+contain column metadata and that the detail parameter is suppoorted. The securityMethod(s) 
+tell clients that authenticating may effect the output such as exposing metadata for 
+protected tables.
 
 The example above descibes a TAP service that can be accessed anonymously or by autheticating with a cookie
 (\verb|ivo://ivoa.net/sso#cookie|) or an X509 client certificate (\verb|ivo://ivoa.net/sso#tls-with-certificate|).
