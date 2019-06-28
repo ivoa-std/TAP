@@ -300,7 +300,7 @@ A TAP service provides a single base URL with child resources for the various fe
 As required by DALI \citep{2017ivoa.spec.0517D}, all resources (including the optional VOSI-tables 
 resource) except the VOSI-availability must be siblings of the VOSI-capabilities resource.
 
-The fixed name resources above (async, sync, tables, and examples) are used for both anonynous and 
+The fixed name resources above (async, sync, tables, and examples) are used for both anonymous and 
 authenticated access to the service; the consequences of having a single base URL are detailed below in 
 section~\ref{sec:vosi-capabilities}. The VOSI-availabilty and VOSI-capabilities resources must allow anonymous access as they can be used by clients to determine if the service is available and which resources to use with
 available security (authentication) methods.
@@ -422,7 +422,7 @@ should treat a missing version attribute is equivalent to \verb|version="1.0"|.
 The interface element within the TAP capability specifies the base URL of the service 
 under which the fixed-name resources specified above (section~\ref{sec:resources}) are located.
 In addition to the accessURL element, the interface element may also contain zero or more securityMethod 
-elements that specify the supported authention methods. Zero such elements and a securityMethod with no standardID attribute are both interpreted as meaning anonymous; the latter should only be used if other securityMethod(s) are also specified and zero such elements is preferrable in an anonymous-only service.
+elements that specify the supported authentication methods. Zero such elements and a securityMethod with no standardID attribute are both interpreted as meaning anonymous; the latter should only be used if other securityMethod(s) are also specified and zero such elements is preferable in an anonymous-only service.
 
 Here is an example for a document as it might be returned from a VOSI
 capabilities endpoint of a TAP service:
@@ -436,7 +436,7 @@ In addition to this basic service description, production services
 should use the TAPRegExt \citep{std:TAPREGEXT} extension to provide
 additional metadata within the TAP capability. Clients should create
 the endpoint URLs by appending the fixed endpoint names to the access URL
-given in the interface defined in the TAP capability. The TAP capabilty normally
+given in the interface defined in the TAP capability. The TAP capability normally
 has a single interface; multiple interfaces are permitted in order to support multiple
 versions (different version attribute on the interface element and different
 accessURL).
@@ -448,11 +448,11 @@ provides an alternative mechanism to convey required information to clients
 (standardID or equivalent, version, accessURL(s), supported securityMethod(s), etc.). 
 In the example above, the VOSI-tables capability conveys the version (1.1) and that multiple 
 securityMethod(s) are supported. The version tells clients that a returned tableset may not 
-contain column metadata and that the detail parameter is suppoorted. The securityMethod(s) 
+contain column metadata and that the detail parameter is supported. The securityMethod(s) 
 tell clients that authenticating may effect the output such as exposing metadata for 
 protected tables.
 
-The example above descibes a TAP service that can be accessed anonymously or by autheticating with a cookie
+The example above describes a TAP service that can be accessed anonymously or by authenticating with a cookie
 (\verb|ivo://ivoa.net/sso#cookie|) or an X509 client certificate (\verb|ivo://ivoa.net/sso#tls-with-certificate|).
 The same URL (e.g. \verb|https://example.net/tap/sync| for a synchronous query) would be used for both anonymous and authenticated access. 
 
