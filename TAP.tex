@@ -131,7 +131,7 @@ services.
 \label{fig:archdiag}
 \end{figure}
 
-Fig.~section~\ref{fig:archdiag} shows the role this document plays within the
+Fig.~\ref{fig:archdiag} shows the role this document plays within the
 IVOA architecture \citep{note:VOARCH}.
 
 TAP depends on the following other IVOA standards:
@@ -296,7 +296,7 @@ DALI-examples & /examples & should \\
 \end{inlinetable}
 \medskip
 
-A TAP service provides a single base URL with child resources for the various features in tbe table above. 
+A TAP service provides a single base URL with child resources for the various features in the table above. 
 As required by DALI \citep{2017ivoa.spec.0517D}, all resources (including the optional VOSI-tables 
 resource) except the VOSI-availability must be siblings of the VOSI-capabilities resource.
 
@@ -315,7 +315,7 @@ of the root resource.
 \label{sec:tap-sync}
 
 A TAP service must provide one or more web resources that represent the results 
-of synchronous query execution. The {sync} resources must conform to the general rules for
+of synchronous query execution. The /sync resources must conform to the general rules for
 DALI-sync  resources. The exact form of the query, and hence the 
 representation of the resource, is defined by the  query parameters as listed in 
 section~\ref{sec:parameters}. The representation of results of queries is defined in 
@@ -417,7 +417,7 @@ ivo://ivoa.net/std/TAP
 
 For TAP-1.1 we use the same standardID value. The version attribute of the interfaces 
 must use the minor version (e.g. \verb|version="1.1"|) of the TAP standard; clients 
-should treat a missing version attribute is equivalent to \verb|version="1.0"|.
+should treat a missing version attribute as equivalent to \verb|version="1.0"|.
 
 The interface element within the TAP capability specifies the base URL of the service 
 under which the fixed-name resources specified above (section~\ref{sec:resources}) are located.
@@ -449,7 +449,7 @@ provides an alternative mechanism to convey required information to clients
 In the example above, the VOSI-tables capability conveys the version (1.1) and that multiple 
 securityMethod(s) are supported. The version tells clients that a returned tableset may not 
 contain column metadata and that the detail parameter is supported. The securityMethod(s) 
-tell clients that authenticating may effect the output such as exposing metadata for 
+tell clients that authenticating may affect the output such as exposing metadata for 
 protected tables.
 
 The example above describes a TAP service that can be accessed anonymously or by authenticating with a cookie
@@ -457,12 +457,7 @@ The example above describes a TAP service that can be accessed anonymously or by
 The same URL (e.g. \verb|https://example.net/tap/sync| for a synchronous query) would be used for both anonymous and authenticated access. 
 
 As a consequence of using a single base URL with fixed name child resources, all supported authentication 
-methods must be able to co-exist on the same URL. At this time, both anonymous and other authentication 
-methods described in SSO can be made to work in this way, with the exception of HTTP Basic and Digest authentication. With a single base URL, one can provide an anonymous-only TAP service with http or https; once support for \verb|ivo://ivoa.net/sso#tls-with-certificate| is added, however, the entire service
-must use https only. While one can provide a service with \verb|securityMethod="ivo://ivoa.net/sso#BasicAA"|, 
-this authentication method uses the HTTP protocol to implement it's challenge-response and thus cannot co-exist with other methods (including anonymous); such a service would only be able to describe that single method. However, the SSO standard recommends that username-password authentication (including BasicAA) be used to login
-and obtain another type of credential (e.g. a cookie) and that services should not directly use username-password
-for authentication; the single base URL design here is consistent with the recommendations of SSO. 
+methods must be able to co-exist on the same URL.  
 
 In the example above, the VOSI-availability and VOSI-capabilities interfaces are anonymous (no securityMethod). 
 The VOSI-tables interface is typically also anonymous-only, but in the example we show that it may also support
@@ -538,7 +533,7 @@ enforced only when the TAP request is executed (not when individual HTTP
 requests are handled). Thus, for asynchronous TAP queries, the parameter 
 requirements must be satisfied (and errors returned if not) only when the query 
 is run (in the sense of UWS job execution). Specifically, asynchronous 
-queries may be created with with no parameters and multiple, subsequent HTTP 
+queries may be created with no parameters and multiple, subsequent HTTP 
 POST actions may specify the parameters in any order.
 
 Not all combinations of the parameters are meaningful. If a 
@@ -728,7 +723,7 @@ results) and input (table upload) in a TAP service so most of this section
 deals with how VOTable is used. However, rules about serialising column values 
 also apply to other formats (e.g. CSV and TSV).
 
-The use of VOTable in TAP services is described in DALI, with additional clarifications
+The use of VOTable is described in DALI, with additional clarifications
 or advice below.
 
 \subsection{INFO elements}
@@ -743,9 +738,8 @@ self-document the query response), but clients should not depend on these.
 \begin{verbatim}
 <RESOURCE type="results">
 ...
-<INFO name="QUERY">
-    select * from stuff.items
-</INFO>
+<INFO name="QUERY" value="select * from stuff.items" />
+
 ...
 </RESOURCE>
 \end{verbatim}
@@ -842,20 +836,18 @@ Reporting of overflow depends on the output format and is described in DALI.
 \subsection{Mapping Table Datatypes}
 \label{sec:vot-rdbms}
 
-This section describes the bi-directional mapping between VOTable on the
-one and the RDBMS (including its 
-geometric datatypes) on the other side.  It extends the basic rules for serialising such values in 
-VOTable described in DALI. These rules apply to input tables 
-supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) and to result tables after successful 
-query execution.
+The mapping between VOTable and database tables uses the datatype, arraysize, and xtype values from 
+the VOTable FIELD elements and the TAP\kern-3pt\_SCHEMA.columns table. Mapping for primitive types 
+(numbers and strings) is straightforward; services should ensure that input values behave as 
+expected in query processing and output values should have correct and complete metadata. Mapping for specially
+structured values use xtype(s) as specified in DALI. The behaviour and usability of such structured values in 
+queries depends on the query language (section~\ref{sec:LANG}) being used and support for optional features 
+of the language.
 
-The mapping to and from VOTable makes use of the datatype, arraysize, and xtype 
-attributes. Mapping for primitive types (numbers and strings) is 
-straightforward; services should ensure that input values behave as 
-expected in query processing and output values should have correct and complete 
-metadata. Mapping for specially structured values use xtype(s) specified
-in DALI. The behaviour of such structured values in queries depends 
-on the query language (section~\ref{sec:LANG}) being used. 
+Datatype mapping rules apply to input tables supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) 
+and to result tables after successful query execution.  TAP services should at least be able to round-trip all
+values from an uploaded VOTable to the database and back when columns in the uploaded table are selected (e.g.
+SELECT * from TAP_UPLOAD.mytable).
 
 \section{Metadata: TAP\kern-3pt\_SCHEMA}
 \label{sec:tap-schema}
@@ -1013,7 +1005,7 @@ of TAP, the \verb|"size"| column will be removed.
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
 reference to these columns in the select clause but not in every other part of the query where
 character columns may be used. In addition, services may want to define generated columns where the output is dynamically generated but the content is not stored in the 
-databasase in a form that supports querying. For example, if service implementors want to make
+database in a form that supports querying. For example, if service implementors want to make
 URL(s) available as column values in the results, but do not actually store the URL(s) in the
 database, the column with URL(s) could be referenced in the SELECT clause of a query, but could
 not sensibly be used in the WHERE clause. In general, if a query references a column in an 
@@ -1110,15 +1102,12 @@ This section gives examples of the exchange of messages between a
 TAP client and service when using UWS to run an asynchronous query.
 
 \subsection{Example: Asynchronous Query}
-Consider a TAP service at http://example.com/tap. TAP mandates that the 
-asynchronous requests be directed to http://example.com/tap/async (e.g. for 
-anonymous queries). This URL points to the list of ``jobs'', i.e., the list of 
+Consider a TAP service at http://example.com/tap. Asynchronous requests are directed to the http://example.com/tap/async endpoint. This URL points to the list of ``jobs'', i.e., the list of 
 queries currently executing or recently executed.
 
 \subsubsection{Creating and Executing a Simple Query}
 
-Asynchronous queries are created in the same way as synchronous, using 
-one of the {async} endpoints, for example:
+Asynchronous queries are created with the same parameters as synchronous queries, using the /async endpoint, for example:
 
 \begin{verbatim}
 HTTP POST http://example.com/tap/async
