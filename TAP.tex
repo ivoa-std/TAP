@@ -230,7 +230,7 @@ the service metadata.
 \subsubsection{Query Standard Data Models}
 A TAP service should enable users to query (parts of) externally defined data 
 models that are (partially or fully) implemented by the service. Services must 
-be able to declare their support for data models as well as the way that model 
+be able to declare their support for data models as well as the way those model 
 elements are mapped to tables and columns.
 
 \subsection{Query Languages}
@@ -302,7 +302,7 @@ resource) except the VOSI-availability must be siblings of the VOSI-capabilities
 
 The fixed name resources above (async, sync, tables, and examples) are used for both anonymous and 
 authenticated access to the service; the consequences of having a single base URL are detailed below in 
-section~\ref{sec:vosi-capabilities}. The VOSI-availabilty and VOSI-capabilities resources must allow anonymous access as they can be used by clients to determine if the service is available and which resources to use with
+section~\ref{sec:vosi-capabilities}. The VOSI-availability and VOSI-capabilities resources must allow anonymous access as they can be used by clients to determine if the service is available and which resources to use with
 available security (authentication) methods.
 
 The web resource at the root of the tree represents the service as a whole. 
@@ -386,7 +386,7 @@ http://example.com/tap/async/42/error
 For query languages that produce a single result executed using the /async 
 endpoint, the result of a successful query can be found within the result list 
 specified by UWS; the result must be named result and thus 
-clients are able to access it directly, e.g.:
+clients can access it directly, e.g.:
 \begin{verbatim}
 http://example.com/tap/async/42/results/result
 \end{verbatim}
@@ -475,7 +475,7 @@ The content is equivalent to the metadata from the
 map directly; TAPType may be used when VOTableType does not provide a suitable
 alternative.
 
-Services which do not implement the /tables resource must respond with an HTTP 
+Services that do not implement the /tables resource must respond with an HTTP 
 response code of 404 when this resource is accessed.
 
 \subsection{DALI-examples}
@@ -580,7 +580,7 @@ variant>) when appropriate.
 A service must support the QUERY parameter because ADQL is a required language.
 
 If timestamp comparisons are supported within ADQL queries, they must use the syntax 
-defined in DALI. Timestamp values are usable if there are columns with timestamp values, 
+defined in DALI. Timestamp values may be used if there are columns with timestamp values, 
 including in uploaded tables if table upload is supported.
 
 If the service supports the use of spatial coordinates in ADQL queries, the output of 
@@ -596,7 +596,7 @@ even if comparisons are not supported.
 Note: Although it is allowed by the ADQL-2.0 syntax, clients should be careful when 
 mixing constants and column references for coordinate system and coordinate 
 values. For example, POINT('ICRS', t.ra, t.dec) does not cause t.ra and t.dec to 
-be transformed to ICRS; it simply tells the service to treat the values  as 
+be transformed to ICRS; it tells the service to treat the values  as 
 being expressed in that coordinate system. Clients should avoid using the coordinate 
 system argument to geometric functions (supply the empty string, or use an 
 alternate function without the coordinate system argument if available).
@@ -618,7 +618,7 @@ formats.
 \subsubsection{MAXREC}
 \label{sec:MAXREC}
 
-The MAXREC parameter and its effect on the query result is fully described in 
+The MAXREC parameter and its effects on the query result are fully described in 
 DALI. If the result set is truncated in this fashion, it must 
 include an overflow indicator as specified in section~\ref{sec:query-overflow}.
 
@@ -732,8 +732,8 @@ or advice below.
 The RESOURCE element must contain INFO element(s) as described in DALI.
 
 Additional INFO elements may be provided, e.g., to echo the input parameters 
-back to the client in the query response (a useful feature for debugging or to 
-self-document the query response), but clients should not depend on these. 
+back to the client in the query response (a useful feature for debugging or  
+self-documenting the query response), but clients should not depend on these. 
 
 \begin{verbatim}
 <RESOURCE type="results">
@@ -748,7 +748,7 @@ self-document the query response), but clients should not depend on these.
 \label{sec:query-ok}
 
 The result of a query depends on the query language used and may be one or more 
-tables in one or more resources. Unsupportable combinations of query result and 
+tables in one or more resources. Unsupportable combinations of query results and 
 RESPONSEFORMAT (e.g. queries that produce multiple tables and an inherently 
 single-table format like CSV) will cause the request to fail. Currently, an ADQL 
 query result must be a single table (in a single file).
@@ -847,14 +847,14 @@ of the language.
 Datatype mapping rules apply to input tables supplied via an UPLOAD parameter (see section~\ref{sec:UPLOAD}) 
 and to result tables after successful query execution.  TAP services should at least be able to round-trip all
 values from an uploaded VOTable to the database and back when columns in the uploaded table are selected (e.g.
-SELECT * from TAP_UPLOAD.mytable).
+\verb|SELECT * from TAP_UPLOAD.mytable|).
 
 \section{Metadata: TAP\kern-3pt\_SCHEMA}
 \label{sec:tap-schema}
 
 There are several approaches to getting metadata for a given TAP service. All 
 TAP services must support a set of tables in a schema named 
-\tapschema\ that describe the tables and columns included in the 
+\tapschema\ that describes the tables and columns included in the 
 service. In addition to the \tapschema, there are two other ways 
 to get metadata from a TAP service. First, the VOSI tables resource provides 
 metadata on all tables and columns; this resource is described in 
@@ -877,7 +877,7 @@ metadata is defined by the service. Services must provide these tables and make
 them accessible by all supported query mechanisms.
 
 Column datatypes in the \tapschema{} are specified using the same concepts used in 
-VOTable: datatype, arraysize, and xtype. For backwards compatibility, implementors
+VOTable: datatype, arraysize, and xtype. For backward compatibility, implementors
 must also include the \verb|"size"| column and populate it where possible. In the details
 below, \tapschema{} column types are either string or integer; implementers may choose an 
 appropriate data type that behaves the same way in queries and output (e.g. varchar(16) or
@@ -999,7 +999,7 @@ To use the \verb|"size"| column in a query, the column name must be put in doubl
 it collides with an ADQL reserved word. Since delimited identifiers are case-sensitive, for the 
 \verb|"size"| column both
 clients and servers MUST always (in particular, in the creation of the 
-\tapschema) use lower case exclusively. In the next major version 
+\tapschema), use lower case exclusively. In the next major version 
 of TAP, the \verb|"size"| column will be removed.
 
 For columns with a database type equivalent to BLOB or CLOB, most database systems support
@@ -1173,7 +1173,7 @@ QUERY=select * from TAP_UPLOAD.mytable t join magnitudes
   m on t.target = m.target
 \end{verbatim}
 
-Here we have specified with the UPLOAD parameter that the service create a 
+Here we have specified with the UPLOAD parameter that the service creates a 
 temporary table named mytable with content from the VOTable at the specified 
 URL. The QUERY parameter can then reference the uploaded table with the 
 specified name (but in the \tapupload{} schema).
@@ -1217,7 +1217,7 @@ The quote resource specifies the predicted completion time for the job (query),
 assuming it is started immediately. In practice, it is very hard to estimate the 
 time a query will take; for TAP services it is recommended that this is set to 
 the current time plus the maximum amount of time the query will be allowed to 
-run. The executionduration resource specifies the amount of time (in seconds) 
+run. The \verb|executionduration| resource specifies the amount of time (in seconds) 
 the job (query) will be allowed to run before being aborted by the service. The 
 execution duration is set by the service and can be read from the job or 
 directly from the executionduration resource:
@@ -1254,7 +1254,7 @@ check and possibly negotiate the UWS job control parameters.
 The phase URL shows the progress of the job. When the job is created by the 
 service it will normally be set to PENDING, but might be set to ERROR if the 
 service has rejected the job. If the phase is ERROR, then the error URL should 
-lead to a an error document explaining the problem. If the phase is PENDING, 
+lead to an error document explaining the problem. If the phase is PENDING, 
 then the client needs to commit the job for execution.
 
 The client runs the job by posting to the phase URL:
