@@ -1472,143 +1472,143 @@ specific name or location (\ref{sec:resources}).
 tables-1.1 capability (\ref{sec:resources}).
 \end{itemize}
 
-\section{Detailed Changes from Previous Versions}
-
-\subsection{PR-TAP-20190420}
-
-Modified the resources section to only allow the fixed name resources on a single base URL. Adapted the 
-VOSI-capabilities example and explanation to demonstrate the single base URL design and specify the meaning
-of having zero or more securityMethod(s). Removed all use to the previously proposed UWSRegExt.
-
-Added explicit mention of SSO-2.0 in related standards.
-
-\subsection{PR-TAP-1.1-20180830}
-
-Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities.
-
-\subsection{PR-TAP-1.1-20180416}
-
-Added updated IVOA architecture diagram showing role of TAP.
-
-Removed language that somehow defined or restricted usage of ADQL constructs in
-favour of just referring to the AQDL spec. Clarified use of serialisation
-rules for extended types defined in DALI.
-
-Removed explicit datatype/arraysize/xtype from \tapschema{} description
-in favour of string and integer. Specified which integers are actually
-booleans (0 or 1). Added list of foreign keys for \tapschema{}
-relational model. Clarified use of delimited identifiers for column names in 
-\tapschema. Added schema\_index column. Clarified when the \verb|"size"| column 
-in \tapschema\ can contain a value. Clarified that both arraysize and \verb|"size"|
-must be null for scalar numeric columns.
-
-Fixed use of double-quotes which misbehaved inside tables. 
-
-Fixed BasicAA security method in capabilities example. Included use of prototype
-UWSRegExt interface tags in capabilities example and removed use of separate
-standardID values for async and sync.
-
-Fixed numerous typos and gramnmatical errors.
-
-Removed obsolete REQUEST=doQuery from examples.
-
-Added explicit reference to VOSI-tables. Updated capabilities example to describe a
-tables-1.1 capability.
-
-Clarified dependency on minor versions of related standards with some recommendations on
-using newer versions.
-
-\subsection{PR-TAP-1.1-20170830}
-
-Added an example for \verb|examples|.
-
-Clarified that the QUERY param is intended for use with other values of LANG and is not
-reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value.
-
-Removed remaining uses of PQL; replaced one example with something more clearly non-standard.
-
-Removed restriction from previous WD that the ``size'' column must be null for variable length arrays. In fact, ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column).
-
-Changed language about mandatory ADQL geometry function support back to optional (should in
-the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
-
-Removed some VOTable content and reference DALI. Explicitly relaxed datatype and arraysize used in \tapschema{} tables. Fixed various cross-references and typos. 
-
-Added example use of UWS-1.1 blocking requests.
-
-\subsection{WD-TAP-1.1-20170707}
-
-Changed arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
-
-Clarified required and optional ADQL geometric functions.
-
-Format tables so column headers are bold.
-
-Added paragraph specifying allowed values for \tapschema.tables.table\_type.
-
-Changed the principal, indexed, and std columns in \tapschema.columns to boolean since we
-now use the VOTabletype system.
-
-Fixed URL to schema in VOSI-capabilities example.
-
-\subsection{WD-TAP-1.1-20161011}
-
-Removed details of mapping database and VOTable data types and refer to DALI 
-instead. 
-
-Strongly recommend that VOSI resources allow anonymous access.
-
-Relax restrictions on column names in uploaded tables; clarify that services 
-must support delimited identifiers. Advise that services should assign unique 
-column names in cases where they generate the name.
-
-\subsection{WD-TAP-1.1-20160428}
-
-Completed the mapping table from VOTable to RDBMS datatypes using DALI-1.1 xtype values.
-
-Added details and VOSI-capabilities example for providing multiple resources with different 
-authentication requirements. Clarified that VOSI-availability is no longer restricted to a
-specific name or location.
-
-\subsection{WD-TAP-1.1-20150930}
-
-Clarified that MAXREC always overrides limitations in the query (e.g. 
-TOP in an ADQL query).
-
-Clarified that services are not required to support queries that reference tables 
-in different schema. This is primarily to allow the \tapschema{} to be implemented 
-in a different server from the content.
-
-Completed the references section.
-
-\subsection{Changes from TAP-1.0}
-
-Added table\_index and column\_index to \tapschema.
-
-Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
-indicator.
-
-Added advice that the size column \tapschema.columns must always be used 
-as a delimited identifier because it is a reserved word in many RDBMS 
-servers. Added arraysize column to \tapschema.columns to replace size and 
-deprecated size (which will be removed in the next major version).
- 
-Removed REQUEST and VERSION parameters from interface.
-
-Restructured the document and removed text that duplicates material from DALI. 
-Rewrite the overly long introduction with some basic use cases to help define 
-the scope and tell readers what TAP is supposed to accomplish.
-
-Made clarifications: restricted allowed table names for UPLOAD, clarified that 
-multiple UPLOAD parameters accumulate, deprecated the size column in 
-\tapschema.columns and added advice to quote it as a delimited 
-identifier, made presence of a TABLE element on VOTable output only required for 
-successful queries, added optional DALI-examples endpoint (text TBD).
-
-Defined standardID values for the async and sync resource types and explicitly 
-allow for multiple of each resource (typically to support authentication). The 
-fixed paths /async and /sync are still required and are to provide anonymous 
-query access, which should be compatible with existing services.
+% \section{Detailed Changes from Previous Versions}
+% 
+% \subsection{PR-TAP-20190420}
+% 
+% Modified the resources section to only allow the fixed name resources on a single base URL. Adapted the 
+% VOSI-capabilities example and explanation to demonstrate the single base URL design and specify the meaning
+% of having zero or more securityMethod(s). Removed all use to the previously proposed UWSRegExt.
+% 
+% Added explicit mention of SSO-2.0 in related standards.
+% 
+% \subsection{PR-TAP-1.1-20180830}
+% 
+% Added reference to UWSRegExt Note and clarified the use of this prototype in VOSI-capabilities.
+% 
+% \subsection{PR-TAP-1.1-20180416}
+% 
+% Added updated IVOA architecture diagram showing role of TAP.
+% 
+% Removed language that somehow defined or restricted usage of ADQL constructs in
+% favour of just referring to the AQDL spec. Clarified use of serialisation
+% rules for extended types defined in DALI.
+% 
+% Removed explicit datatype/arraysize/xtype from \tapschema{} description
+% in favour of string and integer. Specified which integers are actually
+% booleans (0 or 1). Added list of foreign keys for \tapschema{}
+% relational model. Clarified use of delimited identifiers for column names in 
+% \tapschema. Added schema\_index column. Clarified when the \verb|"size"| column 
+% in \tapschema\ can contain a value. Clarified that both arraysize and \verb|"size"|
+% must be null for scalar numeric columns.
+% 
+% Fixed use of double-quotes which misbehaved inside tables. 
+% 
+% Fixed BasicAA security method in capabilities example. Included use of prototype
+% UWSRegExt interface tags in capabilities example and removed use of separate
+% standardID values for async and sync.
+% 
+% Fixed numerous typos and gramnmatical errors.
+% 
+% Removed obsolete REQUEST=doQuery from examples.
+% 
+% Added explicit reference to VOSI-tables. Updated capabilities example to describe a
+% tables-1.1 capability.
+% 
+% Clarified dependency on minor versions of related standards with some recommendations on
+% using newer versions.
+% 
+% \subsection{PR-TAP-1.1-20170830}
+% 
+% Added an example for \verb|examples|.
+% 
+% Clarified that the QUERY param is intended for use with other values of LANG and is not
+% reserved for ADQL only. Removed text concerning the case sensitivity of QUERY value.
+% 
+% Removed remaining uses of PQL; replaced one example with something more clearly non-standard.
+% 
+% Removed restriction from previous WD that the ``size'' column must be null for variable length arrays. In fact, ``size'' can be used for 1-dimension arrays but just does not carry any info about them being variable-length (which is only in the new arraysize column).
+% 
+% Changed language about mandatory ADQL geometry function support back to optional (should in
+% the case where the tables contain spatial coordinates) so TAP now recommends a set of functions to support and notes others are simply optional (or not supported in the case of REGION). Removed the comment about use of point args to INTERECTS (belongs in ADQL). Clarified that DALI timestamp format support is required only in services where it can be used in queries.
+% 
+% Removed some VOTable content and reference DALI. Explicitly relaxed datatype and arraysize used in \tapschema{} tables. Fixed various cross-references and typos. 
+% 
+% Added example use of UWS-1.1 blocking requests.
+% 
+% \subsection{WD-TAP-1.1-20170707}
+% 
+% Changed arraysize in \tapschema{} to allow the complete VOTable arraysize syntax and specified that the effective datatype in TAP is specified as in VOTable using datatype,arraysize, and xtype. Recommend use of VOTableType in VOSI-tables output.
+% 
+% Clarified required and optional ADQL geometric functions.
+% 
+% Format tables so column headers are bold.
+% 
+% Added paragraph specifying allowed values for \tapschema.tables.table\_type.
+% 
+% Changed the principal, indexed, and std columns in \tapschema.columns to boolean since we
+% now use the VOTabletype system.
+% 
+% Fixed URL to schema in VOSI-capabilities example.
+% 
+% \subsection{WD-TAP-1.1-20161011}
+% 
+% Removed details of mapping database and VOTable data types and refer to DALI 
+% instead. 
+% 
+% Strongly recommend that VOSI resources allow anonymous access.
+% 
+% Relax restrictions on column names in uploaded tables; clarify that services 
+% must support delimited identifiers. Advise that services should assign unique 
+% column names in cases where they generate the name.
+% 
+% \subsection{WD-TAP-1.1-20160428}
+% 
+% Completed the mapping table from VOTable to RDBMS datatypes using DALI-1.1 xtype values.
+% 
+% Added details and VOSI-capabilities example for providing multiple resources with different 
+% authentication requirements. Clarified that VOSI-availability is no longer restricted to a
+% specific name or location.
+% 
+% \subsection{WD-TAP-1.1-20150930}
+% 
+% Clarified that MAXREC always overrides limitations in the query (e.g. 
+% TOP in an ADQL query).
+% 
+% Clarified that services are not required to support queries that reference tables 
+% in different schema. This is primarily to allow the \tapschema{} to be implemented 
+% in a different server from the content.
+% 
+% Completed the references section.
+% 
+% \subsection{Changes from TAP-1.0}
+% 
+% Added table\_index and column\_index to \tapschema.
+% 
+% Clarified the relationship of MAXREC and TOP (in ADQL) and the overflow 
+% indicator.
+% 
+% Added advice that the size column \tapschema.columns must always be used 
+% as a delimited identifier because it is a reserved word in many RDBMS 
+% servers. Added arraysize column to \tapschema.columns to replace size and 
+% deprecated size (which will be removed in the next major version).
+%  
+% Removed REQUEST and VERSION parameters from interface.
+% 
+% Restructured the document and removed text that duplicates material from DALI. 
+% Rewrite the overly long introduction with some basic use cases to help define 
+% the scope and tell readers what TAP is supposed to accomplish.
+% 
+% Made clarifications: restricted allowed table names for UPLOAD, clarified that 
+% multiple UPLOAD parameters accumulate, deprecated the size column in 
+% \tapschema.columns and added advice to quote it as a delimited 
+% identifier, made presence of a TABLE element on VOTable output only required for 
+% successful queries, added optional DALI-examples endpoint (text TBD).
+% 
+% Defined standardID values for the async and sync resource types and explicitly 
+% allow for multiple of each resource (typically to support authentication). The 
+% fixed paths /async and /sync are still required and are to provide anonymous 
+% query access, which should be compatible with existing services.
 
 
 \bibliography{ivoatex/ivoabib,ivoatex/docrepo}
