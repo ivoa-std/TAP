@@ -163,7 +163,7 @@ versions are missing features that are required and may be unusable in practice.
 For example, the overflow reporting and xtype attribute were introduced in 
 VOTable 1.2 so that is the minimum viable version that must be used.
 
-\item[SSO \citep{std:SSOAUTH2}] TAP services that support authenticated 
+\item[SSO \citep{2017ivoa.spec.0524T}] TAP services that support authenticated 
 access declare this in their capabilities using recommendations and security method 
 identifiers from the SSO standard.
 \end{description}
@@ -178,7 +178,7 @@ written against version 1.1 of DALI.  In particular, TAP directly
 references DALI 1.1's serialisation rules for geometries and timestamps
 and recommends implementing the examples endpoint defined by DALI.
 
-\item[Obscore \citep{std:OBSCORE11}] The Obscore data model
+\item[Obscore \citep{2017ivoa.spec.0509L}] The Obscore data model
 facilitates the publication of metadata of observational data products.
 TAP is used to access compliant metadata collections.
 
@@ -433,7 +433,7 @@ capabilities endpoint of a TAP service:
 This specification requires that exactly one capability with a
 standardID of \nolinkurl{ivo://ivoa.net/std/TAP} is present.
 In addition to this basic service description, production services
-should use the TAPRegExt \citep{std:TAPREGEXT} extension to provide
+should use the TAPRegExt \citep{2012ivoa.spec.0827D} extension to provide
 additional metadata within the TAP capability. Clients should create
 the endpoint URLs by appending the fixed endpoint names to the access URL
 given in the interface defined in the TAP capability. The TAP capability normally
