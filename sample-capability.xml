@@ -1,0 +1,49 @@
+<vosi:capabilities
+   xmlns:vosi="http://www.ivoa.net/xml/VOSICapabilities/v1.0"
+   xmlns:vs="http://www.ivoa.net/xml/VODataService/v1.1"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation=
+    "http://www.ivoa.net/xml/VOSICapabilities/v1.0
+     http://www.ivoa.net/xml/VOSICapabilities/v1.0
+     http://www.ivoa.net/xml/VODataService/v1.1
+     http://www.ivoa.net/xml/VODataService/v1.1">
+
+  <!-- base URL for clients that apppend /async, /sync, etc -->
+  <capability standardID="ivo://ivoa.net/std/TAP">
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base"> https://example.net/srv </accessURL>
+      <!-- anonymous or cookie or client certificate -->
+      <securityMethod/>
+      <securityMethod standardID="ivo://ivoa.net/sso#cookie"/>
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
+    </interface>
+  </capability>
+  
+  <capability standardID="ivo://ivoa.net/std/VOSI#capabilities">
+  	<!-- VOSI capabilities endpoint as per VOSI 1.1 -->
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
+      <accessURL use="full"> https://example.net/srv/capabilities </accessURL>
+      <!-- anonymous only -->
+    </interface>
+  </capability>
+
+  <capability standardID="ivo://ivoa.net/std/VOSI#availability">
+  	<!-- VOSI availability endpoint as per VOSI 1.1 -->
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.0">
+      <accessURL use="full"> https://example.net/srv/availability </accessURL>
+      <!-- anonymous only -->
+    </interface>
+  </capability>
+
+  <capability standardID="ivo://ivoa.net/std/VOSI#tables-1.1">
+  	<!-- VOSI table endpoint as per VOSI 1.1 -->
+    <interface xsi:type="vs:ParamHTTP" role="std" version="1.1">
+      <accessURL use="base"> https://example.net/srv/tables </accessURL>
+      <!-- anonymous or cookie or client certificate -->
+      <securityMethod/>
+      <securityMethod standardID="ivo://ivoa.net/sso#cookie"/>
+      <securityMethod standardID="ivo://ivoa.net/sso#tls-with-certificate"/>
+    </interface>
+  </capability>
+
+</vosi:capabilities>
