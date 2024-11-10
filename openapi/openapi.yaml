@@ -1,0 +1,35 @@
+openapi: 3.1.0
+info:
+  title: TAP service endpoints
+  version: "1.1"
+  description: This is more or less the current TAP-1.1 standard.
+servers:
+- url: /example
+paths:
+# notes: the tap openapi components are included here; 
+# the uws- and vosi- components are not included here and would have to
+# use the $ref: {URL} style or be pulled in when building the complete
+# stand-alone spec/document structure (TBD)
+    /sync:
+        $ref: ./tap-sync.yaml
+
+    /async:
+        $ref: ./tap-async.yaml
+    /async/{jobID}:
+        $ref: ./include/UWS/uws-job.yaml
+        #$ref: https://ivoa.net/std/UWS/uws-job.yaml
+    ## TODO: more resources under /async/{jobID} here...
+
+    /tables:
+        $ref: ./include/VOSI/vosi-tableset.yaml
+        #$ref: https://ivoa.net/std/VOSI/vosi-tableset.yaml
+    /tables/{name}:
+        $ref: ./include/VOSI/vosi-table.yaml
+        #$ref: https://ivoa.net/std/VOSI/vosi-table.yaml
+
+    /availability:
+        $ref: ./include/VOSI/vosi-availability.yaml
+        #$ref: https://ivoa.net/std/VOSI/vosi-availability.yaml
+    /capabilities:
+        $ref: ./include/VOSI/vosi-capabilities.yaml
+        #$ref: https://ivoa.net/std/VOSI/vosi-capabilities.yaml
