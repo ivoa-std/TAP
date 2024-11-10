@@ -1,5 +1,8 @@
 name: CI build of the standard
 
+env:
+  doc_name: TAP
+
 on: 
   pull_request:
     types: [opened, synchronize, reopened]
@@ -19,14 +22,14 @@ jobs:
         sudo apt install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended xsltproc ghostscript cm-super librsvg2-bin inkscape
       
     - name: Build the document
-      run: make role_diagram.pdf biblio forcetex
+      run: make
       
     - name: Check the output
       run: |
-        test -f TAP.pdf
-        test -f TAP.bbl
+        test -f ${{ env.doc_name }}.pdf
+        test -f ${{ env.doc_name }}.bbl
         
-    - uses: actions/upload-artifact@v1
+    - name: Keep the PDF artefact 
+      uses: actions/upload-artifact@v4
       with:
-        name: TAP.pdf Preview
-        path: TAP.pdf
+        path: ${{ env.doc_name }}.pdf
