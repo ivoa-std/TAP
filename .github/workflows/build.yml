@@ -13,13 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    
     - uses: actions/checkout@v1
       with:
         submodules: true
+
     - name: Setup dependencies
       run: |
         sudo apt update
-        sudo apt install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended xsltproc ghostscript cm-super librsvg2-bin inkscape
+        sudo apt install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended xsltproc latexmk cm-super
       
     - name: Build the document
       run: make
