@@ -94,7 +94,7 @@ services accept queries posed against the tableset available via the service and
 return the query response as another table, in accord with the relational model. 
  Queries may be submitted using various query languages and may execute 
 synchronously or asynchronously. Support for the Astronomical Data Query 
-Language ADQL \citep{2008ivoa.spec.1030O} is mandatory; support for other query languages is 
+Language ADQL \citep{2023ivoa.spec.1215M} is mandatory; support for other query languages is 
 supported 
 but optional.
 
@@ -133,7 +133,7 @@ services.
 \end{figure}
 
 Fig.~\ref{fig:archdiag} shows the role this document plays within the
-IVOA architecture \citep{note:VOARCH}.
+IVOA architecture \citep{2021ivoa.spec.1101D}.
 
 TAP depends on the following other IVOA standards:
 
@@ -146,7 +146,7 @@ require the use of any particular minor version of the UWS standard,
 UWS 1.1 can significantly streamline the communication, and
 implementors of TAP 1.1 are encouraged to support UWS 1.1 or later.
 
-\item[ADQL \citep{2008ivoa.spec.1030O}] A standards-compliant TAP
+\item[ADQL \citep{2023ivoa.spec.1215M}] A standards-compliant TAP
 service must support queries written in the Astronomical Data Query
 Language.
 
@@ -157,7 +157,7 @@ require the use of any particular minor version of the VOSI standard,
 the VOSI-tables resource in VOSI 1.1 provides important usability features, and
 implementors of TAP 1.1 are encouraged to support VOSI 1.1 or later.
 
-\item[VOTable \citep{2013ivoa.spec.0920O}] All TAP services must be able
+\item[VOTable \citep{2019ivoa.spec.1021O}] All TAP services must be able
 to serve query results in the VOTable format. Note that while TAP 1.1 does not
 require the use of any particular minor version of the VOTable standard, older 
 versions are missing features that are required and may be unusable in practice.
@@ -183,7 +183,7 @@ and recommends implementing the examples endpoint defined by DALI.
 facilitates the publication of metadata of observational data products.
 TAP is used to access compliant metadata collections.
 
-\item[RegTAP \citep{2014ivoa.spec.1208D}]  The relational model for the
+\item[RegTAP \citep{2019ivoa.spec.1011D}]  The relational model for the
 VO Registry provides a data model for publishing service metadata.
 TAP is used to access compliant metadata collections.
 
@@ -237,7 +237,7 @@ elements are mapped to tables and columns.
 \subsection{Query Languages}
 
 \subsubsection{ADQL Queries}
-The Astronomical Data Query Language ADQL \citep{2008ivoa.spec.1030O} is the standard 
+The Astronomical Data Query Language ADQL \citep{2023ivoa.spec.1215M} is the standard 
 query language for the IVOA. Support for ADQL queries is mandatory. ADQL can be 
 used to specify queries  that access one or more tables provided by the TAP 
 service, including the standard metadata tables. In general, the client must 
@@ -656,10 +656,10 @@ The RUNID parameter is fully described in DALI.
 
 The UPLOAD parameter is described in DALI. Services should support 
 the 
-upload of temporary tables in VOTable \citep{2013ivoa.spec.0920O} format via the standard 
+upload of temporary tables in VOTable \citep{2019ivoa.spec.1021O} format via the standard 
 UPLOAD 
 parameter. The table-name(s) must be legal table names as defined in 
-ADQL \citep{2008ivoa.spec.1030O} but restricted as described in section~\ref{sec:tap-schema-tables}. 
+ADQL \citep{2023ivoa.spec.1215M} but restricted as described in section~\ref{sec:tap-schema-tables}. 
 URIs may be simple URLs (e.g. with a URI scheme of http or https) or 
 URIs that must be resolved (e.g. with a URI scheme of vos or param) to give 
 the location of the table content.
@@ -719,7 +719,7 @@ in queries.
 \section{Use of VOTable}
 \label{sec:votable}
 
-VOTable \citep{2013ivoa.spec.0920O} is the standard format for output (query 
+VOTable \citep{2019ivoa.spec.1021O} is the standard format for output (query 
 results) and input (table upload) in a TAP service so most of this section 
 deals with how VOTable is used. However, rules about serialising column values 
 also apply to other formats (e.g. CSV and TSV).
@@ -863,7 +863,7 @@ section~\ref{sec:vosi-tables}. The
 VOSI tables resource provides the same metadata as the \tapschema{}
 but in a rigorously controlled format; the information in the 
 \tapschema{} is equivalent to that defined by VODataService 
-\citep{2010ivoa.spec.1202P}. Second, the client may specify a query of one or more 
+\citep{2021ivoa.spec.1102D}. Second, the client may specify a query of one or more 
 tables setting the 
 MAXREC parameter to 0 so that only the metadata regarding the requested fields 
 is returned. Use of MAXREC is described in section~\ref{sec:MAXREC}.
@@ -983,7 +983,7 @@ the name must be quoted (delimited identifier in ADQL) then the value must inclu
 The type of a database column is described in the \tapschema.columns
 table using three columns with an additional (deprecated) column from TAP-1.0 
 for backwards compatibility. The allowed values for datatype and the syntax for arraysize
-are specified in VOTable \citep{2013ivoa.spec.0920O}. Values for xtype are not restricted per se but 
+are specified in VOTable \citep{2019ivoa.spec.1021O}. Values for xtype are not restricted per se but 
 implementors should use standard values such as those defined in DALI before 
 inventing new xtype(s). 
 

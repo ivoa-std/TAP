@@ -22,4 +22,16 @@ FIGURES = role_diagram.pdf
 # List of PDF figures (for vector graphics)
 VECTORFIGURES = 
 
-include ivoatex/Makefile
+# An e-mail address of the person doing the submission to the document
+# repository (can be empty until a make upload is being made)
+AUTHOR_EMAIL=pdowler.cadc@gmail.com
+
+-include ivoatex/Makefile
+
+ivoatex/Makefile:
+	@echo "*** ivoatex submodule not found.  Initialising submodules."
+	@echo
+	git submodule update --init
+
+test:
+	@echo "No tests defined yet"
