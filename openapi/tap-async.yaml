@@ -1,0 +1,28 @@
+get:
+    summary: UWS 1.1
+    description: async job listing
+    parameters:
+    responses:
+        200:
+            $ref: ./include/UWS/uws-responses.yaml#/job-listing
+        401:
+            $ref: ./include/VOSI/std-responses.yaml#/not-authenticated
+        403:
+            $ref: ./include/VOSI/std-responses.yaml#/permission-denied
+post:
+    summary: TAP-async 1.1
+    description: TAP asynchronous query endpoint (create UWS Job)
+    parameters:
+      - $ref: ./parameters/tap-lang.yaml
+      - $ref: ./parameters/tap-query.yaml
+      - $ref: ./parameters/tap-upload.yaml
+      - $ref: ./parameters/tap-format.yaml
+      - $ref: ./parameters/dali-maxrec.yaml
+      - $ref: ./parameters/dali-responseformat.yaml
+    responses:
+        303:
+            $ref: ./include/UWS/uws-responses.yaml#/created
+        401:
+            $ref: ./include/VOSI/std-responses.yaml#/not-authenticated
+        403:
+            $ref: ./include/VOSI/std-responses.yaml#/permission-denied
