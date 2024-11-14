@@ -17,10 +17,10 @@ post:
         # TAP job definition specified here
       - $ref: ./parameters/tap-lang.yaml
       - $ref: ./parameters/tap-query.yaml
-      - $ref: ./parameters/tap-upload.yaml
       - $ref: ./parameters/tap-format.yaml
       - $ref: ./parameters/dali-maxrec.yaml
       - $ref: ./parameters/dali-responseformat.yaml
+      - $ref: ./parameters/dali-upload.yaml
     responses:
         303:
             # UWS respoonse code

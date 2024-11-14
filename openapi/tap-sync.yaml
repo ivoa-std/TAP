@@ -4,10 +4,10 @@ get:
     parameters:
       - $ref: ./parameters/tap-lang.yaml
       - $ref: ./parameters/tap-query.yaml
-      - $ref: ./parameters/tap-upload.yaml
       - $ref: ./parameters/tap-format.yaml
       - $ref: ./parameters/dali-maxrec.yaml
       - $ref: ./parameters/dali-responseformat.yaml
+      - $ref: ./parameters/dali-upload.yaml
     responses:
         200:
             description: successful response
@@ -25,10 +25,10 @@ post:
     parameters:
       - $ref: ./parameters/tap-lang.yaml
       - $ref: ./parameters/tap-query.yaml
-      - $ref: ./parameters/tap-upload.yaml
       - $ref: ./parameters/tap-format.yaml
       - $ref: ./parameters/dali-maxrec.yaml
       - $ref: ./parameters/dali-responseformat.yaml
+      - $ref: ./parameters/dali-upload.yaml
     responses:
         200:
             description: successful response
